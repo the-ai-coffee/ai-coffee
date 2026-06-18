@@ -1,0 +1,1983 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>IA Coffee · Épisode 01 — Agentic AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="deck-stage.js"></script>
+<style>
+  :root {
+    /* palette */
+    --paper:       #efe7d6;
+    --paper-2:     #e6dcc7;
+    --ink:         #1c1612;
+    --ink-2:       #4a3f33;
+    --ink-3:       #7a6a58;
+    --rule:        #d8cdb6;
+    --rule-2:      #c8bb9e;
+    --crema:       #c4622e;
+    --crema-soft:  #e9b893;
+    --sage:        #6e8a72;
+    --espresso:    #2b1d14;
+
+    /* type scale (1920x1080) */
+    --type-display: 168px;
+    --type-title:   84px;
+    --type-h2:      56px;
+    --type-sub:     40px;
+    --type-body:    30px;
+    --type-small:   24px;
+    --type-micro:   18px;
+
+    /* spacing */
+    --pad-x:       110px;
+    --pad-y:       96px;
+    --gap-title:   56px;
+    --gap-item:    28px;
+
+    /* fonts */
+    --serif:  "Instrument Serif", "Times New Roman", serif;
+    --sans:   "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono:   "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+  }
+
+  html, body { margin:0; padding:0; background:#0b0a08; color:var(--ink); font-family:var(--sans); }
+  * { box-sizing: border-box; }
+
+  deck-stage section {
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* shared chrome */
+  .chrome {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .chrome .kicker {
+    position: absolute;
+    top: 44px;
+    left: var(--pad-x);
+    font-family: var(--mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .chrome .kicker .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--crema);
+  }
+  .chrome .folio {
+    position: absolute;
+    top: 44px;
+    right: var(--pad-x);
+    font-family: var(--mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+  }
+  .chrome .baseline {
+    position: absolute;
+    bottom: 44px;
+    left: var(--pad-x);
+    right: var(--pad-x);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.16em;
+    color: var(--ink-3);
+    border-top: 1px solid var(--rule);
+    padding-top: 18px;
+  }
+  .chrome .baseline .left { display:flex; gap:18px; align-items:center; }
+  .chrome .baseline .mark {
+    color: var(--ink);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .body {
+    position: absolute;
+    inset: 110px var(--pad-x) 110px var(--pad-x);
+  }
+
+  h1.display {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: var(--type-display);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  h1.display em { color: var(--crema); font-style: italic; }
+  h2.title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: var(--type-title);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  h2.title em { font-style: italic; color: var(--crema); }
+  h3.h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: var(--type-h2);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0;
+    min-height: 2.2em;
+  }
+  p.lead {
+    font-family: var(--serif);
+    font-size: var(--type-sub);
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: var(--ink-2);
+    margin: 0;
+    max-width: 1300px;
+  }
+  p.txt {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: var(--type-body);
+    line-height: 1.45;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  p.small {
+    font-family: var(--sans);
+    font-size: var(--type-small);
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .mono   { font-family: var(--mono); }
+  .serif  { font-family: var(--serif); }
+  .label  {
+    font-family: var(--mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .crema  { color: var(--crema); }
+  .sage   { color: var(--sage); }
+  .ink2   { color: var(--ink-2); }
+  .ink3   { color: var(--ink-3); }
+  .rule   { height:1px; background:var(--rule); border:0; margin:0; }
+
+  /* generic concept card */
+  .card {
+    border-top: 1px solid var(--ink);
+    padding-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .card .head .name {
+    font-family: var(--serif);
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .card .head .tag {
+    font-family: var(--mono);
+    font-size: var(--type-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .card .desc {
+    font-family: var(--sans);
+    font-size: 24px;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
+  /* ============================================================
+     SLIDE 1 — COVER
+  ============================================================ */
+  .cover {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: stretch;
+    height: 100%;
+    padding: 92px var(--pad-x) 92px var(--pad-x);
+    gap: 60px;
+    position: relative;
+  }
+  .cover .topbar {
+    position: absolute;
+    top: 44px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono);
+    font-size: 24px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .cover .topbar .brand {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--serif);
+    font-size: 32px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .cover .topbar .brand .seal {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: grid; place-items: center;
+    font-family: var(--mono);
+    font-size: 15px;
+    letter-spacing: 0;
+    font-style: normal;
+  }
+  .cover .left { display: flex; flex-direction: column; justify-content: flex-end; gap: 36px; padding-top: 60px; }
+  .cover .episode { color: var(--ink-3); font-family: var(--mono); font-size: 26px; letter-spacing: 0.3em; }
+  .cover h1 {
+    font-family: var(--serif);
+    font-size: 196px;
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    margin: 0;
+    font-weight: 400;
+  }
+  .cover h1 em { font-style: italic; color: var(--crema); }
+  .cover .meta {
+    display: flex; gap: 38px; align-items: center;
+    font-family: var(--mono);
+    font-size: 26px;
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+  }
+  .cover .meta .pip { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+
+  .cover .right {
+    position: relative;
+    align-self: stretch;
+  }
+  /* concentric coffee mark */
+  .cup {
+    position: absolute;
+    right: -60px; top: 40px;
+    width: 640px; height: 640px;
+  }
+  .cup .ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--ink);
+  }
+  .cup .ring.r2 { inset: 50px; border-color: var(--rule-2); }
+  .cup .ring.r3 { inset: 110px; border-color: var(--rule); }
+  .cup .core {
+    position: absolute; inset: 170px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #4a2a18 0%, var(--espresso) 55%, #110a06 100%);
+    box-shadow: inset 0 0 80px rgba(255,255,255,0.06);
+  }
+  .cup .crema {
+    position: absolute;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: var(--crema);
+    top: 220px; right: 220px;
+    mix-blend-mode: multiply;
+    opacity: 0.65;
+  }
+  .cup .steam {
+    position: absolute;
+    top: 20px; right: 210px;
+    font-family: var(--mono);
+    font-size: 24px;
+    letter-spacing: 0.25em;
+    color: var(--ink-3);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+  .cover .tags {
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+    border-top: 1px solid var(--ink);
+    padding-top: 28px;
+  }
+  .tag-chip {
+    border: 1px solid var(--ink);
+    padding: 10px 18px;
+    font-family: var(--mono);
+    font-size: 24px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    border-radius: 999px;
+  }
+  .tag-chip.fill { background: var(--ink); color: var(--paper); }
+
+  /* ============================================================
+     SLIDE 2 — AGENDA
+  ============================================================ */
+  .agenda {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    height: 100%;
+  }
+  .agenda .left { padding-top: 40px; }
+  .agenda .right { border-left: 1px solid var(--ink); padding-left: 60px; display: flex; flex-direction: column; }
+  .agenda .item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 36px;
+    align-items: baseline;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .agenda .item:last-child { border-bottom: 0; }
+  .agenda .num {
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+  }
+  .agenda .name {
+    font-family: var(--serif);
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+  .agenda .sub {
+    font-family: var(--mono);
+    font-size: 17px;
+    letter-spacing: 0.05em;
+    color: var(--ink-3);
+    margin-top: 8px;
+    display: block;
+  }
+  .agenda .dur {
+    font-family: var(--mono);
+    font-size: 17px;
+    letter-spacing: 0.12em;
+    color: var(--crema);
+  }
+
+  /* ============================================================
+     SLIDE 3 — LLM
+  ============================================================ */
+  .def-layout {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 56px;
+    height: 100%;
+  }
+  .grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 36px;
+    align-items: stretch;
+  }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; align-items: stretch; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; align-items: stretch; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 64px; align-items: stretch; }
+
+  .warn-stripe {
+    background: repeating-linear-gradient(45deg, var(--paper) 0 12px, var(--paper-2) 12px 24px);
+    border: 1px solid var(--ink);
+  }
+
+  /* ============================================================
+     SLIDE 4 — DEEPSEEK
+  ============================================================ */
+  .ds-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 60px;
+  }
+  .ds-num {
+    font-family: var(--serif);
+    font-size: 220px;
+    line-height: 0.9;
+    color: var(--crema);
+    letter-spacing: -0.04em;
+  }
+  .ds-num small {
+    display: block;
+    font-family: var(--mono);
+    font-size: 22px;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+
+  /* ============================================================
+     SLIDE 5 — TOKEN / CONTEXT / TEMPERATURE
+  ============================================================ */
+  .token-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 18px;
+  }
+  .token-chip {
+    border: 1px solid var(--ink);
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    background: var(--paper);
+  }
+  .token-chip:nth-child(odd) { background: var(--paper-2); }
+
+  .ctx-table { width: 100%; border-collapse: collapse; }
+  .ctx-table tr { border-bottom: 1px solid var(--rule); }
+  .ctx-table tr:last-child { border-bottom: 0; }
+  .ctx-table td {
+    padding: 18px 0;
+    font-family: var(--sans);
+    font-size: 26px;
+    color: var(--ink);
+    vertical-align: baseline;
+  }
+  .ctx-table td.val {
+    text-align: right;
+    font-family: var(--mono);
+    color: var(--crema);
+    letter-spacing: 0.04em;
+  }
+
+  .temp-scale {
+    position: relative;
+    height: 12px;
+    background: linear-gradient(90deg, #2d3a4a 0%, var(--sage) 35%, var(--crema) 70%, #a83824 100%);
+    border-radius: 2px;
+    margin: 50px 0 20px;
+  }
+  .temp-mark {
+    position: absolute;
+    top: -8px;
+    width: 2px; height: 28px;
+    background: var(--ink);
+  }
+  .temp-mark span {
+    position: absolute;
+    top: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .temp-mark span em {
+    display: block;
+    font-style: normal;
+    color: var(--ink-3);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  /* ============================================================
+     SLIDE 6 — RAG PIPELINE
+  ============================================================ */
+  .pipe {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .pipe .step {
+    padding: 28px 22px 32px;
+    border-right: 1px solid var(--rule);
+    position: relative;
+  }
+  .pipe .step:last-child { border-right: 0; }
+  .pipe .step .num {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 18px;
+  }
+  .pipe .step .name {
+    font-family: var(--serif);
+    font-size: 38px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .pipe .step .what {
+    font-family: var(--sans);
+    font-size: 17px;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+  .pipe .step .arrow {
+    position: absolute;
+    top: 38px;
+    right: -10px;
+    width: 20px; height: 20px;
+    background: var(--paper);
+    color: var(--crema);
+    font-family: var(--mono);
+    text-align: center;
+    line-height: 18px;
+  }
+
+  /* ============================================================
+     SLIDE 7 — AGENT ANATOMY (ReAct loop)
+  ============================================================ */
+  .react-loop {
+    position: relative;
+    width: 520px; height: 520px;
+    margin: 0 auto;
+  }
+  .react-loop .center {
+    position: absolute;
+    inset: 110px;
+    border-radius: 50%;
+    border: 1px solid var(--ink);
+    background: var(--paper-2);
+    display: grid; place-items: center;
+    text-align: center;
+  }
+  .react-loop .center .lbl {
+    font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.22em; color: var(--ink-3);
+  }
+  .react-loop .center .ttl {
+    font-family: var(--serif); font-size: 56px;
+    line-height: 1; letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .react-loop .node {
+    position: absolute;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .react-loop .node .v {
+    font-family: var(--serif); font-size: 28px;
+    line-height: 1;
+  }
+  .react-loop .node .l {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.2em; color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .react-loop .node.n1 { top: -10px; left: 50%; transform: translateX(-50%); }
+  .react-loop .node.n2 { top: 50%; right: -10px; transform: translateY(-50%); background: var(--crema); color: var(--paper); border-color: var(--crema); }
+  .react-loop .node.n2 .l { color: var(--crema-soft); }
+  .react-loop .node.n3 { bottom: -10px; left: 50%; transform: translateX(-50%); }
+  .react-loop .node.n4 { top: 50%; left: -10px; transform: translateY(-50%); }
+
+  .react-loop .arc {
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+
+  /* ============================================================
+     SLIDE 8 — TOOL USE
+  ============================================================ */
+  .tool-category {
+    border: 1px solid var(--ink);
+    padding: 32px 28px;
+    display: flex; flex-direction: column; gap: 18px;
+    background: var(--paper);
+  }
+  .tool-category .head {
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .tool-category h4 {
+    font-family: var(--serif);
+    font-size: 40px;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .tool-category .num {
+    font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.2em; color: var(--ink-3);
+  }
+  .tool-category ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .tool-category li {
+    font-family: var(--mono);
+    font-size: 19px;
+    color: var(--ink);
+    padding: 8px 12px;
+    background: var(--paper-2);
+  }
+
+  .flow-line {
+    display: grid;
+    grid-template-columns: repeat(11, auto);
+    gap: 12px;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--ink-2);
+    padding: 18px 24px;
+    border: 1px solid var(--ink);
+    background: var(--paper-2);
+    justify-content: center;
+    width: fit-content;
+    margin: 0 auto;
+  }
+  .flow-line .arrow { color: var(--crema); }
+  .flow-line .word { color: var(--ink); }
+  .flow-line .word.acc { color: var(--crema); }
+
+  /* ============================================================
+     SLIDE 9 — MCP
+  ============================================================ */
+  .mcp {
+    display: grid;
+    grid-template-columns: 1.1fr 0.7fr 1.6fr;
+    gap: 48px;
+    align-items: stretch;
+  }
+  .mcp .col { display: flex; flex-direction: column; gap: 18px; }
+  .mcp .col .hdr {
+    font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.24em; color: var(--ink-3);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .mcp .host {
+    background: var(--ink); color: var(--paper);
+    padding: 24px 22px;
+    font-family: var(--mono);
+    font-size: 22px;
+    letter-spacing: 0.04em;
+  }
+  .mcp .host:nth-child(even) { background: var(--ink-2); }
+  .mcp .channel {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+    border-left: 1px dashed var(--rule-2);
+    border-right: 1px dashed var(--rule-2);
+    padding: 0 16px;
+  }
+  .mcp .channel .pipe-art {
+    width: 100%; height: 6px;
+    background: repeating-linear-gradient(90deg, var(--ink) 0 12px, transparent 12px 22px);
+  }
+  .mcp .channel .lbl {
+    font-family: var(--mono);
+    font-size: 18px;
+    letter-spacing: 0.18em;
+    color: var(--crema);
+    text-align: center;
+  }
+  .mcp .servers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .mcp .server {
+    border: 1px solid var(--ink);
+    padding: 16px 18px;
+    background: var(--paper);
+  }
+  .mcp .server .name {
+    font-family: var(--mono); font-weight: 500;
+    font-size: 20px; color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .mcp .server .what {
+    font-family: var(--sans); font-size: 15px; color: var(--ink-2);
+  }
+
+  /* ============================================================
+     SLIDE 10 — SKILLS / ORCHESTRATION
+  ============================================================ */
+  .quad {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    border: 1px solid var(--ink);
+    height: 100%;
+  }
+  .quad .q {
+    padding: 40px 44px;
+    border-right: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .quad .q:nth-child(2n) { border-right: 0; }
+  .quad .q:nth-child(n+3) { border-bottom: 0; }
+  .quad .q .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .quad .q h4 {
+    font-family: var(--serif);
+    font-size: 44px;
+    margin: 0;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    min-height: 2.2em;
+  }
+  .quad .q .what {
+    font-family: var(--sans);
+    font-size: 24px;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+  .quad .q .ex {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--crema);
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    margin-top: auto;
+  }
+  .quad .q.dark {
+    background: var(--ink); color: var(--paper);
+  }
+  .quad .q.dark .what { color: var(--paper); opacity: 0.8; }
+  .quad .q.dark .ex { color: var(--crema-soft); border-top-color: rgba(255,255,255,0.12); }
+
+  /* ============================================================
+     SLIDE 11 — MEMORY
+  ============================================================ */
+  .mem-table {
+    width: 100%; border-collapse: collapse;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .mem-table th, .mem-table td {
+    padding: 18px 22px;
+    text-align: left;
+    vertical-align: top;
+    border-right: 1px solid var(--rule);
+  }
+  .mem-table th:last-child, .mem-table td:last-child { border-right: 0; }
+  .mem-table th {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--rule);
+    font-weight: 400;
+  }
+  .mem-table .meta {
+    font-family: var(--serif);
+    font-size: 32px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .mem-table .scope {
+    font-family: var(--mono);
+    font-size: 17px;
+    letter-spacing: 0.08em;
+    color: var(--crema);
+    margin-top: 8px;
+    display: block;
+  }
+  .mem-table .desc {
+    font-family: var(--sans);
+    font-size: 19px;
+    color: var(--ink-2);
+    line-height: 1.4;
+    margin-top: 12px;
+  }
+
+  /* ============================================================
+     SLIDE 12-14 — DEMO SLIDES
+  ============================================================ */
+  .demo-frame {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    height: 100%;
+  }
+  .demo-frame .marker {
+    font-family: var(--mono);
+    font-size: 22px;
+    letter-spacing: 0.3em;
+    color: var(--crema);
+    text-transform: uppercase;
+  }
+  .demo-frame .marker .seq {
+    color: var(--ink-3);
+  }
+  .vs-block {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 28px;
+    align-items: stretch;
+  }
+  .vs-card {
+    border: 1px solid var(--ink);
+    padding: 30px 28px;
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--paper);
+  }
+  .vs-card.dim { background: var(--paper-2); }
+  .vs-card .lbl {
+    font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.22em; color: var(--ink-3); text-transform: uppercase;
+  }
+  .vs-card .quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 30px;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .vs-card.dim .quote { color: var(--ink-2); }
+  .vs-card .note {
+    font-family: var(--mono); font-size: 16px;
+    color: var(--ink-3);
+    border-top: 1px solid var(--rule);
+    padding-top: 12px;
+    margin-top: auto;
+  }
+  .vs-card.acc .note { color: var(--crema); }
+  .vs-arrow {
+    align-self: center;
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--crema);
+  }
+
+  /* researcher horizontal flow */
+  .agent-flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border: 1px solid var(--ink);
+  }
+  .agent-flow .node {
+    padding: 28px 22px;
+    border-right: 1px solid var(--rule);
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative;
+  }
+  .agent-flow .node:last-child { border-right: 0; }
+  .agent-flow .node .role {
+    font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.2em; color: var(--ink-3); text-transform: uppercase;
+  }
+  .agent-flow .node .verb {
+    font-family: var(--serif);
+    font-size: 38px;
+    line-height: 1;
+  }
+  .agent-flow .node .what {
+    font-family: var(--mono); font-size: 16px; color: var(--ink-2);
+  }
+  .agent-flow .node.act { background: var(--ink); color: var(--paper); }
+  .agent-flow .node.act .role { color: var(--crema-soft); }
+  .agent-flow .node.act .what { color: var(--paper); opacity: 0.7; }
+
+  /* live build timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .timeline .row {
+    display: grid;
+    grid-template-columns: 120px 280px 1fr;
+    gap: 40px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  .timeline .row:last-child { border-bottom: 0; }
+  .timeline .time {
+    font-family: var(--mono); font-size: 32px;
+    color: var(--crema); letter-spacing: 0.04em;
+  }
+  .timeline .what {
+    font-family: var(--serif); font-size: 36px;
+    line-height: 1.1; letter-spacing: -0.01em;
+  }
+  .timeline .detail {
+    font-family: var(--mono); font-size: 18px;
+    color: var(--ink-2);
+  }
+
+  .terminal {
+    background: var(--espresso);
+    color: #efe7d6;
+    padding: 22px 26px;
+    font-family: var(--mono);
+    font-size: 19px;
+    line-height: 1.5;
+    border: 1px solid var(--ink);
+  }
+  .terminal .prompt { color: var(--crema); }
+  .terminal .com { color: #8aa68f; }
+
+  /* ============================================================
+     SLIDE 15 — GLOSSAIRE
+  ============================================================ */
+  .gloss {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--ink);
+    border-left: 1px solid var(--ink);
+  }
+  .gloss .term {
+    padding: 26px 24px 30px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    display: flex; flex-direction: column; gap: 10px;
+    background: var(--paper);
+  }
+  .gloss .term .name {
+    font-family: var(--serif);
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .gloss .term .def {
+    font-family: var(--sans);
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .gloss .term .num {
+    font-family: var(--mono); font-size: 13px;
+    letter-spacing: 0.18em; color: var(--ink-3);
+  }
+
+  /* ============================================================
+     SLIDE 16 — CLOSE
+  ============================================================ */
+  .close {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 36px;
+    height: 100%;
+  }
+  .chain {
+    display: grid;
+    grid-template-columns: repeat(9, auto);
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+  }
+  .chain .node {
+    text-align: center;
+    width: 180px;
+  }
+  .chain .node .v {
+    font-family: var(--serif);
+    font-size: 58px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .chain .node .l {
+    font-family: var(--mono);
+    font-size: 16px;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+  .chain .sep {
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--crema);
+  }
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px;
+    padding-top: 36px;
+    border-top: 1px solid var(--ink);
+  }
+  .res {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .res .src {
+    font-family: var(--mono); font-size: 16px;
+    letter-spacing: 0.18em; color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .res .url {
+    font-family: var(--mono); font-size: 22px;
+    color: var(--ink);
+  }
+  .next-card {
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .next-card .ep {
+    font-family: var(--mono); font-size: 16px;
+    letter-spacing: 0.22em; color: var(--crema-soft);
+    text-transform: uppercase;
+  }
+  .next-card .title2 {
+    font-family: var(--serif); font-size: 48px;
+    line-height: 1; font-style: italic;
+  }
+  .next-card .cta {
+    font-family: var(--sans); font-size: 18px;
+    color: var(--paper); opacity: 0.7;
+  }
+
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ============================================================
+       1. COVER
+  ============================================================ -->
+  <section data-label="01 Cover">
+    <div class="cover">
+      <div class="topbar">
+        <div class="brand"><span class="seal">IA</span> IA Coffee</div>
+        <div>Épisode 01 · 1h30 · Saison 2026</div>
+      </div>
+
+      <div class="left">
+        <div class="episode">— ÉPISODE Nº 01 —</div>
+        <h1>Agentic<br><em>AI.</em></h1>
+        <div class="meta">
+          <span>1h30</span><span class="pip"></span>
+          <span>3 démos live</span><span class="pip"></span>
+          <span>Q&amp;R ouverte</span>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="cup">
+          <span class="steam">~ ~ ~  STEAM</span>
+          <div class="ring"></div>
+          <div class="ring r2"></div>
+          <div class="ring r3"></div>
+          <div class="core"></div>
+          <div class="crema"></div>
+        </div>
+      </div>
+
+      <div class="tags">
+        <span class="tag-chip fill">LLM</span>
+        <span class="tag-chip">Token</span>
+        <span class="tag-chip">RAG</span>
+        <span class="tag-chip fill">Agent</span>
+        <span class="tag-chip">Tool use</span>
+        <span class="tag-chip">MCP</span>
+        <span class="tag-chip">Skills</span>
+        <span class="tag-chip fill">DeepSeek</span>
+        <span class="tag-chip">Orchestration</span>
+        <span class="tag-chip">Multi-agent</span>
+        <span class="tag-chip">Embeddings</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2. AGENDA
+  ============================================================ -->
+  <section data-label="02 Au programme">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme</div>
+      <div class="folio">02 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Épisode 01</span></div><div>Agentic AI · 1h30</div></div>
+    </div>
+
+    <div class="body agenda">
+      <div class="left">
+        <div class="label">Ce soir</div>
+        <h2 class="title" style="margin-top:24px; font-size: 72px;">Six chapitres,<br>une <em>conversation</em>.</h2>
+        <p class="txt" style="margin-top:36px; max-width: 520px;">
+          Du token au multi-agent, on construit ensemble le vocabulaire et l'intuition de l'IA agentique. Puis on code en live.
+        </p>
+      </div>
+
+      <div class="right">
+        <div class="item">
+          <span class="num">01</span>
+          <div>
+            <div class="name">Les fondations</div>
+            <span class="sub">LLM · DeepSeek · Token · Contexte · Température</span>
+          </div>
+          <span class="dur">15 min</span>
+        </div>
+        <div class="item">
+          <span class="num">02</span>
+          <div>
+            <div class="name">Les données</div>
+            <span class="sub">RAG · Embeddings · Vector DB · Chunking</span>
+          </div>
+          <span class="dur">10 min</span>
+        </div>
+        <div class="item">
+          <span class="num">03</span>
+          <div>
+            <div class="name">Les agents</div>
+            <span class="sub">Agent · Tools · Planning · Memory · ReAct</span>
+          </div>
+          <span class="dur">15 min</span>
+        </div>
+        <div class="item">
+          <span class="num">04</span>
+          <div>
+            <div class="name">L'écosystème</div>
+            <span class="sub">MCP · Skills · Orchestration · Multi-agents</span>
+          </div>
+          <span class="dur">15 min</span>
+        </div>
+        <div class="item">
+          <span class="num">05</span>
+          <div>
+            <div class="name">Démos live</div>
+            <span class="sub">RAG chatbot · Agent researcher · Claude Code</span>
+          </div>
+          <span class="dur">25 min</span>
+        </div>
+        <div class="item">
+          <span class="num">06</span>
+          <div>
+            <div class="name">Q&amp;R</div>
+            <span class="sub">Questions ouvertes · Retours d'XP · Ressources</span>
+          </div>
+          <span class="dur">10 min</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. LLM
+  ============================================================ -->
+  <section data-label="03 LLM">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Fondations · 01</div>
+      <div class="folio">03 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Fondations</span></div><div>LLM — Large Language Model</div></div>
+    </div>
+
+    <div class="body def-layout">
+      <div>
+        <div class="label">Large Language Model</div>
+        <h2 class="title" style="margin-top:24px;">Il ne <em>comprend</em> pas — il <em>complète</em>.</h2>
+      </div>
+
+      <p class="lead">
+        Un modèle entraîné sur des centaines de milliards de mots pour prédire le token suivant. Toute la puissance vient de l'échelle.
+      </p>
+
+      <div class="grid-5">
+        <div class="card">
+          <div class="head"><span class="name">Paramètres</span><span class="tag">01</span></div>
+          <div class="desc">Poids ajustés à l'entraînement. <span class="mono crema">7B → 1 000B+</span>. Plus = plus capable, plus coûteux.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Fine-tuning</span><span class="tag">02</span></div>
+          <div class="desc">Ré-entraîner sur vos données métier pour spécialiser le modèle. Touche aux poids.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Inférence</span><span class="tag">03</span></div>
+          <div class="desc">Phase de production : le modèle génère <span class="mono">token par token</span>, en streaming.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Pré-entraînement</span><span class="tag">04</span></div>
+          <div class="desc">La phase massive — milliers de GPU, semaines de calcul, web entier digéré.</div>
+        </div>
+        <div class="card warn-stripe" style="padding: 22px;">
+          <div class="head"><span class="name crema">Hallucination</span><span class="tag">⚠ 05</span></div>
+          <div class="desc">Texte plausible mais faux. <strong>Toujours sourcer</strong> et vérifier les faits.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. DEEPSEEK
+  ============================================================ -->
+  <section data-label="04 DeepSeek">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Fondations · 02 · Les modèles</div>
+      <div class="folio">04 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Fondations</span></div><div>DeepSeek — open source disruption</div></div>
+    </div>
+
+    <div class="body">
+      <div class="ds-hero">
+        <div>
+          <div class="label">DeepSeek — janvier 2025</div>
+          <h2 class="title" style="margin-top: 24px;">Le <em>game-changer</em><br>open source.</h2>
+          <p class="lead" style="margin-top: 36px;">
+            Labo chinois. Sort un modèle de raisonnement rival de GPT-4o, entraîné pour une fraction du coût. Onde de choc dans tout le secteur.
+          </p>
+        </div>
+        <div>
+          <div class="ds-num">10–30×
+            <small>Moins cher que l'API OpenAI à l'inférence</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-top: 60px;">
+        <div class="card">
+          <div class="head"><span class="name">V3</span><span class="tag">Chat &amp; Coding</span></div>
+          <div class="desc">Modèle de base <span class="mono">671B</span> paramètres MoE. Comparable à GPT-4o. Poids ouverts.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">R1</span><span class="tag">Reasoning</span></div>
+          <div class="desc">Entraîné par RL pur. Rival de <span class="mono">o1</span>. Chaîne de pensée visible.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">MoE</span><span class="tag">Architecture</span></div>
+          <div class="desc">Mixture of Experts : seuls <span class="mono crema">~37B</span> paramètres actifs sur 671B à chaque token.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Coût</span><span class="tag">L'argument clé</span></div>
+          <div class="desc">Entraînement : <span class="mono">~6M$</span> vs <span class="mono">~100M$</span> pour GPT-4. Marges sous pression partout.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5. TOKEN / CONTEXT / TEMPERATURE
+  ============================================================ -->
+  <section data-label="05 Token Context Temperature">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Fondations · 03</div>
+      <div class="folio">05 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Fondations</span></div><div>Token · Contexte · Température</div></div>
+    </div>
+
+    <div class="body">
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 60px; height: 100%;">
+
+        <!-- TOKEN -->
+        <div style="display:flex; flex-direction:column; gap: 28px;">
+          <div class="label">A — Token</div>
+          <h3 class="h2">L'unité de traitement.</h3>
+          <p class="txt" style="min-height: 130px;">~¾ mot anglais · 1 000 tokens ≈ 750 mots · Impact direct sur le coût et la latence.</p>
+
+          <div>
+            <div class="label" style="margin-bottom: 12px;">Exemple — 5 tokens</div>
+            <div class="token-strip">
+              <span class="token-chip">Bon</span>
+              <span class="token-chip">jour</span>
+              <span class="token-chip">le</span>
+              <span class="token-chip">monde</span>
+              <span class="token-chip">!</span>
+            </div>
+          </div>
+
+          <p class="small ink3" style="margin-top:auto;">→ Tokenisation BPE : un mot fréquent = 1 token, un mot rare = 2-5.</p>
+        </div>
+
+        <!-- CONTEXT -->
+        <div style="display:flex; flex-direction:column; gap: 28px; border-left: 1px solid var(--ink); border-right: 1px solid var(--ink); padding: 0 44px;">
+          <div class="label">B — Context window</div>
+          <h3 class="h2">La mémoire de travail.</h3>
+          <p class="txt" style="min-height: 130px;">Tout ce que le modèle « voit » en même temps. Prompt + historique + outputs.</p>
+
+          <table class="ctx-table" style="margin-top: 8px;">
+            <tr><td>GPT-4o</td><td class="val">128k</td></tr>
+            <tr><td>Claude 3.5</td><td class="val">200k</td></tr>
+            <tr><td>DeepSeek-V3</td><td class="val">128k</td></tr>
+            <tr><td>Gemini 1.5</td><td class="val">1M</td></tr>
+          </table>
+        </div>
+
+        <!-- TEMPERATURE -->
+        <div style="display:flex; flex-direction:column; gap: 28px;">
+          <div class="label">C — Température</div>
+          <h3 class="h2">Créativité vs déterminisme.</h3>
+          <p class="txt" style="min-height: 130px;">Échelle <span class="mono">0.0 → 2.0</span>. Contrôle l'aléatoire dans l'échantillonnage.</p>
+
+          <div style="margin-top: 8px;">
+            <div class="temp-scale">
+              <div class="temp-mark" style="left: 0%;"><span>0.0<em>déterministe</em></span></div>
+              <div class="temp-mark" style="left: 35%;"><span>0.7<em>équilibré</em></span></div>
+              <div class="temp-mark" style="left: 70%;"><span>1.2<em>créatif</em></span></div>
+              <div class="temp-mark" style="left: 100%; transform: translateX(-100%);"><span style="left:auto; right:0; transform:none; text-align:right;">2.0<em>aléatoire</em></span></div>
+            </div>
+          </div>
+
+          <p class="small ink3" style="margin-top: 80px;">→ Code, SQL, JSON : <span class="mono">0.0–0.3</span>. Écriture : <span class="mono">0.7–1.2</span>.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6. RAG
+  ============================================================ -->
+  <section data-label="06 RAG">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Les données · 01</div>
+      <div class="folio">06 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Données</span></div><div>RAG — Retrieval-Augmented Generation</div></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; gap: 60px;">
+      <div>
+        <div class="label">Données · RAG</div>
+        <h2 class="title" style="margin-top:24px;">Brancher le LLM sur <em>vos</em> documents.</h2>
+        <p class="lead" style="margin-top: 28px;">Le modèle ne voit pas vos données. On les indexe, on les récupère par similarité, et on les injecte dans le contexte au moment de répondre.</p>
+      </div>
+
+      <div class="pipe">
+        <div class="step">
+          <span class="num">01 — INGESTION</span>
+          <div class="name">Document</div>
+          <div class="what">PDF · Word · Notion · web · Confluence…</div>
+          <div class="arrow">→</div>
+        </div>
+        <div class="step">
+          <span class="num">02 — DÉCOUPE</span>
+          <div class="name">Chunking</div>
+          <div class="what">Blocs ~500 tokens, overlap 50.</div>
+          <div class="arrow">→</div>
+        </div>
+        <div class="step">
+          <span class="num">03 — VECTORISATION</span>
+          <div class="name">Embedding</div>
+          <div class="what">Texte → vecteur numérique sémantique.</div>
+          <div class="arrow">→</div>
+        </div>
+        <div class="step">
+          <span class="num">04 — STOCKAGE</span>
+          <div class="name">Vector DB</div>
+          <div class="what">Pinecone · Chroma · pgvector · Weaviate.</div>
+          <div class="arrow">→</div>
+        </div>
+        <div class="step">
+          <span class="num">05 — RECHERCHE</span>
+          <div class="name">Retrieval</div>
+          <div class="what">Similarité cosinus, top-k chunks.</div>
+          <div class="arrow">→</div>
+        </div>
+        <div class="step">
+          <span class="num">06 — SYNTHÈSE</span>
+          <div class="name" style="color: var(--crema);">Réponse</div>
+          <div class="what">LLM + contexte = réponse sourcée.</div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top: 10px;">
+        <div class="card">
+          <div class="head"><span class="name">Embedding</span><span class="tag">Vecteur</span></div>
+          <div class="desc">Deux textes sémantiquement proches ont des vecteurs proches. Base de toute recherche moderne.<br><span class="mono small">ex. text-embedding-3-small</span></div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Vector DB</span><span class="tag">Stockage</span></div>
+          <div class="desc">Base optimisée pour la recherche par similarité cosinus, à très grande échelle.<br><span class="mono small">ex. Pinecone, pgvector</span></div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Chunking</span><span class="tag">Stratégie</span></div>
+          <div class="desc">Taille et overlap impactent fortement la qualité de récupération. À tester sur vos docs.<br><span class="mono small">ex. 500 tokens, overlap 50</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7. AGENT ANATOMY
+  ============================================================ -->
+  <section data-label="07 Agent anatomie">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Les agents · 01</div>
+      <div class="folio">07 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Agents</span></div><div>Anatomie d'un agent IA</div></div>
+    </div>
+
+    <div class="body" style="display:grid; grid-template-columns: 1fr 580px; gap: 80px; align-items: center;">
+      <div style="display:flex; flex-direction:column; gap: 36px;">
+        <div class="label">Agents · Définition</div>
+        <h2 class="title">Un agent agit. <em>En boucle.</em></h2>
+        <p class="lead">Agent = LLM + boucle de raisonnement + outils + mémoire.<br>Objectif donné → planifie → agit → observe → s'adapte.</p>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 12px;">
+          <div class="card">
+            <div class="head"><span class="name">LLM</span><span class="tag">Cerveau</span></div>
+            <div class="desc">Raisonne sur l'objectif, choisit l'étape suivante.</div>
+          </div>
+          <div class="card">
+            <div class="head"><span class="name">Tools</span><span class="tag">Bras</span></div>
+            <div class="desc">Fonctions appelables : web, code, APIs métier.</div>
+          </div>
+          <div class="card">
+            <div class="head"><span class="name">Memory</span><span class="tag">Souvenir</span></div>
+            <div class="desc">Court terme (contexte) + long terme (DB).</div>
+          </div>
+          <div class="card">
+            <div class="head"><span class="name">Planning</span><span class="tag">Stratégie</span></div>
+            <div class="desc">Chain-of-Thought, Tree-of-Thought, ReAct.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="react-loop">
+          <div class="center">
+            <div>
+              <div class="lbl">Boucle</div>
+              <div class="ttl">ReAct</div>
+              <div class="lbl" style="margin-top: 8px;">Reason + Act</div>
+            </div>
+          </div>
+          <div class="node n1"><div class="v">Think</div><div class="l">Reason</div></div>
+          <div class="node n2"><div class="v">Act</div><div class="l">Tool</div></div>
+          <div class="node n3"><div class="v">Observe</div><div class="l">Result</div></div>
+          <div class="node n4"><div class="v">Adapt</div><div class="l">Loop</div></div>
+          <svg class="arc" viewBox="0 0 520 520" fill="none" stroke="#7a6a58" stroke-width="1" stroke-dasharray="4 6">
+            <circle cx="260" cy="260" r="190"/>
+            <polygon points="450,255 462,260 450,265" fill="#c4622e" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8. TOOL USE
+  ============================================================ -->
+  <section data-label="08 Tool use">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Les agents · 02</div>
+      <div class="folio">08 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Agents</span></div><div>Tool use — comment l'IA agit</div></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; gap: 48px;">
+      <div>
+        <div class="label">Tool use</div>
+        <h2 class="title" style="margin-top: 24px;">L'agent ne <em>connaît</em> pas les outils.<br>Il les <em>choisit</em>.</h2>
+      </div>
+
+      <div class="flow-line">
+        <span class="word">user</span>
+        <span class="arrow">→</span>
+        <span class="word">LLM choisit un outil</span>
+        <span class="arrow">→</span>
+        <span class="word acc">JSON call</span>
+        <span class="arrow">→</span>
+        <span class="word">runtime exécute</span>
+        <span class="arrow">→</span>
+        <span class="word">LLM reçoit le résultat</span>
+        <span class="arrow">→</span>
+        <span class="word acc">réponse finale</span>
+      </div>
+
+      <div class="grid-4">
+        <div class="tool-category">
+          <div class="head"><h4>Recherche &amp; Web</h4><span class="num">01</span></div>
+          <ul>
+            <li>web_search()</li>
+            <li>browse_url()</li>
+            <li>news_fetch()</li>
+            <li>wikipedia()</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="head"><h4>Code &amp; Fichiers</h4><span class="num">02</span></div>
+          <ul>
+            <li>python_exec()</li>
+            <li>bash()</li>
+            <li>read_file()</li>
+            <li>write_file()</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="head"><h4>APIs &amp; Services</h4><span class="num">03</span></div>
+          <ul>
+            <li>email.send()</li>
+            <li>calendar.create()</li>
+            <li>slack.post()</li>
+            <li>github.pr()</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="head"><h4>Données</h4><span class="num">04</span></div>
+          <ul>
+            <li>sql_query()</li>
+            <li>csv_read()</li>
+            <li>vector_search()</li>
+            <li>scrape()</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="txt ink3" style="text-align:center; font-style: italic; font-family: var(--serif); font-size: 28px;">Le pouvoir d'un agent = la qualité de sa <span class="crema">boîte à outils</span>.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9. MCP
+  ============================================================ -->
+  <section data-label="09 MCP">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> L'écosystème · 01</div>
+      <div class="folio">09 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Écosystème</span></div><div>MCP — Model Context Protocol</div></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; gap: 56px;">
+      <div>
+        <div class="label">Model Context Protocol · Anthropic · nov. 2024</div>
+        <h2 class="title" style="margin-top: 24px;">Le <em>« USB-C »</em> des agents IA.</h2>
+        <p class="lead" style="margin-top: 24px;">N'importe quel LLM ↔ n'importe quel outil, via un protocole ouvert et commun.</p>
+      </div>
+
+      <div class="mcp">
+        <div class="col">
+          <div class="hdr">Host · l'application</div>
+          <div class="host">Claude</div>
+          <div class="host">GPT-4o</div>
+          <div class="host">Cursor / Zed</div>
+          <div class="host" style="background: var(--crema);">Votre app</div>
+        </div>
+
+        <div class="channel">
+          <div class="lbl">MCP Client</div>
+          <div class="pipe-art"></div>
+          <div class="lbl">⇄ Protocol</div>
+          <div class="pipe-art"></div>
+          <div class="lbl">MCP Server</div>
+        </div>
+
+        <div class="col">
+          <div class="hdr">Servers · les capacités</div>
+          <div class="servers">
+            <div class="server"><div class="name">filesystem</div><div class="what">Lire / écrire des fichiers locaux</div></div>
+            <div class="server"><div class="name">github</div><div class="what">Issues, PRs, code</div></div>
+            <div class="server"><div class="name">postgres</div><div class="what">Requêtes SQL</div></div>
+            <div class="server"><div class="name">slack</div><div class="what">Messages, canaux</div></div>
+            <div class="server"><div class="name">brave-search</div><div class="what">Recherche web</div></div>
+            <div class="server" style="background: var(--paper-2);"><div class="name crema">custom</div><div class="what">Votre propre API métier</div></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="txt ink3" style="font-style: italic; font-family: var(--serif); font-size: 26px;">Un serveur MCP expose <span class="crema">tools</span>, <span class="crema">ressources</span> et <span class="crema">prompts</span> de manière standardisée.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       10. SKILLS / ORCHESTRATION
+  ============================================================ -->
+  <section data-label="10 Skills Orchestration">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> L'écosystème · 02</div>
+      <div class="folio">10 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Écosystème</span></div><div>Skills · System Prompt · Orchestration</div></div>
+    </div>
+
+    <div class="body" style="display:grid; grid-template-rows: auto 1fr; gap: 40px;">
+      <div>
+        <div class="label">Construire un système agentique</div>
+        <h2 class="title" style="margin-top: 20px;">Quatre primitives à connaître.</h2>
+      </div>
+
+      <div class="quad">
+        <div class="q">
+          <div class="head"><h4>Skill / Tool</h4><span class="label">01</span></div>
+          <div class="what">Capacité encapsulée donnée à un agent : fonction Python, prompt template, API wrappée. L'agent choisit quel skill invoquer.</div>
+          <div class="ex">→ search_web(query) · send_email(to, subject)</div>
+        </div>
+        <div class="q dark">
+          <div class="head"><h4>System Prompt</h4><span class="label" style="color: var(--crema-soft);">02</span></div>
+          <div class="what">Instructions persistantes avant la conversation. Définissent rôle, limites, ton. Invisibles pour l'utilisateur final.</div>
+          <div class="ex">→ « Tu es un assistant RH. Ne parle pas des salaires. »</div>
+        </div>
+        <div class="q dark">
+          <div class="head"><h4>Orchestrateur</h4><span class="label" style="color: var(--crema-soft);">03</span></div>
+          <div class="what">Code ou framework qui coordonne plusieurs agents et appels LLM. Gère flux, dépendances, agrégation des résultats.</div>
+          <div class="ex">→ LangChain · LangGraph · CrewAI · n8n · Make</div>
+        </div>
+        <div class="q">
+          <div class="head"><h4>Multi-agent</h4><span class="label">04</span></div>
+          <div class="what">Plusieurs agents spécialisés collaborent. Un manager délègue à des sous-agents : researcher, coder, reviewer…</div>
+          <div class="ex">→ A cherche → B rédige → C valide → D publie</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       11. MEMORY
+  ============================================================ -->
+  <section data-label="11 Memory">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> L'écosystème · 03</div>
+      <div class="folio">11 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Écosystème</span></div><div>Memory · Grounding · Fine-tuning</div></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; gap: 32px;">
+      <div>
+        <div class="label">Mémoire d'un agent</div>
+        <h2 class="title" style="margin-top: 16px; font-size: 64px;">Quatre étages, des <em>vitesses</em> différentes.</h2>
+      </div>
+
+      <table class="mem-table">
+        <tr>
+          <th>Type</th>
+          <th>Analogie matérielle</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td><div class="meta">In-context</div><span class="scope">RAM</span></td>
+          <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Volatile · session</td>
+          <td class="desc">Tout ce qui tient dans le context window. Rapide, mais effacé à chaque nouvelle conversation. La mémoire la plus immédiate.</td>
+        </tr>
+        <tr>
+          <td><div class="meta">External DB</div><span class="scope">SSD</span></td>
+          <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Persistant</td>
+          <td class="desc">Vector DB ou SQL. Survit entre les sessions. Récupéré à la demande via RAG ou tool use. Le « disque dur » de l'agent.</td>
+        </tr>
+        <tr>
+          <td><div class="meta">Épisodique</div><span class="scope">Journal</span></td>
+          <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Append-only</td>
+          <td class="desc">Logs des actions passées et de leurs résultats. Permet l'apprentissage par l'expérience et le debugging des décisions.</td>
+        </tr>
+        <tr>
+          <td><div class="meta">Sémantique</div><span class="scope">Poids</span></td>
+          <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Gravé · entraînement</td>
+          <td class="desc">Les connaissances dans les poids du modèle. Modifiable uniquement par fine-tuning. La « culture générale » de base.</td>
+        </tr>
+      </table>
+
+      <div class="grid-3" style="gap: 36px;">
+        <div class="card">
+          <div class="head"><span class="name">Grounding</span><span class="tag">RAG + Tools</span></div>
+          <div class="desc" style="font-size: 20px;">Ancrer le LLM sur des faits réels. Réduit les hallucinations sans modifier les poids.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Prompt Eng.</span><span class="tag">Instructions</span></div>
+          <div class="desc" style="font-size: 20px;">Instructions système + exemples (few-shot) pour guider le comportement, sans toucher aux poids.</div>
+        </div>
+        <div class="card">
+          <div class="head"><span class="name">Fine-tuning</span><span class="tag">Poids</span></div>
+          <div class="desc" style="font-size: 20px;">Ré-entraîner sur vos données. Modifie les poids. Coûteux mais utile pour style spécifique.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       12. DEMO 1 — RAG
+  ============================================================ -->
+  <section data-label="12 Demo RAG">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Démo live · 01 / 03</div>
+      <div class="folio">12 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Démo live</span></div><div>Chatbot RAG sur vos propres données</div></div>
+    </div>
+
+    <div class="body demo-frame">
+      <div style="display:flex; flex-direction:column; gap: 22px;">
+        <div class="marker"><span class="seq">Démo nº</span> 01</div>
+        <h2 class="title">Chatbot RAG sur <em>vos</em> données.</h2>
+        <p class="lead">On branche un LLM générique sur un dossier de PDF métier. La même question — deux réponses radicalement différentes.</p>
+
+        <div style="display:flex; flex-direction:column; gap: 12px; margin-top: 16px;">
+          <div class="label">Stack</div>
+          <div class="mono" style="font-size: 22px; color: var(--ink-2); line-height: 1.5;">
+            LangChain · Chroma · OpenAI Embeddings<br>
+            <span class="crema">text-embedding-3-small</span>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--ink); padding-top: 16px; margin-top: 16px;">
+          <span class="label" style="display:block; margin-bottom:6px;">→ Question pour la salle</span>
+          <span class="serif" style="font-style: italic; font-size: 28px; color: var(--ink);">Sur quels documents vous voudriez ça&nbsp;?</span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap: 32px; justify-content:center;">
+        <div class="vs-block">
+          <div class="vs-card dim">
+            <div class="lbl">Sans RAG</div>
+            <div class="quote">« Je n'ai pas accès à vos documents internes, mais en général… »</div>
+            <div class="note">⚠ Réponse générique · hallucination possible</div>
+          </div>
+          <div class="vs-arrow">VS</div>
+          <div class="vs-card acc">
+            <div class="lbl crema">Avec RAG</div>
+            <div class="quote">« D'après la <span class="crema">page 12</span> de votre politique RH, le délai est de… »</div>
+            <div class="note">✓ Sourcé · vérifiable · chiffres exacts</div>
+          </div>
+        </div>
+
+        <div class="terminal">
+          <div><span class="prompt">$</span> chatbot --docs ./policies/ --ask "délai préavis CDI ?"</div>
+          <div class="com"># retrieving 4 chunks (cosine ≥ 0.78)…</div>
+          <div class="com"># sources : politiques-rh.pdf p.12, p.34</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       13. DEMO 2 — AGENT RESEARCHER
+  ============================================================ -->
+  <section data-label="13 Demo Researcher">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Démo live · 02 / 03</div>
+      <div class="folio">13 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Démo live</span></div><div>Agent researcher — ReAct en action</div></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; gap: 50px;">
+      <div>
+        <div class="marker" style="font-family: var(--mono); font-size: 22px; letter-spacing: 0.3em; color: var(--crema); text-transform: uppercase;">
+          <span style="color: var(--ink-3);">Démo nº</span> 02
+        </div>
+        <h2 class="title" style="margin-top: 16px;">Agent researcher — <em>ReAct</em> en action.</h2>
+        <p class="lead" style="margin-top: 24px;">Un input simple. L'agent planifie, cherche, browse, filtre, et rend un rapport markdown. Vous voyez chaque étape du raisonnement.</p>
+      </div>
+
+      <div class="agent-flow">
+        <div class="node">
+          <span class="role">01 · user</span>
+          <span class="verb">Input</span>
+          <span class="what">« Veille agentic AI cette semaine »</span>
+        </div>
+        <div class="node">
+          <span class="role">02 · LLM</span>
+          <span class="verb">Think</span>
+          <span class="what">Planifie les sources et requêtes</span>
+        </div>
+        <div class="node act">
+          <span class="role">03 · tool</span>
+          <span class="verb">Act</span>
+          <span class="what">web_search() · browse()</span>
+        </div>
+        <div class="node">
+          <span class="role">04 · LLM</span>
+          <span class="verb">Observe</span>
+          <span class="what">Filtre le bruit, garde 5 sources</span>
+        </div>
+        <div class="node">
+          <span class="role">05 · output</span>
+          <span class="verb">Rapport</span>
+          <span class="what">Markdown sourcé, par thème</span>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap: 60px;">
+        <div class="terminal">
+          <div><span class="prompt">›</span> agent.run("veille agentic AI cette semaine")</div>
+          <div class="com"># [think] je vais chercher sur Anthropic blog, HN, X…</div>
+          <div class="com"># [act ] web_search("agentic AI november 2026")</div>
+          <div class="com"># [observe] 12 résultats — 5 pertinents</div>
+          <div class="com"># [act ] browse(url_3) → 2 184 mots</div>
+          <div class="com"># [think] self-heal : url_2 timeout, on bascule</div>
+          <div class="com"># [output] rapport.md (1 200 mots)</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap: 22px;">
+          <div>
+            <div class="label" style="margin-bottom: 10px;">Stack</div>
+            <div class="mono" style="font-size: 22px; color: var(--ink-2); line-height: 1.5;">
+              Claude 3.5 Sonnet · Tool use natif<br>
+              MCP brave-search
+            </div>
+          </div>
+          <div class="card" style="border-top-color: var(--crema); padding-top: 16px;">
+            <div class="head"><span class="name" style="font-size: 32px;">Self-healing</span><span class="tag">Robustesse</span></div>
+            <div class="desc" style="font-size: 20px;">L'agent se corrige si une source est inaccessible. Pas de plantage — une autre route.</div>
+          </div>
+          <div style="border-top: 1px solid var(--ink); padding-top: 14px; margin-top: 8px;">
+            <span class="label" style="display:block; margin-bottom:6px;">→ Question pour la salle</span>
+            <span class="serif" style="font-style: italic; font-size: 24px; color: var(--ink);">Quelle tâche répétitive vous voudriez déléguer&nbsp;?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       14. DEMO 3 — BUILD LIVE
+  ============================================================ -->
+  <section data-label="14 Demo Claude Code">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Démo live · 03 / 03</div>
+      <div class="folio">14 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Démo live</span></div><div>Build en live avec Claude Code</div></div>
+    </div>
+
+    <div class="body" style="display:grid; grid-template-columns: 1fr 1.05fr; gap: 80px; height: 100%;">
+      <div style="display:flex; flex-direction:column; gap: 36px;">
+        <div class="marker" style="font-family: var(--mono); font-size: 22px; letter-spacing: 0.3em; color: var(--crema); text-transform: uppercase;">
+          <span style="color: var(--ink-3);">Démo nº</span> 03 · <span style="color:var(--ink);">LIVE</span>
+        </div>
+        <h2 class="title">Build en live<br>avec <em>Claude Code</em>.</h2>
+
+        <div class="terminal" style="font-size: 18px;">
+          <div><span class="prompt">›</span> claude</div>
+          <div>›<span class="com"> Crée un agent Python avec tool use :</span></div>
+          <div>›<span class="com"> input sujet → recherche → rapport structuré.</span></div>
+          <div style="margin-top: 12px;"><span class="com"># reading repo… analyzing context…</span></div>
+          <div><span class="com"># proposing : agents/researcher.py + tools.py</span></div>
+        </div>
+
+        <p class="txt" style="border-top: 1px solid var(--ink); padding-top: 22px; font-family: var(--serif); font-style: italic; font-size: 30px; color: var(--ink-2);">
+          Claude Code lit votre repo, comprend le contexte et agit en autonomie.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="row">
+          <div class="time">2 min</div>
+          <div class="what">On décrit l'objectif</div>
+          <div class="detail">— en langage naturel<br>— system prompt + tools schema</div>
+        </div>
+        <div class="row">
+          <div class="time">4 min</div>
+          <div class="what">Claude génère le code</div>
+          <div class="detail">— tool definitions<br>— ReAct loop<br>— error handling</div>
+        </div>
+        <div class="row">
+          <div class="time">4 min</div>
+          <div class="what">On lance l'agent</div>
+          <div class="detail">— raisonnement étape par étape<br>— visible en temps réel</div>
+        </div>
+        <div class="row">
+          <div class="time">5 min</div>
+          <div class="what">Le public itère</div>
+          <div class="detail">— ajouter un tool<br>— changer de modèle<br>— ajuster la température</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       15. GLOSSAIRE
+  ============================================================ -->
+  <section data-label="15 Glossaire">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Glossaire</div>
+      <div class="folio">15 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Glossaire</span></div><div>12 termes à retenir</div></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; gap: 36px;">
+      <div>
+        <div class="label">À retenir</div>
+        <h2 class="title" style="margin-top: 18px;">Le vocabulaire de base.</h2>
+      </div>
+
+      <div class="gloss">
+        <div class="term"><span class="num">G·01</span><span class="name">LLM</span><span class="def">Modèle de langage massif. Moteur de ChatGPT, Claude, Gemini…</span></div>
+        <div class="term"><span class="num">G·02</span><span class="name">Token</span><span class="def">Unité de traitement. ~¾ mot. Impact direct sur coût et limite de contexte.</span></div>
+        <div class="term"><span class="num">G·03</span><span class="name">Context</span><span class="def">Mémoire de travail du modèle. Tout ce qu'il peut voir = ses tokens.</span></div>
+        <div class="term"><span class="num">G·04</span><span class="name">RAG</span><span class="def">Retrieval-Augmented Generation. Brancher le LLM sur vos données.</span></div>
+        <div class="term"><span class="num">G·05</span><span class="name">Agent</span><span class="def">LLM + boucle d'action. Objectif → planifie → agit → s'adapte.</span></div>
+        <div class="term"><span class="num">G·06</span><span class="name">Tool use</span><span class="def">LLM qui appelle des fonctions (search, code, API…) via JSON.</span></div>
+        <div class="term"><span class="num">G·07</span><span class="name">MCP</span><span class="def">Model Context Protocol. Standard Anthropic pour LLM ↔ outils.</span></div>
+        <div class="term"><span class="num">G·08</span><span class="name">Embedding</span><span class="def">Vecteur d'un texte. Proches = sémantiquement similaires.</span></div>
+        <div class="term"><span class="num">G·09</span><span class="name">DeepSeek</span><span class="def">LLM open source chinois. Rival de GPT-4o. 10–30× moins cher.</span></div>
+        <div class="term"><span class="num">G·10</span><span class="name">Fine-tuning</span><span class="def">Ré-entraîner sur vos données. Modifie les poids du modèle.</span></div>
+        <div class="term"><span class="num">G·11</span><span class="name">Skill</span><span class="def">Capacité encapsulée d'un agent : fonction, prompt ou API wrappée.</span></div>
+        <div class="term"><span class="num">G·12</span><span class="name">Orchestration</span><span class="def">Coordonner plusieurs agents / appels LLM vers un objectif commun.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       16. CLOSE
+  ============================================================ -->
+  <section data-label="16 Conclusion">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Ce qu'on retient</div>
+      <div class="folio">16 / 16</div>
+      <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Conclusion &amp; ressources</span></div><div>Merci — Q&amp;R</div></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; gap: 32px;">
+      <div>
+        <div class="label">L'enchaînement</div>
+        <h2 class="title" style="margin-top: 16px;">Cinq mots, une <em>architecture</em>.</h2>
+      </div>
+
+      <div style="width: 100%; padding: 30px 0;">
+        <div class="chain">
+          <div class="node"><div class="v">LLM</div><div class="l">prédit</div></div>
+          <span class="sep">→</span>
+          <div class="node"><div class="v">RAG</div><div class="l">ancre</div></div>
+          <span class="sep">→</span>
+          <div class="node"><div class="v">Tools</div><div class="l">agit</div></div>
+          <span class="sep">→</span>
+          <div class="node"><div class="v">Agent</div><div class="l">orchestre</div></div>
+          <span class="sep">→</span>
+          <div class="node"><div class="v" style="color: var(--crema);">MCP</div><div class="l">connecte</div></div>
+        </div>
+      </div>
+
+      <div class="next-card" style="padding: 28px 36px;">
+        <div>
+          <div class="ep">Prochain épisode · 02</div>
+          <div class="title2" style="font-size: 40px; margin-top: 6px;">« On construit ensemble »</div>
+        </div>
+        <div class="cta" style="text-align:right; font-size: 19px;">
+          Vous apportez un use case —<br>on conçoit l'archi, on code, on déploie.
+        </div>
+      </div>
+
+      <div class="res-grid" style="padding-top: 22px; gap: 24px; margin-top: auto;">
+        <div class="res"><span class="src">Claude docs</span><span class="url">docs.anthropic.com</span></div>
+        <div class="res"><span class="src">LangChain</span><span class="url">python.langchain.com</span></div>
+        <div class="res"><span class="src">MCP Registry</span><span class="url">github.com/modelcontextprotocol</span></div>
+        <div class="res"><span class="src">DeepSeek</span><span class="url">api.deepseek.com</span></div>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>
