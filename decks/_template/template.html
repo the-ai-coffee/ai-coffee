@@ -302,7 +302,7 @@
   .close { display: grid; grid-template-rows: auto auto auto; align-content: center; gap: 60px; height: 100%; }
   .close .recap { font-family: var(--serif); font-size: 64px; line-height: 1.08; letter-spacing: -0.015em; color: var(--ink); }
   .close .recap .sep { color: var(--accent); font-family: var(--mono); font-size: 36px; margin: 0 14px; vertical-align: middle; }
-  .close .grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 80px; align-items: end; }
+  .close .grid { display: grid; grid-template-columns: 1.2fr 0.9fr auto; gap: 64px; align-items: end; }
   .close .res { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px; }
   .close .res .item { display: flex; flex-direction: column; gap: 6px; }
   .close .res .src { font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
@@ -314,6 +314,10 @@
   .close .next .ep { font-family: var(--mono); font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-soft); }
   .close .next .t { font-family: var(--serif); font-style: italic; font-size: 48px; line-height: 1; }
   .close .next .cta { font-family: var(--sans); font-weight: 300; font-size: 19px; color: var(--paper-on-ink); opacity: 0.68; }
+  /* QR « offrez-nous un café » : artefact fonctionnel, exempté de la règle accent unique */
+  .close .support { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .close .support img { width: 210px; height: 210px; border-radius: 14px; display: block; }
+  .close .support .cap { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
 </style>
 </head>
 <body>
@@ -628,6 +632,11 @@
           <span class="ep">Prochain épisode · Nº 02</span>
           <span class="t">L'IA qui parle.</span>
           <span class="cta">Assistants vocaux, interview live · 23 juin</span>
+        </div>
+
+        <div class="support">
+          <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee — soutenir IA Coffee">
+          <span class="cap">Offrez-nous un café</span>
         </div>
       </div>
     </div>

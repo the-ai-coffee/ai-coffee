@@ -28,7 +28,7 @@ Règle d'or : **le template est un système, pas une page à redécorer.** L'imp
 
 | Dimension | Règle | Pourquoi |
 |---|---|---|
-| Couleur | Neutres crème/encre tiédis (OKLCH) **+ un seul accent rust** (`--accent`). Aucune autre couleur. | Stratégie *Restrained*. Cohérence inter-épisodes. |
+| Couleur | Neutres crème/encre tiédis (OKLCH) **+ un seul accent rust** (`--accent`). Aucune autre couleur. *Seule exception : le QR Buy Me a Coffee de la slide de clôture, artefact fonctionnel non décoratif.* | Stratégie *Restrained*. Cohérence inter-épisodes. |
 | Accent | Rust = ponctuation : un mot clé, un chiffre, une flèche. S'engage à fond **uniquement** sur les slides Impact et Comparaison. | L'impact concentré frappe ; l'accent partout devient bruit. |
 | Typo | Serif éditorial (Instrument Serif) très grand pour les titres, italique rust en emphase. Mono (JetBrains) pour labels/folios. Sans (Geist 300) pour le corps. | La typo EST l'impact visuel. |
 | Geste signature | `<span class="stroke">mot</span>` = trait rust sous un mot clé du titre. Un par titre, pas plus. | Fil de marque récurrent. |
@@ -67,7 +67,7 @@ Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les cla
 - **Comparaison** `.compare` : côté `.before` (atténué) et côté `.after` (accentué) ; chacun `.tag`, `.head`, `ul>li` (valeurs fortes du côté après en `<b>`).
 - **Démo** `.demo` : `.marker` (n° démo), `h2.title`, `.build .row` (étapes), `.terminal` (commandes ; `.p` prompt, `.c` commentaire vert, `.dim` sortie).
 - **Glossaire** `.gloss` : 4 à 8 `.term` (`.name` serif + `.def` sans). Au-delà de 8, faire 2 slides.
-- **Clôture** `.close` : `.recap` (chaîne de mots, dernier en `<em>`), `.res .item` (`.src` + `.url`), `.next` (épisode suivant).
+- **Clôture** `.close` : `.recap` (chaîne de mots, dernier en `<em>`), `.res .item` (`.src` + `.url`), `.next` (épisode suivant), `.support` (QR Buy Me a Coffee `media/bmc_qr.png` + légende). Le QR reste **toujours** sur la slide de clôture, jamais ailleurs : c'est là qu'il a le plus de valeur (on scanne pour soutenir à la fin). Chemin depuis `decks/NN-theme/deck.html` : `../../media/bmc_qr.png`.
 
 ------
 
@@ -90,6 +90,7 @@ Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les cla
 - [ ] La slide Impact (`.ink`) est unique et porte **un** chiffre.
 - [ ] Folios cohérents (`NN / total`), `.baseline` à jour sur chaque slide.
 - [ ] Aucun texte coupé par le bas (tester le rendu, surtout `.stat` et les titres longs).
+- [ ] Slide de clôture : QR Buy Me a Coffee présent (`.support`, `media/bmc_qr.png`), légende lisible, image non déformée.
 - [ ] Export PDF OK (Print → Save as PDF via `deck-stage`).
 
 > **Document créé le** : 2026-06-19

@@ -62,6 +62,11 @@ files and existing `decks/NN-*` folders to help the user choose).
 5. **Per slide**, set `data-label`, the `.folio` (`NN / total`), and the
    `.baseline`, exactly as the guide specifies. Update the `<title>` to
    `IA Coffee · Épisode NN — <Theme>`.
+   - On the **closing** slide (`.close`), always keep the `.support` block with
+     the Buy Me a Coffee QR (`../../media/bmc_qr.png` from `decks/NN-theme/`) and
+     its caption. This is where it has the most value (attendees scan to support
+     as the session wraps). In **update** mode, if the existing deck predates the
+     QR, add the `.support` block to the close slide.
 6. **Verify in the browser** (see protocol below) before claiming done.
 7. **Report**: list the slide-by-slide archetype mapping, flag any content gaps
    (empty sections in `sessions/NN.md`, missing metric), and state what you
@@ -69,7 +74,8 @@ files and existing `decks/NN-*` folders to help the user choose).
 
 ## Invariants (enforced; full list in TEMPLATE-GUIDE.md)
 
-- One rust accent only. No other color introduced.
+- One rust accent only. No other color introduced. Sole exception: the Buy Me a
+  Coffee QR on the closing slide (a functional artifact, not decoration).
 - Exactly one dark `class="ink"` slide, reserved for the Impact beat, carrying a
   single number. If the session has no honest hard metric, use a real defensible
   attribute instead of fabricating one (e.g. "100% on-prem"). Never invent data.
