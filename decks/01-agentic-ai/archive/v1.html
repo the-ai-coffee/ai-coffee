@@ -5,119 +5,21 @@
 <title>IA Coffee · Épisode 01 — Agentic AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
-<script src="deck-stage.js"></script>
-<script>
-  // Default tweaks
-  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-    "cover_variation": "pop",
-    "bg_palette": "ink"
-  }/*EDITMODE-END*/;
-
-  function applyCover(v){ document.documentElement.setAttribute('data-cover', v); }
-  function applyBg(v){ document.documentElement.setAttribute('data-bg', v); }
-  applyCover(TWEAK_DEFAULTS.cover_variation);
-  applyBg(TWEAK_DEFAULTS.bg_palette);
-
-  let panelEl = null;
-  function buildPanel(){
-    if (panelEl) return panelEl;
-    panelEl = document.createElement('div');
-    panelEl.id = 'tweaks-panel';
-    panelEl.innerHTML = `
-      <div class="tw-head">
-        <div class="tw-ttl">Tweaks</div>
-        <button class="tw-close" aria-label="Close">×</button>
-      </div>
-      <div class="tw-sec">
-        <div class="tw-lbl">Cover variation</div>
-        <div class="tw-radio" data-key="cover_variation">
-          <button data-v="pop">A · Pop magazine (bloc orange)</button>
-          <button data-v="bleed">B · Full-bleed photo</button>
-        </div>
-      </div>
-      <div class="tw-sec">
-        <div class="tw-lbl">Background palette</div>
-        <div class="tw-swatches" data-key="bg_palette">
-          <button data-v="cream" title="Crème (actuel)"><span class="sw" style="background:#f0e7d3"></span><span class="nm">Crème</span></button>
-          <button data-v="bone"  title="Off-white neutre"><span class="sw" style="background:#f0eee8"></span><span class="nm">Bone</span></button>
-          <button data-v="sage"  title="Vert pâle"><span class="sw" style="background:#e6ebe2"></span><span class="nm">Sage</span></button>
-          <button data-v="dust"  title="Rose poudré"><span class="sw" style="background:#efe6e0"></span><span class="nm">Dust</span></button>
-          <button data-v="mist"  title="Bleu froid"><span class="sw" style="background:#e7ebee"></span><span class="nm">Mist</span></button>
-          <button data-v="ink"   title="Charbon sombre"><span class="sw" style="background:#1c1612"></span><span class="nm" style="color:var(--ink-3)">Charbon</span></button>
-        </div>
-      </div>
-      <div class="tw-foot">Live · sauvegardé dans le fichier</div>
-    `;
-    document.body.appendChild(panelEl);
-
-    panelEl.querySelector('.tw-close').addEventListener('click', () => {
-      panelEl.style.display = 'none';
-      window.parent.postMessage({type:'__edit_mode_dismissed'}, '*');
-    });
-
-    panelEl.querySelectorAll('.tw-radio button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.parentElement.dataset.key;
-        const v   = btn.dataset.v;
-        applyCover(v);
-        refreshAll();
-        window.parent.postMessage({type:'__edit_mode_set_keys', edits:{ [key]: v }}, '*');
-      });
-    });
-    panelEl.querySelectorAll('.tw-swatches button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.parentElement.dataset.key;
-        const v   = btn.dataset.v;
-        applyBg(v);
-        refreshAll();
-        window.parent.postMessage({type:'__edit_mode_set_keys', edits:{ [key]: v }}, '*');
-      });
-    });
-    refreshAll();
-    return panelEl;
-  }
-  function refreshAll(){
-    if (!panelEl) return;
-    const curCover = document.documentElement.getAttribute('data-cover');
-    const curBg    = document.documentElement.getAttribute('data-bg');
-    panelEl.querySelectorAll('.tw-radio button').forEach(b => b.classList.toggle('on', b.dataset.v === curCover));
-    panelEl.querySelectorAll('.tw-swatches button').forEach(b => b.classList.toggle('on', b.dataset.v === curBg));
-  }
-
-  window.addEventListener('message', (e) => {
-    const d = e.data;
-    if (!d || typeof d !== 'object') return;
-    if (d.type === '__activate_edit_mode')   { buildPanel().style.display = 'block'; refreshAll(); }
-    if (d.type === '__deactivate_edit_mode') { if (panelEl) panelEl.style.display = 'none'; }
-  });
-  window.parent.postMessage({type:'__edit_mode_available'}, '*');
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="../../deck-stage.js"></script>
 <style>
   :root {
     /* palette */
-    --paper:       #f0e7d3;
-    --paper-2:     #e6dcc4;
-    --paper-3:     #fbf6ea;
+    --paper:       #efe7d6;
+    --paper-2:     #e6dcc7;
     --ink:         #1c1612;
     --ink-2:       #4a3f33;
     --ink-3:       #7a6a58;
     --rule:        #d8cdb6;
     --rule-2:      #c8bb9e;
-
-    /* coffee-shop accents */
-    --crema:       #d65a23;   /* espresso crema — orange brûlée */
-    --crema-soft:  #f0a878;
-    --matcha:      #5b8b4f;   /* matcha latte */
-    --matcha-soft: #b7d09b;
-    --honey:       #d9a13a;   /* miel / caramel */
-    --honey-soft:  #f0d28a;
-    --berry:       #b8423a;   /* hibiscus / cerise */
-    --berry-soft:  #e8a298;
-    --denim:       #3e6b8a;   /* nuit bleue */
-    --denim-soft:  #9bb8cf;
-    --plum:        #6b3a5e;   /* mocha plum */
-
+    --crema:       #c4622e;
+    --crema-soft:  #e9b893;
+    --sage:        #6e8a72;
     --espresso:    #2b1d14;
 
     /* type scale (1920x1080) */
@@ -139,184 +41,7 @@
     --serif:  "Instrument Serif", "Times New Roman", serif;
     --sans:   "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --mono:   "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
-    --pop:    "Bricolage Grotesque", "Geist", system-ui, sans-serif;
-    --hand:   "Caveat", "Marker Felt", cursive;
   }
-
-  /* ============================================================
-     POP MAGAZINE — utilities (images, annotations, blocks)
-  ============================================================ */
-  .photo {
-    position: relative;
-    overflow: hidden;
-    background: var(--paper-2);
-    border: 1px solid var(--ink);
-  }
-  .photo img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .photo .credit {
-    position: absolute;
-    bottom: 8px; right: 10px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: #fff;
-    background: rgba(0,0,0,0.45);
-    padding: 3px 7px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border-radius: 2px;
-  }
-  /* duotone treatments */
-  .photo.duotone-crema img { filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
-  .photo.duotone-crema { background: var(--crema); }
-  .photo.duotone-matcha img { filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
-  .photo.duotone-matcha { background: var(--matcha); }
-  .photo.duotone-denim img { filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
-  .photo.duotone-denim { background: var(--denim); }
-  .photo.duotone-berry img { filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
-  .photo.duotone-berry { background: var(--berry); }
-  .photo.duotone-ink img { filter: grayscale(1) contrast(1.05); mix-blend-mode: multiply; }
-  .photo.duotone-ink { background: var(--ink); }
-
-  /* polaroid */
-  .polaroid {
-    background: var(--paper-3);
-    padding: 14px 14px 22px;
-    border: 1px solid var(--rule-2);
-    box-shadow: 0 14px 32px rgba(28,22,18,0.18), 0 2px 4px rgba(28,22,18,0.10);
-  }
-  .polaroid .photo { border: 0; }
-  .polaroid .cap {
-    font-family: var(--hand);
-    font-size: 28px;
-    line-height: 1;
-    color: var(--ink);
-    text-align: center;
-    padding-top: 12px;
-  }
-
-  /* pop type — chunky magazine display */
-  .pop-display {
-    font-family: var(--pop);
-    font-weight: 800;
-    line-height: 0.86;
-    letter-spacing: -0.035em;
-    margin: 0;
-    text-transform: none;
-  }
-  .pop-display.tight { letter-spacing: -0.045em; }
-  .pop-shout {
-    font-family: var(--pop);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 0.95;
-    margin: 0;
-  }
-
-  /* color block (full-bleed accent on a slide) */
-  .pop-bg-crema  { background: var(--crema)  !important; color: var(--paper); }
-  .pop-bg-matcha { background: var(--matcha) !important; color: var(--paper); }
-  .pop-bg-honey  { background: var(--honey)  !important; color: var(--ink); }
-  .pop-bg-denim  { background: var(--denim)  !important; color: var(--paper); }
-  .pop-bg-berry  { background: var(--berry)  !important; color: var(--paper); }
-  .pop-bg-ink    { background: var(--ink)    !important; color: var(--paper); }
-  .pop-bg-plum   { background: var(--plum)   !important; color: var(--paper); }
-
-  /* highlight marker behind a word */
-  .hl {
-    position: relative;
-    display: inline-block;
-    z-index: 0;
-  }
-  .hl::after {
-    content:"";
-    position: absolute;
-    left: -8px; right: -8px;
-    bottom: 6px;
-    height: 0.42em;
-    background: var(--honey);
-    opacity: 0.55;
-    z-index: -1;
-    transform: skewX(-6deg);
-    border-radius: 3px;
-  }
-  .hl.hl-crema::after  { background: var(--crema-soft); opacity:0.7; }
-  .hl.hl-matcha::after { background: var(--matcha-soft); opacity:0.7; }
-  .hl.hl-berry::after  { background: var(--berry-soft); opacity:0.85; }
-  .hl.hl-denim::after  { background: var(--denim-soft); opacity:0.85; }
-
-  /* sticker / stamp */
-  .stamp {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    border: 2.5px solid currentColor;
-    padding: 8px 14px;
-    transform: rotate(-6deg);
-    border-radius: 4px;
-    text-align: center;
-  }
-  .stamp.round {
-    width: 130px; height: 130px;
-    border-radius: 50%;
-    flex-direction: column;
-    line-height: 1.05;
-    font-size: 14px;
-    padding: 0;
-  }
-  .stamp.round .big {
-    font-family: var(--pop);
-    font-weight: 800;
-    font-size: 32px;
-    letter-spacing: -0.01em;
-  }
-
-  /* marker annotation — handwritten note */
-  .marker-note {
-    position: absolute;
-    font-family: var(--hand);
-    color: var(--berry);
-    font-size: 38px;
-    line-height: 1;
-    transform: rotate(-4deg);
-    pointer-events: none;
-    z-index: 4;
-  }
-  .marker-note.crema  { color: var(--crema); }
-  .marker-note.matcha { color: var(--matcha); }
-  .marker-note.denim  { color: var(--denim); }
-  .marker-note.ink    { color: var(--ink); }
-
-  /* generic absolute SVG layer for marker drawings (arrows, circles, scribbles) */
-  .marker-svg {
-    position: absolute;
-    pointer-events: none;
-    overflow: visible;
-    z-index: 3;
-  }
-  .marker-svg path,
-  .marker-svg circle,
-  .marker-svg ellipse {
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  /* chapter color helpers — sets --accent for chrome dot & slide accents */
-  .ch-fond     { --accent: var(--crema);  }
-  .ch-data     { --accent: var(--matcha); }
-  .ch-agents   { --accent: var(--honey);  }
-  .ch-eco      { --accent: var(--denim);  }
-  .ch-demo     { --accent: var(--berry);  }
-  .ch-close    { --accent: var(--plum);   }
 
   html, body { margin:0; padding:0; background:#0b0a08; color:var(--ink); font-family:var(--sans); }
   * { box-sizing: border-box; }
@@ -348,7 +73,7 @@
     gap: 16px;
   }
   .chrome .kicker .dot {
-    width: 9px; height: 9px; border-radius: 50%; background: var(--accent, var(--crema));
+    width: 7px; height: 7px; border-radius: 50%; background: var(--crema);
   }
   .chrome .folio {
     position: absolute;
@@ -500,10 +225,6 @@
     padding: 92px var(--pad-x) 92px var(--pad-x);
     gap: 60px;
     position: relative;
-    background:
-      radial-gradient(circle at 88% 36%, rgba(214,90,35,0.10) 0%, transparent 42%),
-      radial-gradient(circle at 8% 92%, rgba(91,139,79,0.08) 0%, transparent 38%),
-      var(--paper);
   }
   .cover .topbar {
     position: absolute;
@@ -544,17 +265,7 @@
     margin: 0;
     font-weight: 400;
   }
-  .cover h1 em { font-style: italic; color: var(--crema); position: relative; }
-  .cover h1 em::after {
-    content: "";
-    position: absolute;
-    left: -6px; right: -6px; bottom: 8px;
-    height: 36px;
-    background: var(--honey);
-    z-index: -1;
-    opacity: 0.55;
-    border-radius: 4px;
-  }
+  .cover h1 em { font-style: italic; color: var(--crema); }
   .cover .meta {
     display: flex; gap: 38px; align-items: center;
     font-family: var(--mono);
@@ -584,31 +295,17 @@
   .cup .core {
     position: absolute; inset: 170px;
     border-radius: 50%;
-    background:
-      radial-gradient(circle at 30% 28%, #6a3a1c 0%, var(--espresso) 50%, #110a06 100%);
-    box-shadow: inset 0 0 80px rgba(255,255,255,0.06), 0 12px 40px rgba(28,22,18,0.18);
+    background: radial-gradient(circle at 35% 35%, #4a2a18 0%, var(--espresso) 55%, #110a06 100%);
+    box-shadow: inset 0 0 80px rgba(255,255,255,0.06);
   }
   .cup .crema {
     position: absolute;
-    width: 130px; height: 130px;
+    width: 90px; height: 90px;
     border-radius: 50%;
-    background: radial-gradient(circle at 40% 40%, #f0a878 0%, var(--crema) 70%);
-    top: 200px; right: 200px;
-    opacity: 0.92;
-  }
-  .cup .crema-2 {
-    position: absolute;
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    background: var(--honey);
-    top: 330px; right: 340px;
-    opacity: 0.85;
-  }
-  .cup .bean {
-    position: absolute;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: var(--matcha);
+    background: var(--crema);
+    top: 220px; right: 220px;
+    mix-blend-mode: multiply;
+    opacity: 0.65;
   }
   .cup .steam {
     position: absolute;
@@ -628,529 +325,15 @@
     padding-top: 28px;
   }
   .tag-chip {
-    border: 1.5px solid var(--ink);
+    border: 1px solid var(--ink);
     padding: 10px 18px;
     font-family: var(--mono);
     font-size: 24px;
     letter-spacing: 0.06em;
     color: var(--ink);
     border-radius: 999px;
-    background: var(--paper-3);
   }
-  .tag-chip.c-crema  { background: var(--crema);  color: var(--paper); border-color: var(--crema); }
-  .tag-chip.c-matcha { background: var(--matcha); color: var(--paper); border-color: var(--matcha); }
-  .tag-chip.c-honey  { background: var(--honey);  color: var(--ink);   border-color: var(--honey); }
-  .tag-chip.c-berry  { background: var(--berry);  color: var(--paper); border-color: var(--berry); }
-  .tag-chip.c-denim  { background: var(--denim);  color: var(--paper); border-color: var(--denim); }
-  .tag-chip.c-ink    { background: var(--ink);    color: var(--paper); border-color: var(--ink); }
-
-  /* ============================================================
-     COVER V2 — Pop magazine (full-color block + photo)
-  ============================================================ */
-  .cover-pop {
-    position: absolute; inset: 0;
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    grid-template-rows: 1fr;
-    background: var(--paper);
-    overflow: hidden;
-  }
-  .cover-pop .l {
-    background: var(--crema);
-    color: var(--paper-3);
-    padding: 76px 80px 60px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-  }
-  .cover-pop .l::before {
-    content: "";
-    position: absolute;
-    right: -180px; bottom: -180px;
-    width: 520px; height: 520px;
-    border-radius: 50%;
-    background: var(--berry);
-    opacity: 0.55;
-    mix-blend-mode: multiply;
-  }
-  .cover-pop .l::after {
-    content: "";
-    position: absolute;
-    left: 60%; top: -80px;
-    width: 280px; height: 280px;
-    border-radius: 50%;
-    background: var(--honey);
-    opacity: 0.85;
-  }
-  .cover-pop .l .top {
-    display: flex; justify-content: space-between; align-items: center;
-    position: relative; z-index: 2;
-    font-family: var(--mono);
-    font-size: 20px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--paper-3);
-  }
-  .cover-pop .l .seal {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--ink);
-    color: var(--paper);
-    display: grid; place-items: center;
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 600;
-  }
-  .cover-pop .l .brand {
-    display: flex; align-items: center; gap: 16px;
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 38px;
-    color: var(--paper-3);
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  .cover-pop .l .mid {
-    position: relative; z-index: 2;
-    display: flex; flex-direction: column; gap: 28px;
-  }
-  .cover-pop .l .ep {
-    font-family: var(--mono);
-    font-size: 22px;
-    letter-spacing: 0.32em;
-    color: var(--paper-3);
-    opacity: 0.85;
-  }
-  .cover-pop .l h1.pop {
-    font-family: var(--pop);
-    font-weight: 800;
-    font-size: 168px;
-    line-height: 0.86;
-    letter-spacing: -0.05em;
-    color: var(--paper-3);
-    margin: 0;
-  }
-  .cover-pop .l h1.pop em {
-    font-style: normal;
-    color: var(--ink);
-    position: relative;
-    display: inline-block;
-  }
-  .cover-pop .l h1.pop em::after {
-    content: "";
-    position: absolute;
-    left: -8px; right: -8px; bottom: 12px;
-    height: 28px;
-    background: var(--honey);
-    z-index: -1;
-  }
-  .cover-pop .l .meta {
-    position: relative; z-index: 2;
-    display: flex; gap: 30px; align-items: center;
-    font-family: var(--mono);
-    font-size: 22px;
-    color: var(--paper-3);
-    letter-spacing: 0.06em;
-    flex-wrap: wrap;
-  }
-  .cover-pop .l .meta .pip { width: 6px; height: 6px; border-radius: 50%; background: var(--paper-3); opacity: 0.7; }
-
-  .cover-pop .r {
-    position: relative;
-    background: var(--paper-3);
-    overflow: hidden;
-  }
-  .cover-pop .r .hero-photo {
-    position: absolute; inset: 0;
-  }
-  .cover-pop .r .hero-photo img {
-    width: 100%; height: 100%; object-fit: cover;
-    filter: saturate(1.05) contrast(1.02);
-  }
-  .cover-pop .r .stickers {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    z-index: 3;
-  }
-  .cover-pop .r .stamp-fresh {
-    position: absolute;
-    top: 70px; right: 70px;
-    color: var(--paper);
-    background: var(--berry);
-    border-color: var(--berry);
-    transform: rotate(8deg);
-    padding: 10px 18px;
-    font-size: 17px;
-  }
-  .cover-pop .r .stamp-live {
-    position: absolute;
-    bottom: 90px; left: 50px;
-    color: var(--ink);
-    background: var(--honey);
-    border-color: var(--honey);
-    transform: rotate(-7deg);
-    padding: 12px 20px;
-    font-size: 19px;
-  }
-  .cover-pop .r .note-hand {
-    position: absolute;
-    bottom: 30px; right: 40px;
-    font-family: var(--hand);
-    font-size: 46px;
-    color: var(--paper);
-    transform: rotate(-3deg);
-    line-height: 1;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.35);
-  }
-
-  .cover-pop .tags-bar {
-    grid-column: 1 / -1;
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 22px 80px;
-    display: flex; gap: 28px;
-    align-items: center;
-    font-family: var(--mono);
-    font-size: 18px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    overflow: hidden;
-    z-index: 5;
-  }
-  .cover-pop .tags-bar .sep { color: var(--crema); }
-  .cover-pop .tags-bar strong { color: var(--honey); font-weight: 500; }
-
-  /* ============================================================
-     COVER V3 — full-bleed espresso photo + huge type overlay
-  ============================================================ */
-  .cover-bleed {
-    position: absolute; inset: 0;
-    overflow: hidden;
-    color: var(--paper-3);
-    background: var(--ink);
-  }
-  .cover-bleed .bg {
-    position: absolute; inset: 0;
-  }
-  .cover-bleed .bg img {
-    width: 100%; height: 100%; object-fit: cover;
-    filter: brightness(0.65) contrast(1.05) saturate(1.15);
-  }
-  .cover-bleed .grain {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(circle at 78% 22%, rgba(214,90,35,0.32) 0%, transparent 45%),
-      radial-gradient(circle at 12% 88%, rgba(184,66,58,0.28) 0%, transparent 40%),
-      linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
-  }
-  .cover-bleed .frame {
-    position: absolute; inset: 60px;
-    border: 2px solid var(--paper-3);
-    pointer-events: none;
-  }
-  .cover-bleed .content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    padding: 90px 110px 90px;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 40px;
-  }
-  .cover-bleed .top {
-    display: flex; justify-content: space-between; align-items: center;
-    font-family: var(--mono);
-    font-size: 20px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--paper-3);
-  }
-  .cover-bleed .top .brand {
-    display: flex; align-items: center; gap: 16px;
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 36px;
-    letter-spacing: 0;
-    text-transform: none;
-  }
-  .cover-bleed .top .brand .seal {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: var(--crema);
-    color: var(--paper);
-    display: grid; place-items: center;
-    font-family: var(--mono);
-    font-size: 16px;
-    font-weight: 600;
-    font-style: normal;
-  }
-  .cover-bleed .center {
-    display: flex; flex-direction: column; justify-content: flex-end;
-    gap: 22px;
-  }
-  .cover-bleed .ep-line {
-    font-family: var(--mono);
-    font-size: 26px;
-    letter-spacing: 0.32em;
-    color: var(--honey);
-  }
-  .cover-bleed h1.bleed {
-    font-family: var(--pop);
-    font-weight: 800;
-    font-size: 280px;
-    line-height: 0.82;
-    letter-spacing: -0.05em;
-    color: var(--paper-3);
-    margin: 0;
-  }
-  .cover-bleed h1.bleed em {
-    font-style: normal;
-    color: var(--crema);
-    text-shadow: 0 4px 24px rgba(0,0,0,0.45);
-  }
-  .cover-bleed .bottom {
-    display: flex; justify-content: space-between; align-items: flex-end;
-    gap: 40px;
-  }
-  .cover-bleed .meta {
-    display: flex; gap: 30px; align-items: center;
-    font-family: var(--mono);
-    font-size: 22px;
-    color: var(--paper-3);
-    letter-spacing: 0.06em;
-    flex-wrap: wrap;
-  }
-  .cover-bleed .meta .pip { width: 6px; height: 6px; border-radius: 50%; background: var(--honey); }
-  .cover-bleed .note {
-    font-family: var(--hand);
-    font-size: 56px;
-    color: var(--honey);
-    transform: rotate(-4deg);
-    line-height: 1;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    max-width: 360px;
-    text-align: right;
-  }
-
-  /* hide/show variation */
-  [data-cover="pop"]    deck-stage section.cover-host .v-pop { display: block; }
-  [data-cover="pop"]    deck-stage section.cover-host .v-bleed { display: none; }
-  [data-cover="bleed"]  deck-stage section.cover-host .v-pop { display: none; }
-  [data-cover="bleed"]  deck-stage section.cover-host .v-bleed { display: block; }
-  deck-stage section.cover-host .v-bleed { display: none; }
-  deck-stage section.cover-host .v-legacy { display: none !important; }
-
-  /* ============================================================
-     POP CHAPTER INTRO — reusable color block
-  ============================================================ */
-  .pop-chapter {
-    position: absolute; inset: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    background: var(--accent, var(--crema));
-    color: var(--paper);
-    overflow: hidden;
-  }
-  .pop-chapter .ttl-side {
-    padding: 110px 80px;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
-  .pop-chapter .ttl-side h2 {
-    font-family: var(--pop);
-    font-weight: 800;
-    font-size: 200px;
-    line-height: 0.85;
-    letter-spacing: -0.045em;
-    color: var(--paper-3);
-    margin: 0;
-  }
-  .pop-chapter .photo-side {
-    position: relative;
-    overflow: hidden;
-  }
-  .pop-chapter .photo-side img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-
-  /* ============================================================
-     TWEAKS PANEL
-  ============================================================ */
-  #tweaks-panel {
-    position: fixed;
-    bottom: 20px; right: 20px;
-    width: 320px;
-    background: var(--paper-3);
-    border: 1.5px solid var(--ink);
-    box-shadow: 0 16px 40px rgba(28,22,18,0.25);
-    padding: 0;
-    z-index: 9999;
-    font-family: var(--sans);
-    color: var(--ink);
-    display: none;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  #tweaks-panel .tw-head {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 18px;
-    background: var(--ink);
-    color: var(--paper);
-  }
-  #tweaks-panel .tw-ttl {
-    font-family: var(--pop); font-weight: 800;
-    font-size: 20px; letter-spacing: -0.01em;
-  }
-  #tweaks-panel .tw-close {
-    border: 0; background: transparent;
-    color: var(--paper); font-size: 24px;
-    cursor: pointer; line-height: 1; padding: 0 4px;
-  }
-  #tweaks-panel .tw-sec { padding: 16px 18px; }
-  #tweaks-panel .tw-lbl {
-    font-family: var(--mono); font-size: 11px;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--ink-3); margin-bottom: 10px;
-  }
-  #tweaks-panel .tw-radio { display: flex; flex-direction: column; gap: 6px; }
-  #tweaks-panel .tw-radio button {
-    text-align: left;
-    background: var(--paper);
-    border: 1px solid var(--rule-2);
-    padding: 10px 14px;
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--ink);
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.12s ease;
-  }
-  #tweaks-panel .tw-radio button:hover { border-color: var(--ink); }
-  #tweaks-panel .tw-radio button.on {
-    background: var(--crema); color: var(--paper);
-    border-color: var(--crema); font-weight: 500;
-  }
-  #tweaks-panel .tw-foot {
-    padding: 10px 18px;
-    font-family: var(--mono); font-size: 10px;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--ink-3);
-    border-top: 1px solid var(--rule);
-    background: var(--paper);
-  }
-  #tweaks-panel .tw-swatches {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-  }
-  #tweaks-panel .tw-swatches button {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    padding: 10px 6px 8px;
-    border: 1px solid var(--rule-2);
-    background: var(--paper);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.12s ease;
-  }
-  #tweaks-panel .tw-swatches button:hover { border-color: var(--ink); }
-  #tweaks-panel .tw-swatches button.on {
-    border-color: var(--ink);
-    box-shadow: 0 0 0 2px var(--crema);
-  }
-  #tweaks-panel .tw-swatches .sw {
-    width: 100%; height: 36px;
-    border-radius: 4px;
-    border: 1px solid rgba(0,0,0,0.12);
-  }
-  #tweaks-panel .tw-swatches .nm {
-    font-family: var(--mono); font-size: 11px;
-    letter-spacing: 0.06em;
-    color: var(--ink-2);
-  }
-
-  /* ============================================================
-     BACKGROUND PALETTES — testable via Tweaks panel
-  ============================================================ */
-  :root[data-bg="cream"] {
-    /* default — already declared in :root */
-  }
-  :root[data-bg="bone"] {
-    --paper:   #efece5;
-    --paper-2: #e3dfd5;
-    --paper-3: #f7f5ef;
-    --rule:    #d8d4ca;
-    --rule-2:  #c5c0b3;
-  }
-  :root[data-bg="sage"] {
-    --paper:   #e6ebe2;
-    --paper-2: #d6ddd0;
-    --paper-3: #eff3eb;
-    --rule:    #c9d0c2;
-    --rule-2:  #b6c0ad;
-  }
-  :root[data-bg="dust"] {
-    --paper:   #f1e6df;
-    --paper-2: #e5d8d0;
-    --paper-3: #f8efe9;
-    --rule:    #d9cbc3;
-    --rule-2:  #c8b6ad;
-  }
-  :root[data-bg="mist"] {
-    --paper:   #e8eced;
-    --paper-2: #d9dee0;
-    --paper-3: #f1f4f5;
-    --rule:    #c9d0d2;
-    --rule-2:  #b3bcc0;
-  }
-  /* DARK — full inversion */
-  :root[data-bg="ink"] {
-    --paper:   #18130f;
-    --paper-2: #221c16;
-    --paper-3: #100c08;
-    --ink:     #f0e7d3;
-    --ink-2:   #c9b89c;
-    --ink-3:   #8a7d6a;
-    --rule:    #2c241d;
-    --rule-2:  #3a3025;
-    --espresso:#0a0705;
-  }
-  /* dark-mode touch-ups for elements that hardcoded the old paper */
-  :root[data-bg="ink"] .terminal { background: #0a0705; border-color: #2c241d; }
-  :root[data-bg="ink"] deck-stage section { background: var(--paper); color: var(--ink); }
-  :root[data-bg="ink"] .pipe .step .arrow { background: var(--paper); }
-  :root[data-bg="ink"] .warn-stripe {
-    background: repeating-linear-gradient(45deg, var(--paper) 0 12px, var(--paper-2) 12px 24px);
-    border-color: var(--ink-3);
-  }
-  :root[data-bg="ink"] .tool-category { background: var(--paper-2); color: var(--ink); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .tool-category li { background: rgba(255,255,255,0.06); color: var(--ink); }
-  :root[data-bg="ink"] .gloss .term { background: var(--paper-2); }
-  :root[data-bg="ink"] .vs-card.dim { background: var(--paper-2); }
-  :root[data-bg="ink"] .vs-card { background: var(--paper-2); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .mcp .host { background: #0a0705; }
-  :root[data-bg="ink"] .mcp .host:nth-child(even) { background: #15110d; }
-  :root[data-bg="ink"] .mcp .server { background: var(--paper-2); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .next-card { background: #0a0705; border-color: var(--ink-3); }
-  :root[data-bg="ink"] .quad { border-color: var(--ink-3); }
-  :root[data-bg="ink"] .quad .q { border-color: var(--ink-3); }
-  :root[data-bg="ink"] .quad .q.q-1 { background: var(--paper-2); color: var(--ink); }
-  :root[data-bg="ink"] .ds-num small { color: rgba(240,231,211,0.85) !important; }
-  :root[data-bg="ink"] .polaroid { background: var(--paper-2); border-color: var(--ink-3); box-shadow: 0 14px 32px rgba(0,0,0,0.45); }
-  :root[data-bg="ink"] #tweaks-panel { background: var(--paper-2); color: var(--ink); }
-  :root[data-bg="ink"] #tweaks-panel .tw-radio button,
-  :root[data-bg="ink"] #tweaks-panel .tw-swatches button { background: var(--paper); color: var(--ink); border-color: var(--ink-3); }
-  :root[data-bg="ink"] #tweaks-panel .tw-foot { background: var(--paper); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .react-loop .center { background: var(--paper-2); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .react-loop .node { background: var(--paper-2); border-color: var(--ink-3); color: var(--ink); }
-  :root[data-bg="ink"] .pipe .step { background: transparent; }
-  :root[data-bg="ink"] .token-chip { background: var(--paper-2); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .token-chip:nth-child(odd) { background: var(--paper-3); }
-  :root[data-bg="ink"] .agenda .num { color: var(--paper); }
-  :root[data-bg="ink"] .tag-chip { background: var(--paper-2); color: var(--ink); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .tag-chip.c-ink { background: var(--paper-3); color: var(--ink); border-color: var(--ink-3); }
-  :root[data-bg="ink"] .cover-bleed h1.bleed em,
-  :root[data-bg="ink"] .cover-pop .l h1.pop em { color: var(--paper-3); }
+  .tag-chip.fill { background: var(--ink); color: var(--paper); }
 
   /* ============================================================
      SLIDE 2 — AGENDA
@@ -1167,8 +350,8 @@
     display: grid;
     grid-template-columns: 80px 1fr auto;
     gap: 36px;
-    align-items: center;
-    padding: 22px 0;
+    align-items: baseline;
+    padding: 26px 0;
     border-bottom: 1px solid var(--rule);
   }
   .agenda .item:last-child { border-bottom: 0; }
@@ -1177,19 +360,7 @@
     font-size: 22px;
     color: var(--ink-3);
     letter-spacing: 0.05em;
-    display: inline-grid;
-    place-items: center;
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: var(--accent-num, var(--paper-2));
-    color: var(--ink);
   }
-  .agenda .item.a-fond   .num { background: var(--crema);  color: var(--paper); }
-  .agenda .item.a-data   .num { background: var(--matcha); color: var(--paper); }
-  .agenda .item.a-agents .num { background: var(--honey);  color: var(--ink); }
-  .agenda .item.a-eco    .num { background: var(--denim);  color: var(--paper); }
-  .agenda .item.a-demo   .num { background: var(--berry);  color: var(--paper); }
-  .agenda .item.a-close  .num { background: var(--plum);   color: var(--paper); }
   .agenda .name {
     font-family: var(--serif);
     font-size: 48px;
@@ -1302,7 +473,7 @@
   .temp-scale {
     position: relative;
     height: 12px;
-    background: linear-gradient(90deg, var(--denim) 0%, var(--matcha) 35%, var(--crema) 70%, var(--berry) 100%);
+    background: linear-gradient(90deg, #2d3a4a 0%, var(--sage) 35%, var(--crema) 70%, #a83824 100%);
     border-radius: 2px;
     margin: 50px 0 20px;
   }
@@ -1438,25 +609,11 @@
      SLIDE 8 — TOOL USE
   ============================================================ */
   .tool-category {
-    border: 1.5px solid var(--ink);
+    border: 1px solid var(--ink);
     padding: 32px 28px;
     display: flex; flex-direction: column; gap: 18px;
     background: var(--paper);
   }
-  .tool-category.tc-1 { background: var(--crema);  color: var(--paper); border-color: var(--crema); }
-  .tool-category.tc-2 { background: var(--matcha); color: var(--paper); border-color: var(--matcha); }
-  .tool-category.tc-3 { background: var(--honey);  color: var(--ink); border-color: var(--honey); }
-  .tool-category.tc-4 { background: var(--denim);  color: var(--paper); border-color: var(--denim); }
-  .tool-category.tc-1 li, .tool-category.tc-2 li, .tool-category.tc-4 li {
-    background: rgba(255,255,255,0.18);
-    color: var(--paper);
-  }
-  .tool-category.tc-3 li {
-    background: rgba(0,0,0,0.12);
-    color: var(--ink);
-  }
-  .tool-category.tc-1 .num, .tool-category.tc-2 .num, .tool-category.tc-4 .num { color: rgba(255,255,255,0.7); }
-  .tool-category.tc-3 .num { color: rgba(0,0,0,0.5); }
   .tool-category .head {
     display: flex; justify-content: space-between; align-items: baseline;
   }
@@ -1609,16 +766,6 @@
     border-top: 1px solid var(--rule);
     margin-top: auto;
   }
-  .quad .q.q-1 { background: var(--paper-3); }
-  .quad .q.q-2 { background: var(--denim);  color: var(--paper); }
-  .quad .q.q-3 { background: var(--berry);  color: var(--paper); }
-  .quad .q.q-4 { background: var(--honey);  color: var(--ink); }
-  .quad .q.q-2 .what, .quad .q.q-3 .what { color: var(--paper); opacity: 0.88; }
-  .quad .q.q-2 .ex,   .quad .q.q-3 .ex   { color: rgba(255,255,255,0.92); border-top-color: rgba(255,255,255,0.18); }
-  .quad .q.q-4 .ex { color: var(--ink); border-top-color: rgba(0,0,0,0.18); }
-  .quad .q.q-2 .label, .quad .q.q-3 .label { color: rgba(255,255,255,0.65); }
-  .quad .q.q-4 .label { color: rgba(0,0,0,0.55); }
-
   .quad .q.dark {
     background: var(--ink); color: var(--paper);
   }
@@ -1925,87 +1072,9 @@
 <deck-stage width="1920" height="1080">
 
   <!-- ============================================================
-       1. COVER — 3 variations (pop / bleed / legacy) — toggle via Tweaks
+       1. COVER
   ============================================================ -->
-  <section data-label="01 Cover" class="ch-fond cover-host">
-
-    <!-- VARIATION A : pop magazine (orange bloc + photo expresso) -->
-    <div class="v-pop">
-      <div class="cover-pop">
-        <div class="l">
-          <div class="top">
-            <div class="brand"><span class="seal">IA</span> IA Coffee</div>
-            <div>Épisode 01 · S2026</div>
-          </div>
-
-          <div class="mid">
-            <div class="ep">— Épisode Nº 01 —</div>
-            <h1 class="pop">Agentic<br><em>AI.</em></h1>
-            <div class="meta">
-              <span>1h30</span><span class="pip"></span>
-              <span>3 démos live</span><span class="pip"></span>
-              <span>Q&amp;R ouverte</span>
-            </div>
-          </div>
-
-          <div></div>
-        </div>
-
-        <div class="r">
-          <div class="hero-photo">
-            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1600&q=75" alt="Espresso pour" loading="eager">
-          </div>
-          <div class="stickers">
-            <div class="stamp stamp-fresh">★ FRESH SHOT 2026 ★</div>
-            <div class="stamp stamp-live">3 DÉMOS LIVE</div>
-            <div class="note-hand">l'IA<br>qui agit ↘</div>
-          </div>
-        </div>
-
-        <div class="tags-bar">
-          <span>LLM</span><span class="sep">·</span>
-          <span>RAG</span><span class="sep">·</span>
-          <span>Agent</span><span class="sep">·</span>
-          <span>Tool use</span><span class="sep">·</span>
-          <span>MCP</span><span class="sep">·</span>
-          <strong>DeepSeek</strong><span class="sep">·</span>
-          <span>Multi-agent</span><span class="sep">·</span>
-          <span>Skills</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- VARIATION B : full-bleed espresso, type énorme -->
-    <div class="v-bleed">
-      <div class="cover-bleed">
-        <div class="bg">
-          <img src="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?auto=format&fit=crop&w=2400&q=75" alt="Latte art espresso" loading="eager">
-        </div>
-        <div class="grain"></div>
-        <div class="frame"></div>
-        <div class="content">
-          <div class="top">
-            <div class="brand"><span class="seal">IA</span> IA Coffee</div>
-            <div>Épisode 01 · 1h30 · S2026</div>
-          </div>
-          <div class="center">
-            <div class="ep-line">— Épisode Nº 01 —</div>
-            <h1 class="bleed">Agentic<br><em>AI.</em></h1>
-          </div>
-          <div class="bottom">
-            <div class="meta">
-              <span>1h30</span><span class="pip"></span>
-              <span>3 démos live</span><span class="pip"></span>
-              <span>Q&amp;R ouverte</span>
-            </div>
-            <div class="note">entre amis,<br>autour d'un café ☕</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- VARIATION C : version originale éditoriale -->
-    <div class="v-legacy">
+  <section data-label="01 Cover">
     <div class="cover">
       <div class="topbar">
         <div class="brand"><span class="seal">IA</span> IA Coffee</div>
@@ -2030,34 +1099,29 @@
           <div class="ring r3"></div>
           <div class="core"></div>
           <div class="crema"></div>
-          <div class="crema-2"></div>
-          <div class="bean" style="top: 80px; left: 100px;"></div>
-          <div class="bean" style="top: 540px; left: 540px; background: var(--berry);"></div>
-          <div class="bean" style="top: 580px; left: 80px; background: var(--honey); width:16px; height:16px;"></div>
         </div>
       </div>
 
       <div class="tags">
-        <span class="tag-chip c-crema">LLM</span>
+        <span class="tag-chip fill">LLM</span>
         <span class="tag-chip">Token</span>
-        <span class="tag-chip c-matcha">RAG</span>
-        <span class="tag-chip c-honey">Agent</span>
+        <span class="tag-chip">RAG</span>
+        <span class="tag-chip fill">Agent</span>
         <span class="tag-chip">Tool use</span>
-        <span class="tag-chip c-denim">MCP</span>
+        <span class="tag-chip">MCP</span>
         <span class="tag-chip">Skills</span>
-        <span class="tag-chip c-ink">DeepSeek</span>
-        <span class="tag-chip c-berry">Orchestration</span>
+        <span class="tag-chip fill">DeepSeek</span>
+        <span class="tag-chip">Orchestration</span>
         <span class="tag-chip">Multi-agent</span>
         <span class="tag-chip">Embeddings</span>
       </div>
     </div>
-    </div><!-- /.v-legacy -->
   </section>
 
   <!-- ============================================================
        2. AGENDA
   ============================================================ -->
-  <section data-label="02 Au programme" class="ch-fond">
+  <section data-label="02 Au programme">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Au programme</div>
       <div class="folio">02 / 16</div>
@@ -2065,30 +1129,16 @@
     </div>
 
     <div class="body agenda">
-      <div class="left" style="position: relative;">
+      <div class="left">
         <div class="label">Ce soir</div>
-        <h2 class="pop-shout" style="margin-top:24px; font-size: 110px; color: var(--ink);">
-          Six<br>chapitres,<br>une <span class="hl hl-crema" style="color: var(--crema);">conversation</span>.
-        </h2>
+        <h2 class="title" style="margin-top:24px; font-size: 72px;">Six chapitres,<br>une <em>conversation</em>.</h2>
         <p class="txt" style="margin-top:36px; max-width: 520px;">
           Du token au multi-agent, on construit ensemble le vocabulaire et l'intuition de l'IA agentique. Puis on code en live.
         </p>
-
-        <div class="polaroid" style="position:absolute; top: 520px; left: 0; width: 220px; transform: rotate(-4deg);">
-          <div class="photo" style="height: 160px; border: 0;">
-            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=70" alt="Grains de café">
-          </div>
-          <div class="cap">les bases ☕</div>
-        </div>
-
-        <svg class="marker-svg" style="top: 180px; left: 320px; width: 180px; height: 80px;" viewBox="0 0 180 80">
-          <path d="M 10 60 Q 50 10 90 30 T 170 20" stroke="#b8423a" stroke-width="3.5"/>
-          <path d="M 160 12 L 172 22 L 160 30" stroke="#b8423a" stroke-width="3.5"/>
-        </svg>
       </div>
 
       <div class="right">
-        <div class="item a-fond">
+        <div class="item">
           <span class="num">01</span>
           <div>
             <div class="name">Les fondations</div>
@@ -2096,7 +1146,7 @@
           </div>
           <span class="dur">15 min</span>
         </div>
-        <div class="item a-data">
+        <div class="item">
           <span class="num">02</span>
           <div>
             <div class="name">Les données</div>
@@ -2104,7 +1154,7 @@
           </div>
           <span class="dur">10 min</span>
         </div>
-        <div class="item a-agents">
+        <div class="item">
           <span class="num">03</span>
           <div>
             <div class="name">Les agents</div>
@@ -2112,7 +1162,7 @@
           </div>
           <span class="dur">15 min</span>
         </div>
-        <div class="item a-eco">
+        <div class="item">
           <span class="num">04</span>
           <div>
             <div class="name">L'écosystème</div>
@@ -2120,7 +1170,7 @@
           </div>
           <span class="dur">15 min</span>
         </div>
-        <div class="item a-demo">
+        <div class="item">
           <span class="num">05</span>
           <div>
             <div class="name">Démos live</div>
@@ -2128,7 +1178,7 @@
           </div>
           <span class="dur">25 min</span>
         </div>
-        <div class="item a-close">
+        <div class="item">
           <span class="num">06</span>
           <div>
             <div class="name">Q&amp;R</div>
@@ -2143,7 +1193,7 @@
   <!-- ============================================================
        3. LLM
   ============================================================ -->
-  <section data-label="03 LLM" class="ch-fond">
+  <section data-label="03 LLM">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Fondations · 01</div>
       <div class="folio">03 / 16</div>
@@ -2151,17 +1201,9 @@
     </div>
 
     <div class="body def-layout">
-      <div style="display: grid; grid-template-columns: 1fr 480px; gap: 60px; align-items: end;">
-        <div>
-          <div class="label">Large Language Model</div>
-          <h2 class="pop-shout" style="margin-top:24px; font-size: 124px; color: var(--ink);">
-            Il ne <span style="color: var(--crema);">comprend</span> pas —<br>il <span class="hl">complète</span>.
-          </h2>
-        </div>
-        <div class="photo duotone-ink" style="height: 240px;">
-          <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=900&q=70" alt="Code matrix">
-          <div class="credit">Unsplash</div>
-        </div>
+      <div>
+        <div class="label">Large Language Model</div>
+        <h2 class="title" style="margin-top:24px;">Il ne <em>comprend</em> pas — il <em>complète</em>.</h2>
       </div>
 
       <p class="lead">
@@ -2196,7 +1238,7 @@
   <!-- ============================================================
        4. DEEPSEEK
   ============================================================ -->
-  <section data-label="04 DeepSeek" class="ch-fond">
+  <section data-label="04 DeepSeek">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Fondations · 02 · Les modèles</div>
       <div class="folio">04 / 16</div>
@@ -2204,26 +1246,17 @@
     </div>
 
     <div class="body">
-      <div class="ds-hero" style="position: relative;">
+      <div class="ds-hero">
         <div>
           <div class="label">DeepSeek — janvier 2025</div>
-          <h2 class="pop-shout" style="margin-top: 24px; font-size: 120px; color: var(--ink);">
-            Le <span style="color: var(--crema);">game-<br>changer</span><br>open source.
-          </h2>
+          <h2 class="title" style="margin-top: 24px;">Le <em>game-changer</em><br>open source.</h2>
           <p class="lead" style="margin-top: 36px;">
             Labo chinois. Sort un modèle de raisonnement rival de GPT-4o, entraîné pour une fraction du coût. Onde de choc dans tout le secteur.
           </p>
         </div>
-        <div style="position: relative;">
-          <div class="ds-num" style="display: inline-block; background: var(--crema); color: var(--paper); padding: 36px 48px; border-radius: 16px; font-size: 200px; transform: rotate(-2deg);">10–30×
-            <small style="color: var(--paper-3); opacity:0.95;">Moins cher que l'API OpenAI à l'inférence</small>
-          </div>
-          <svg class="marker-svg" style="top: -30px; left: -40px; width: 720px; height: 360px;" viewBox="0 0 720 360">
-            <ellipse cx="360" cy="180" rx="330" ry="155" stroke="#b8423a" stroke-width="4.5" stroke-dasharray="2 0"
-                     transform="rotate(-3 360 180)"/>
-          </svg>
-          <div class="marker-note" style="top: -56px; right: 20px; font-size: 44px; color: var(--berry);">
-            ↘ le choc
+        <div>
+          <div class="ds-num">10–30×
+            <small>Moins cher que l'API OpenAI à l'inférence</small>
           </div>
         </div>
       </div>
@@ -2252,7 +1285,7 @@
   <!-- ============================================================
        5. TOKEN / CONTEXT / TEMPERATURE
   ============================================================ -->
-  <section data-label="05 Token Context Temperature" class="ch-fond">
+  <section data-label="05 Token Context Temperature">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Fondations · 03</div>
       <div class="folio">05 / 16</div>
@@ -2321,28 +1354,18 @@
   <!-- ============================================================
        6. RAG
   ============================================================ -->
-  <section data-label="06 RAG" class="ch-data">
+  <section data-label="06 RAG">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Les données · 01</div>
       <div class="folio">06 / 16</div>
       <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Données</span></div><div>RAG — Retrieval-Augmented Generation</div></div>
     </div>
 
-    <div class="body" style="display:flex; flex-direction:column; gap: 50px;">
-      <div style="display: grid; grid-template-columns: 1fr 380px; gap: 60px; align-items: end;">
-        <div>
-          <div class="label">Données · RAG</div>
-          <h2 class="pop-shout" style="margin-top:24px; font-size: 110px; color: var(--ink);">
-            Brancher le LLM<br>sur <span style="color: var(--matcha);">vos</span> documents.
-          </h2>
-          <p class="lead" style="margin-top: 24px;">Le modèle ne voit pas vos données. On les indexe, on les récupère par similarité, et on les injecte dans le contexte au moment de répondre.</p>
-        </div>
-        <div class="polaroid" style="transform: rotate(3deg); width: 280px; justify-self: end; margin-right: 12px;">
-          <div class="photo" style="height: 200px; border: 0;">
-            <img src="https://images.unsplash.com/photo-1551033406-611cf9a28f67?auto=format&fit=crop&w=600&q=70" alt="Filtre café">
-          </div>
-          <div class="cap">on filtre, on extrait.</div>
-        </div>
+    <div class="body" style="display:flex; flex-direction:column; gap: 60px;">
+      <div>
+        <div class="label">Données · RAG</div>
+        <h2 class="title" style="margin-top:24px;">Brancher le LLM sur <em>vos</em> documents.</h2>
+        <p class="lead" style="margin-top: 28px;">Le modèle ne voit pas vos données. On les indexe, on les récupère par similarité, et on les injecte dans le contexte au moment de répondre.</p>
       </div>
 
       <div class="pipe">
@@ -2376,10 +1399,10 @@
           <div class="what">Similarité cosinus, top-k chunks.</div>
           <div class="arrow">→</div>
         </div>
-        <div class="step" style="background: var(--matcha); color: var(--paper);">
-          <span class="num" style="color: var(--matcha-soft);">06 — SYNTHÈSE</span>
-          <div class="name" style="color: var(--paper);">Réponse</div>
-          <div class="what" style="color: var(--paper); opacity:0.85;">LLM + contexte = réponse sourcée.</div>
+        <div class="step">
+          <span class="num">06 — SYNTHÈSE</span>
+          <div class="name" style="color: var(--crema);">Réponse</div>
+          <div class="what">LLM + contexte = réponse sourcée.</div>
         </div>
       </div>
 
@@ -2403,7 +1426,7 @@
   <!-- ============================================================
        7. AGENT ANATOMY
   ============================================================ -->
-  <section data-label="07 Agent anatomie" class="ch-agents">
+  <section data-label="07 Agent anatomie">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Les agents · 01</div>
       <div class="folio">07 / 16</div>
@@ -2411,12 +1434,9 @@
     </div>
 
     <div class="body" style="display:grid; grid-template-columns: 1fr 580px; gap: 80px; align-items: center;">
-      <div style="display:flex; flex-direction:column; gap: 36px; position: relative;">
+      <div style="display:flex; flex-direction:column; gap: 36px;">
         <div class="label">Agents · Définition</div>
-        <h2 class="pop-shout" style="font-size: 124px; color: var(--ink);">
-          Un agent <span style="color: var(--honey);">agit</span>.<br>
-          <span class="hl">En boucle.</span>
-        </h2>
+        <h2 class="title">Un agent agit. <em>En boucle.</em></h2>
         <p class="lead">Agent = LLM + boucle de raisonnement + outils + mémoire.<br>Objectif donné → planifie → agit → observe → s'adapte.</p>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 12px;">
@@ -2464,7 +1484,7 @@
   <!-- ============================================================
        8. TOOL USE
   ============================================================ -->
-  <section data-label="08 Tool use" class="ch-agents">
+  <section data-label="08 Tool use">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Les agents · 02</div>
       <div class="folio">08 / 16</div>
@@ -2474,10 +1494,7 @@
     <div class="body" style="display:flex; flex-direction:column; gap: 48px;">
       <div>
         <div class="label">Tool use</div>
-        <h2 class="pop-shout" style="margin-top: 24px; font-size: 110px; color: var(--ink);">
-          L'agent ne <span style="color: var(--crema);">connaît</span> pas les outils.<br>
-          Il les <span class="hl hl-crema">choisit</span>.
-        </h2>
+        <h2 class="title" style="margin-top: 24px;">L'agent ne <em>connaît</em> pas les outils.<br>Il les <em>choisit</em>.</h2>
       </div>
 
       <div class="flow-line">
@@ -2495,7 +1512,7 @@
       </div>
 
       <div class="grid-4">
-        <div class="tool-category tc-1">
+        <div class="tool-category">
           <div class="head"><h4>Recherche &amp; Web</h4><span class="num">01</span></div>
           <ul>
             <li>web_search()</li>
@@ -2504,7 +1521,7 @@
             <li>wikipedia()</li>
           </ul>
         </div>
-        <div class="tool-category tc-2">
+        <div class="tool-category">
           <div class="head"><h4>Code &amp; Fichiers</h4><span class="num">02</span></div>
           <ul>
             <li>python_exec()</li>
@@ -2513,7 +1530,7 @@
             <li>write_file()</li>
           </ul>
         </div>
-        <div class="tool-category tc-3">
+        <div class="tool-category">
           <div class="head"><h4>APIs &amp; Services</h4><span class="num">03</span></div>
           <ul>
             <li>email.send()</li>
@@ -2522,7 +1539,7 @@
             <li>github.pr()</li>
           </ul>
         </div>
-        <div class="tool-category tc-4">
+        <div class="tool-category">
           <div class="head"><h4>Données</h4><span class="num">04</span></div>
           <ul>
             <li>sql_query()</li>
@@ -2540,26 +1557,18 @@
   <!-- ============================================================
        9. MCP
   ============================================================ -->
-  <section data-label="09 MCP" class="ch-eco">
+  <section data-label="09 MCP">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> L'écosystème · 01</div>
       <div class="folio">09 / 16</div>
       <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Écosystème</span></div><div>MCP — Model Context Protocol</div></div>
     </div>
 
-    <div class="body" style="display:flex; flex-direction:column; gap: 40px;">
-      <div style="display: grid; grid-template-columns: 1fr 320px; gap: 60px; align-items: end;">
-        <div>
-          <div class="label">Model Context Protocol · Anthropic · nov. 2024</div>
-          <h2 class="pop-shout" style="margin-top: 18px; font-size: 96px; color: var(--ink);">
-            Le <span class="hl" style="color: var(--denim);">« USB-C »</span><br>des agents IA.
-          </h2>
-          <p class="lead" style="margin-top: 18px;">N'importe quel LLM ↔ n'importe quel outil, via un protocole ouvert et commun.</p>
-        </div>
-        <div class="photo duotone-denim" style="height: 200px;">
-          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=70" alt="Circuit board">
-          <div class="credit">Unsplash</div>
-        </div>
+    <div class="body" style="display:flex; flex-direction:column; gap: 56px;">
+      <div>
+        <div class="label">Model Context Protocol · Anthropic · nov. 2024</div>
+        <h2 class="title" style="margin-top: 24px;">Le <em>« USB-C »</em> des agents IA.</h2>
+        <p class="lead" style="margin-top: 24px;">N'importe quel LLM ↔ n'importe quel outil, via un protocole ouvert et commun.</p>
       </div>
 
       <div class="mcp">
@@ -2599,7 +1608,7 @@
   <!-- ============================================================
        10. SKILLS / ORCHESTRATION
   ============================================================ -->
-  <section data-label="10 Skills Orchestration" class="ch-eco">
+  <section data-label="10 Skills Orchestration">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> L'écosystème · 02</div>
       <div class="folio">10 / 16</div>
@@ -2609,28 +1618,26 @@
     <div class="body" style="display:grid; grid-template-rows: auto 1fr; gap: 40px;">
       <div>
         <div class="label">Construire un système agentique</div>
-        <h2 class="pop-shout" style="margin-top: 20px; font-size: 110px; color: var(--ink);">
-          Quatre <span style="color: var(--denim);">primitives</span><br>à connaître.
-        </h2>
+        <h2 class="title" style="margin-top: 20px;">Quatre primitives à connaître.</h2>
       </div>
 
       <div class="quad">
-        <div class="q q-1">
+        <div class="q">
           <div class="head"><h4>Skill / Tool</h4><span class="label">01</span></div>
           <div class="what">Capacité encapsulée donnée à un agent : fonction Python, prompt template, API wrappée. L'agent choisit quel skill invoquer.</div>
           <div class="ex">→ search_web(query) · send_email(to, subject)</div>
         </div>
-        <div class="q q-2">
-          <div class="head"><h4>System Prompt</h4><span class="label">02</span></div>
+        <div class="q dark">
+          <div class="head"><h4>System Prompt</h4><span class="label" style="color: var(--crema-soft);">02</span></div>
           <div class="what">Instructions persistantes avant la conversation. Définissent rôle, limites, ton. Invisibles pour l'utilisateur final.</div>
           <div class="ex">→ « Tu es un assistant RH. Ne parle pas des salaires. »</div>
         </div>
-        <div class="q q-3">
-          <div class="head"><h4>Orchestrateur</h4><span class="label">03</span></div>
+        <div class="q dark">
+          <div class="head"><h4>Orchestrateur</h4><span class="label" style="color: var(--crema-soft);">03</span></div>
           <div class="what">Code ou framework qui coordonne plusieurs agents et appels LLM. Gère flux, dépendances, agrégation des résultats.</div>
           <div class="ex">→ LangChain · LangGraph · CrewAI · n8n · Make</div>
         </div>
-        <div class="q q-4">
+        <div class="q">
           <div class="head"><h4>Multi-agent</h4><span class="label">04</span></div>
           <div class="what">Plusieurs agents spécialisés collaborent. Un manager délègue à des sous-agents : researcher, coder, reviewer…</div>
           <div class="ex">→ A cherche → B rédige → C valide → D publie</div>
@@ -2642,19 +1649,17 @@
   <!-- ============================================================
        11. MEMORY
   ============================================================ -->
-  <section data-label="11 Memory" class="ch-eco">
+  <section data-label="11 Memory">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> L'écosystème · 03</div>
       <div class="folio">11 / 16</div>
       <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Écosystème</span></div><div>Memory · Grounding · Fine-tuning</div></div>
     </div>
 
-    <div class="body" style="display:flex; flex-direction:column; gap: 26px;">
+    <div class="body" style="display:flex; flex-direction:column; gap: 32px;">
       <div>
         <div class="label">Mémoire d'un agent</div>
-        <h2 class="pop-shout" style="margin-top: 12px; font-size: 84px; color: var(--ink);">
-          Quatre étages, des <span class="hl" style="color: var(--denim);">vitesses</span> différentes.
-        </h2>
+        <h2 class="title" style="margin-top: 16px; font-size: 64px;">Quatre étages, des <em>vitesses</em> différentes.</h2>
       </div>
 
       <table class="mem-table">
@@ -2664,22 +1669,22 @@
           <th>Description</th>
         </tr>
         <tr>
-          <td><div class="meta">In-context</div><span class="scope" style="background: var(--berry); color: var(--paper); padding: 4px 10px; border-radius: 4px;">RAM</span></td>
+          <td><div class="meta">In-context</div><span class="scope">RAM</span></td>
           <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Volatile · session</td>
           <td class="desc">Tout ce qui tient dans le context window. Rapide, mais effacé à chaque nouvelle conversation. La mémoire la plus immédiate.</td>
         </tr>
         <tr>
-          <td><div class="meta">External DB</div><span class="scope" style="background: var(--denim); color: var(--paper); padding: 4px 10px; border-radius: 4px;">SSD</span></td>
+          <td><div class="meta">External DB</div><span class="scope">SSD</span></td>
           <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Persistant</td>
           <td class="desc">Vector DB ou SQL. Survit entre les sessions. Récupéré à la demande via RAG ou tool use. Le « disque dur » de l'agent.</td>
         </tr>
         <tr>
-          <td><div class="meta">Épisodique</div><span class="scope" style="background: var(--honey); color: var(--ink); padding: 4px 10px; border-radius: 4px;">Journal</span></td>
+          <td><div class="meta">Épisodique</div><span class="scope">Journal</span></td>
           <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Append-only</td>
           <td class="desc">Logs des actions passées et de leurs résultats. Permet l'apprentissage par l'expérience et le debugging des décisions.</td>
         </tr>
         <tr>
-          <td><div class="meta">Sémantique</div><span class="scope" style="background: var(--matcha); color: var(--paper); padding: 4px 10px; border-radius: 4px;">Poids</span></td>
+          <td><div class="meta">Sémantique</div><span class="scope">Poids</span></td>
           <td class="mono ink2" style="font-size: 22px; vertical-align: top; padding-top: 32px;">Gravé · entraînement</td>
           <td class="desc">Les connaissances dans les poids du modèle. Modifiable uniquement par fine-tuning. La « culture générale » de base.</td>
         </tr>
@@ -2705,7 +1710,7 @@
   <!-- ============================================================
        12. DEMO 1 — RAG
   ============================================================ -->
-  <section data-label="12 Demo RAG" class="ch-demo">
+  <section data-label="12 Demo RAG">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Démo live · 01 / 03</div>
       <div class="folio">12 / 16</div>
@@ -2713,19 +1718,12 @@
     </div>
 
     <div class="body demo-frame">
-      <div style="display:flex; flex-direction:column; gap: 22px; position: relative;">
+      <div style="display:flex; flex-direction:column; gap: 22px;">
         <div class="marker"><span class="seq">Démo nº</span> 01</div>
-        <h2 class="pop-shout" style="font-size: 96px; color: var(--ink);">
-          Chatbot RAG sur <span class="hl hl-berry">vos</span> données.
-        </h2>
+        <h2 class="title">Chatbot RAG sur <em>vos</em> données.</h2>
         <p class="lead">On branche un LLM générique sur un dossier de PDF métier. La même question — deux réponses radicalement différentes.</p>
 
-        <div class="photo duotone-berry" style="height: 200px; margin-top: 10px;">
-          <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=900&q=70" alt="Café posé">
-          <div class="credit">Unsplash</div>
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap: 12px; margin-top: 8px;">
+        <div style="display:flex; flex-direction:column; gap: 12px; margin-top: 16px;">
           <div class="label">Stack</div>
           <div class="mono" style="font-size: 22px; color: var(--ink-2); line-height: 1.5;">
             LangChain · Chroma · OpenAI Embeddings<br>
@@ -2733,7 +1731,7 @@
           </div>
         </div>
 
-        <div style="border-top: 1px solid var(--ink); padding-top: 16px; margin-top: 4px;">
+        <div style="border-top: 1px solid var(--ink); padding-top: 16px; margin-top: 16px;">
           <span class="label" style="display:block; margin-bottom:6px;">→ Question pour la salle</span>
           <span class="serif" style="font-style: italic; font-size: 28px; color: var(--ink);">Sur quels documents vous voudriez ça&nbsp;?</span>
         </div>
@@ -2766,30 +1764,20 @@
   <!-- ============================================================
        13. DEMO 2 — AGENT RESEARCHER
   ============================================================ -->
-  <section data-label="13 Demo Researcher" class="ch-demo">
+  <section data-label="13 Demo Researcher">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Démo live · 02 / 03</div>
       <div class="folio">13 / 16</div>
       <div class="baseline"><div class="left"><span class="mark">IA Coffee</span><span>· Démo live</span></div><div>Agent researcher — ReAct en action</div></div>
     </div>
 
-    <div class="body" style="display:flex; flex-direction:column; gap: 40px;">
-      <div style="display: grid; grid-template-columns: 1fr 320px; gap: 60px; align-items: end;">
-        <div>
-          <div class="marker" style="font-family: var(--mono); font-size: 22px; letter-spacing: 0.3em; color: var(--crema); text-transform: uppercase;">
-            <span style="color: var(--ink-3);">Démo nº</span> 02
-          </div>
-          <h2 class="pop-shout" style="margin-top: 16px; font-size: 88px; color: var(--ink);">
-            Agent researcher —<br><span class="hl hl-berry">ReAct</span> en action.
-          </h2>
-          <p class="lead" style="margin-top: 20px;">Un input simple. L'agent planifie, cherche, browse, filtre, et rend un rapport markdown. Vous voyez chaque étape du raisonnement.</p>
+    <div class="body" style="display:flex; flex-direction:column; gap: 50px;">
+      <div>
+        <div class="marker" style="font-family: var(--mono); font-size: 22px; letter-spacing: 0.3em; color: var(--crema); text-transform: uppercase;">
+          <span style="color: var(--ink-3);">Démo nº</span> 02
         </div>
-        <div class="polaroid" style="transform: rotate(4deg); width: 260px; justify-self: end;">
-          <div class="photo" style="height: 180px; border: 0;">
-            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=70" alt="Code éditeur">
-          </div>
-          <div class="cap">à voix haute.</div>
-        </div>
+        <h2 class="title" style="margin-top: 16px;">Agent researcher — <em>ReAct</em> en action.</h2>
+        <p class="lead" style="margin-top: 24px;">Un input simple. L'agent planifie, cherche, browse, filtre, et rend un rapport markdown. Vous voyez chaque étape du raisonnement.</p>
       </div>
 
       <div class="agent-flow">
@@ -2855,7 +1843,7 @@
   <!-- ============================================================
        14. DEMO 3 — BUILD LIVE
   ============================================================ -->
-  <section data-label="14 Demo Claude Code" class="ch-demo">
+  <section data-label="14 Demo Claude Code">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Démo live · 03 / 03</div>
       <div class="folio">14 / 16</div>
@@ -2863,28 +1851,21 @@
     </div>
 
     <div class="body" style="display:grid; grid-template-columns: 1fr 1.05fr; gap: 80px; height: 100%;">
-      <div style="display:flex; flex-direction:column; gap: 22px;">
+      <div style="display:flex; flex-direction:column; gap: 36px;">
         <div class="marker" style="font-family: var(--mono); font-size: 22px; letter-spacing: 0.3em; color: var(--crema); text-transform: uppercase;">
-          <span style="color: var(--ink-3);">Démo nº</span> 03 · <span style="color:var(--berry); font-weight:600;">LIVE</span>
+          <span style="color: var(--ink-3);">Démo nº</span> 03 · <span style="color:var(--ink);">LIVE</span>
         </div>
-        <h2 class="pop-shout" style="font-size: 88px; color: var(--ink);">
-          Build en live<br>avec <span class="hl">Claude Code</span>.
-        </h2>
+        <h2 class="title">Build en live<br>avec <em>Claude Code</em>.</h2>
 
-        <div class="photo duotone-ink" style="height: 160px;">
-          <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=900&q=70" alt="Code editor">
-          <div class="credit">Unsplash</div>
-        </div>
-
-        <div class="terminal" style="font-size: 17px;">
+        <div class="terminal" style="font-size: 18px;">
           <div><span class="prompt">›</span> claude</div>
           <div>›<span class="com"> Crée un agent Python avec tool use :</span></div>
           <div>›<span class="com"> input sujet → recherche → rapport structuré.</span></div>
-          <div style="margin-top: 8px;"><span class="com"># reading repo… analyzing context…</span></div>
+          <div style="margin-top: 12px;"><span class="com"># reading repo… analyzing context…</span></div>
           <div><span class="com"># proposing : agents/researcher.py + tools.py</span></div>
         </div>
 
-        <p class="txt" style="border-top: 1px solid var(--ink); padding-top: 16px; font-family: var(--serif); font-style: italic; font-size: 24px; color: var(--ink-2);">
+        <p class="txt" style="border-top: 1px solid var(--ink); padding-top: 22px; font-family: var(--serif); font-style: italic; font-size: 30px; color: var(--ink-2);">
           Claude Code lit votre repo, comprend le contexte et agit en autonomie.
         </p>
       </div>
@@ -2917,7 +1898,7 @@
   <!-- ============================================================
        15. GLOSSAIRE
   ============================================================ -->
-  <section data-label="15 Glossaire" class="ch-close">
+  <section data-label="15 Glossaire">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Glossaire</div>
       <div class="folio">15 / 16</div>
@@ -2925,19 +1906,9 @@
     </div>
 
     <div class="body" style="display:flex; flex-direction:column; gap: 36px;">
-      <div style="display: grid; grid-template-columns: 1fr 280px; gap: 60px; align-items: end;">
-        <div>
-          <div class="label">À retenir</div>
-          <h2 class="pop-shout" style="margin-top: 18px; font-size: 110px; color: var(--ink);">
-            Le <span class="hl" style="color: var(--plum);">vocabulaire</span><br>de base.
-          </h2>
-        </div>
-        <div class="polaroid" style="transform: rotate(-4deg); width: 260px; justify-self: end;">
-          <div class="photo" style="height: 180px; border: 0;">
-            <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=70" alt="Latte art">
-          </div>
-          <div class="cap">12 mots, 1 café.</div>
-        </div>
+      <div>
+        <div class="label">À retenir</div>
+        <h2 class="title" style="margin-top: 18px;">Le vocabulaire de base.</h2>
       </div>
 
       <div class="gloss">
@@ -2960,7 +1931,7 @@
   <!-- ============================================================
        16. CLOSE
   ============================================================ -->
-  <section data-label="16 Conclusion" class="ch-close">
+  <section data-label="16 Conclusion">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Ce qu'on retient</div>
       <div class="folio">16 / 16</div>
@@ -2968,30 +1939,22 @@
     </div>
 
     <div class="body" style="display:flex; flex-direction:column; gap: 32px;">
-      <div style="display: grid; grid-template-columns: 1fr 360px; gap: 60px; align-items: end;">
-        <div>
-          <div class="label">L'enchaînement</div>
-          <h2 class="pop-shout" style="margin-top: 16px; font-size: 124px; color: var(--ink);">
-            Cinq mots,<br>une <span class="hl">architecture</span>.
-          </h2>
-        </div>
-        <div class="photo duotone-crema" style="height: 200px;">
-          <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=70" alt="Laptop and coffee">
-          <div class="credit">Unsplash</div>
-        </div>
+      <div>
+        <div class="label">L'enchaînement</div>
+        <h2 class="title" style="margin-top: 16px;">Cinq mots, une <em>architecture</em>.</h2>
       </div>
 
       <div style="width: 100%; padding: 30px 0;">
         <div class="chain">
-          <div class="node"><div class="v" style="color: var(--crema);">LLM</div><div class="l">prédit</div></div>
+          <div class="node"><div class="v">LLM</div><div class="l">prédit</div></div>
           <span class="sep">→</span>
-          <div class="node"><div class="v" style="color: var(--matcha);">RAG</div><div class="l">ancre</div></div>
+          <div class="node"><div class="v">RAG</div><div class="l">ancre</div></div>
           <span class="sep">→</span>
-          <div class="node"><div class="v" style="color: var(--honey);">Tools</div><div class="l">agit</div></div>
+          <div class="node"><div class="v">Tools</div><div class="l">agit</div></div>
           <span class="sep">→</span>
-          <div class="node"><div class="v" style="color: var(--berry);">Agent</div><div class="l">orchestre</div></div>
+          <div class="node"><div class="v">Agent</div><div class="l">orchestre</div></div>
           <span class="sep">→</span>
-          <div class="node"><div class="v" style="color: var(--denim);">MCP</div><div class="l">connecte</div></div>
+          <div class="node"><div class="v" style="color: var(--crema);">MCP</div><div class="l">connecte</div></div>
         </div>
       </div>
 

@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>IA Coffee · Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="../deck-stage.js"></script>
+<style>
+  :root {
+    /* ── Restrained palette (OKLCH) : neutres tiédis + un seul accent ── */
+    --paper:    oklch(0.945 0.018 86);   /* crème, canvas        */
+    --paper-2:  oklch(0.905 0.022 84);   /* inset léger          */
+    --paper-3:  oklch(0.975 0.010 88);   /* surface relevée      */
+    --ink:      oklch(0.255 0.018 60);   /* near-black tiède     */
+    --ink-2:    oklch(0.430 0.022 58);   /* texte secondaire     */
+    --ink-3:    oklch(0.610 0.020 62);   /* labels / muted       */
+    --rule:     oklch(0.860 0.018 82);   /* hairline             */
+    --rule-2:   oklch(0.780 0.022 78);   /* hairline appuyée     */
+    --espresso: oklch(0.250 0.028 55);   /* fond sombre / focal  */
+
+    /* l'accent unique — crema espresso, rust-orange */
+    --accent:      oklch(0.620 0.158 47);
+    --accent-soft: oklch(0.760 0.110 55);
+    /* sur fond sombre */
+    --paper-on-ink: oklch(0.930 0.020 88);
+    --muted-on-ink: oklch(0.700 0.020 80);
+
+    /* échelle typo (canvas 1920×1080) — dramatique, contraste fort */
+    --t-mega:    300px;   /* chiffre géant       */
+    --t-display: 224px;   /* cover               */
+    --t-title:   108px;   /* titre de slide      */
+    --t-h2:      64px;
+    --t-lead:    46px;
+    --t-body:    30px;
+    --t-small:   23px;
+    --t-micro:   18px;
+
+    --pad-x: 132px;
+
+    --serif: "Instrument Serif", "Times New Roman", serif;
+    --sans:  "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono:  "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+  }
+
+  html, body { margin: 0; padding: 0; background: oklch(0.18 0.012 60); color: var(--ink); font-family: var(--sans); }
+  * { box-sizing: border-box; }
+
+  deck-stage section {
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+    position: relative;
+  }
+  /* slide sombre — beat de contraste (réutilisable via class="ink") */
+  deck-stage section.ink { background: var(--espresso); color: var(--paper-on-ink); }
+
+  /* ── chrome partagé ────────────────────────────────────────── */
+  .chrome { position: absolute; inset: 0; pointer-events: none; }
+  .chrome .kicker {
+    position: absolute; top: 52px; left: var(--pad-x);
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .chrome .kicker .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .chrome .folio {
+    position: absolute; top: 52px; right: var(--pad-x);
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.18em; color: var(--ink-3);
+  }
+  .chrome .baseline {
+    position: absolute; bottom: 52px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.14em; color: var(--ink-3);
+  }
+  .chrome .baseline .mark {
+    font-family: var(--serif); font-style: italic; font-size: 24px;
+    letter-spacing: 0; color: var(--ink); text-transform: none;
+  }
+  /* chrome sur fond sombre */
+  section.ink .chrome .kicker,
+  section.ink .chrome .folio,
+  section.ink .chrome .baseline { color: var(--muted-on-ink); }
+  section.ink .chrome .baseline .mark { color: var(--paper-on-ink); }
+
+  .body { position: absolute; inset: 132px var(--pad-x) 120px var(--pad-x); }
+
+  /* ── primitives typo ──────────────────────────────────────── */
+  .label {
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3);
+  }
+  section.ink .label { color: var(--muted-on-ink); }
+  h1.display, h2.title {
+    font-family: var(--serif); font-weight: 400; margin: 0;
+    letter-spacing: -0.025em; line-height: 0.98;
+  }
+  h2.title { font-size: var(--t-title); }
+  em { font-style: italic; color: var(--accent); }
+  /* geste signature : trait rust sous le mot-clé en italique d'un titre */
+  .stroke { position: relative; font-style: italic; color: var(--accent); }
+  .stroke::after {
+    content: ""; position: absolute; left: 0.02em; right: 0.02em; bottom: 0.12em;
+    height: 0.06em; background: var(--accent); opacity: 0.32; border-radius: 2px;
+  }
+  p.lead {
+    font-family: var(--serif); font-size: var(--t-lead); line-height: 1.26;
+    color: var(--ink-2); margin: 0; max-width: 24ch;
+  }
+  section.ink p.lead { color: var(--paper-on-ink); }
+  p.txt {
+    font-family: var(--sans); font-weight: 300; font-size: var(--t-body);
+    line-height: 1.5; color: var(--ink-2); margin: 0; max-width: 34ch;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  /* ============================================================
+     1 · COVER
+  ============================================================ */
+  .cover {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: 64px;
+    padding: 104px var(--pad-x);
+  }
+  .cover .topbar {
+    position: absolute; top: 52px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .cover .topbar .brand {
+    display: flex; align-items: center; gap: 16px;
+    font-family: var(--serif); font-style: italic; font-size: 30px;
+    letter-spacing: 0; text-transform: none; color: var(--ink);
+  }
+  .seal {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    display: grid; place-items: center;
+    font-family: var(--mono); font-style: normal; font-size: 15px;
+  }
+  .cover .left { display: flex; flex-direction: column; gap: 40px; }
+  .cover .episode { font-family: var(--mono); font-size: 24px; letter-spacing: 0.32em; color: var(--ink-3); }
+  .cover h1 { font-family: var(--serif); font-weight: 400; font-size: var(--t-display); line-height: 0.86; letter-spacing: -0.045em; margin: 0; }
+  .cover .meta {
+    display: flex; gap: 28px; align-items: center;
+    font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--ink-2);
+  }
+  .cover .meta .pip { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); }
+
+  /* disque espresso simplifié — un seul geste, plus présent */
+  .cover .right { display: grid; place-items: center; }
+  .espresso-disc {
+    position: relative; width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle at 36% 30%, oklch(0.42 0.07 50) 0%, var(--espresso) 56%, oklch(0.17 0.02 55) 100%);
+    box-shadow: 0 36px 90px -34px oklch(0.25 0.03 55 / 0.55);
+  }
+  .espresso-disc::before {
+    content: ""; position: absolute; inset: -38px;
+    border: 1px solid var(--rule-2); border-radius: 50%;
+  }
+  .espresso-disc .crema {
+    position: absolute; width: 132px; height: 132px; border-radius: 50%;
+    top: 100px; right: 116px;
+    background: radial-gradient(circle at 40% 38%, var(--accent-soft) 0%, var(--accent) 72%);
+    opacity: 0.92;
+  }
+  .espresso-disc .steam {
+    position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.4em; color: var(--paper); opacity: 0.5;
+  }
+
+  .cover .topics {
+    grid-column: 1 / -1; align-self: end;
+    display: flex; gap: 12px; flex-wrap: wrap;
+    border-top: 1px solid var(--rule); padding-top: 28px;
+  }
+  .chip {
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.04em;
+    color: var(--ink-2); border: 1px solid var(--rule-2);
+    padding: 9px 18px; border-radius: 999px;
+  }
+  .chip.lead-chip { color: var(--paper); background: var(--accent); border-color: var(--accent); }
+
+  /* ============================================================
+     2 · SOMMAIRE
+  ============================================================ */
+  .toc { display: grid; grid-template-columns: 1fr 1.25fr; gap: 96px; height: 100%; align-items: center; }
+  .toc .intro { display: flex; flex-direction: column; gap: 32px; }
+  .toc .list { display: flex; flex-direction: column; }
+  .toc .row {
+    display: grid; grid-template-columns: 72px 1fr auto; gap: 32px;
+    align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--rule);
+  }
+  .toc .row:first-child { border-top: 1px solid var(--rule); }
+  .toc .row .n { font-family: var(--mono); font-size: 20px; color: var(--ink-3); letter-spacing: 0.08em; }
+  .toc .row .name { font-family: var(--serif); font-size: 52px; line-height: 1; letter-spacing: -0.015em; }
+  .toc .row .sub { display: block; font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.05em; margin-top: 8px; }
+  .toc .row .dur { font-family: var(--mono); font-size: 18px; letter-spacing: 0.1em; color: var(--accent); }
+
+  /* ============================================================
+     3 · DÉFINITION (un concept)
+  ============================================================ */
+  .define { display: grid; grid-template-rows: auto 1fr; gap: 60px; height: 100%; }
+  .define .head { display: flex; flex-direction: column; gap: 24px; }
+  .define .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 72px; align-items: start; align-content: center; }
+  .define .point { display: flex; flex-direction: column; gap: 16px; }
+  .define .point .n { font-family: var(--mono); font-size: 17px; letter-spacing: 0.18em; color: var(--accent); }
+  .define .point h3 { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; letter-spacing: -0.01em; }
+  .define .point p { font-family: var(--sans); font-weight: 300; font-size: 24px; line-height: 1.5; color: var(--ink-2); margin: 0; }
+
+  /* ============================================================
+     4 · CHIFFRE / IMPACT  (slide sombre, drenched)
+  ============================================================ */
+  .stat { height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+  .stat .top { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted-on-ink); }
+  .stat .big {
+    font-family: var(--serif); font-weight: 400; font-size: var(--t-mega);
+    line-height: 0.84; letter-spacing: -0.04em; color: var(--paper-on-ink);
+  }
+  .stat .big em { color: var(--accent); font-style: italic; }
+  .stat .big .unit { font-size: 0.32em; color: var(--accent); letter-spacing: 0; }
+  .stat .ctx {
+    font-family: var(--serif); font-size: var(--t-lead); line-height: 1.24;
+    color: var(--paper-on-ink); max-width: 26ch; margin-top: 32px;
+  }
+  .stat .foot { display: flex; gap: 40px; font-family: var(--mono); font-size: var(--t-small); color: var(--muted-on-ink); letter-spacing: 0.04em; }
+  .stat .foot b { color: var(--accent-soft); font-weight: 500; }
+
+  /* ============================================================
+     5 · SCHÉMA SIMPLE (3–4 étapes)
+  ============================================================ */
+  .flow-wrap { display: grid; grid-template-rows: auto 1fr; gap: 64px; height: 100%; }
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; }
+  .flow .step { padding-right: 44px; display: flex; flex-direction: column; gap: 18px; }
+  .flow .step + .step { padding-left: 44px; border-left: 1px solid var(--rule); }
+  .flow .step .n { font-family: var(--mono); font-size: 16px; letter-spacing: 0.2em; color: var(--ink-3); }
+  .flow .step h3 { font-family: var(--serif); font-weight: 400; font-size: 50px; line-height: 1; margin: 0; letter-spacing: -0.01em; }
+  .flow .step h3 .arrow { color: var(--accent); }
+  .flow .step p { font-family: var(--sans); font-weight: 300; font-size: 22px; line-height: 1.45; color: var(--ink-2); margin: 0; }
+
+  /* ============================================================
+     6 · COMPARAISON (avant / après)
+  ============================================================ */
+  .compare-wrap { display: grid; grid-template-rows: auto 1fr; gap: 56px; height: 100%; }
+  .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 40px; align-items: stretch; }
+  .compare .side { display: flex; flex-direction: column; gap: 22px; padding-top: 28px; border-top: 2px solid var(--rule-2); }
+  .compare .side .tag { font-family: var(--mono); font-size: 17px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .compare .side .head { font-family: var(--serif); font-size: 56px; line-height: 1; letter-spacing: -0.015em; }
+  .compare .side ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .compare .side li { font-family: var(--sans); font-weight: 300; font-size: 25px; line-height: 1.4; color: var(--ink-2); }
+  /* avant : atténué.  après : accentué. (asymétrie volontaire, pas deux cartes identiques) */
+  .compare .side.before { opacity: 0.62; }
+  .compare .side.after { border-top-color: var(--accent); }
+  .compare .side.after .head { color: var(--ink); }
+  .compare .side.after .tag { color: var(--accent); }
+  .compare .side.after li b { color: var(--accent); font-weight: 500; }
+  .compare .arrow { align-self: center; font-family: var(--serif); font-style: italic; font-size: 72px; color: var(--accent); }
+
+  /* ============================================================
+     7 · DÉMO
+  ============================================================ */
+  .demo { display: grid; grid-template-columns: 1fr 1.1fr; gap: 88px; height: 100%; align-items: center; }
+  .demo .frame { display: flex; flex-direction: column; gap: 32px; }
+  .demo .marker { font-family: var(--mono); font-size: 22px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); }
+  .demo .marker .seq { color: var(--ink-3); }
+  .demo .build { display: flex; flex-direction: column; gap: 14px; }
+  .demo .build .row { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: baseline; font-family: var(--sans); font-weight: 300; font-size: 26px; color: var(--ink-2); }
+  .demo .build .row .b { font-family: var(--mono); font-size: 17px; color: var(--accent); letter-spacing: 0.1em; }
+  .terminal {
+    background: var(--espresso); color: var(--paper-on-ink);
+    border-radius: 10px; padding: 36px 40px;
+    font-family: var(--mono); font-size: 22px; line-height: 1.7;
+    box-shadow: 0 30px 70px -34px oklch(0.25 0.03 55 / 0.55);
+  }
+  .terminal .p { color: var(--accent-soft); }
+  .terminal .c { color: oklch(0.72 0.05 150); }
+  .terminal .dim { color: var(--muted-on-ink); }
+
+  /* ============================================================
+     8 · GLOSSAIRE / TERMES
+  ============================================================ */
+  .gloss-wrap { display: grid; grid-template-rows: auto 1fr; gap: 56px; height: 100%; }
+  .gloss { display: grid; grid-template-columns: 1fr 1fr; gap: 0 80px; align-content: center; }
+  .gloss .term {
+    display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: baseline;
+    padding: 24px 0; border-bottom: 1px solid var(--rule);
+  }
+  .gloss .term .name { font-family: var(--serif); font-size: 40px; line-height: 1; letter-spacing: -0.01em; white-space: nowrap; }
+  .gloss .term .def { font-family: var(--sans); font-weight: 300; font-size: 21px; line-height: 1.4; color: var(--ink-2); }
+
+  /* ============================================================
+     9 · CLÔTURE / RESSOURCES
+  ============================================================ */
+  .close { display: grid; grid-template-rows: auto auto auto; align-content: center; gap: 60px; height: 100%; }
+  .close .recap { font-family: var(--serif); font-size: 64px; line-height: 1.08; letter-spacing: -0.015em; color: var(--ink); }
+  .close .recap .sep { color: var(--accent); font-family: var(--mono); font-size: 36px; margin: 0 14px; vertical-align: middle; }
+  .close .grid { display: grid; grid-template-columns: 1.2fr 0.9fr auto; gap: 64px; align-items: end; }
+  .close .res { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px; }
+  .close .res .item { display: flex; flex-direction: column; gap: 6px; }
+  .close .res .src { font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+  .close .res .url { font-family: var(--mono); font-size: 22px; color: var(--ink); }
+  .close .next {
+    background: var(--espresso); color: var(--paper-on-ink); border-radius: 10px;
+    padding: 36px 44px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .close .next .ep { font-family: var(--mono); font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-soft); }
+  .close .next .t { font-family: var(--serif); font-style: italic; font-size: 48px; line-height: 1; }
+  .close .next .cta { font-family: var(--sans); font-weight: 300; font-size: 19px; color: var(--paper-on-ink); opacity: 0.68; }
+  /* QR « offrez-nous un café » : artefact fonctionnel, exempté de la règle accent unique */
+  .close .support { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .close .support img { width: 210px; height: 210px; border-radius: 14px; display: block; }
+  .close .support .cap { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ============================================================
+       1 · COVER  —  ouverture de l'épisode
+  ============================================================ -->
+  <section data-label="01 Cover">
+    <div class="cover">
+      <div class="topbar">
+        <div class="brand"><span class="seal">IA</span> IA Coffee</div>
+        <div>Épisode 01 · 1h30 · Saison 2026</div>
+      </div>
+
+      <div class="left">
+        <div class="episode">— ÉPISODE Nº 01 —</div>
+        <h1>Agentic<br><span class="stroke">AI.</span></h1>
+        <div class="meta">
+          <span>1h30</span><span class="pip"></span>
+          <span>3 démos live</span><span class="pip"></span>
+          <span>Q&amp;R ouverte</span>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="espresso-disc">
+          <span class="steam">~~~</span>
+          <div class="crema"></div>
+        </div>
+      </div>
+
+      <div class="topics">
+        <span class="chip lead-chip">LLM</span>
+        <span class="chip">RAG</span>
+        <span class="chip">Agent</span>
+        <span class="chip">Tool use</span>
+        <span class="chip">MCP</span>
+        <span class="chip">Multi-agent</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2 · SOMMAIRE  —  le programme
+  ============================================================ -->
+  <section data-label="02 Sommaire">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme</div>
+      <div class="folio">02 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 01 · Agentic AI</span></div>
+    </div>
+
+    <div class="body toc">
+      <div class="intro">
+        <div class="label">Ce soir</div>
+        <h2 class="title">Quatre temps,<br>une <span class="stroke">conversation</span>.</h2>
+        <p class="txt">Du token au multi-agent : on pose le vocabulaire et l'intuition, puis on code en live.</p>
+      </div>
+
+      <div class="list">
+        <div class="row">
+          <span class="n">01</span>
+          <div><span class="name">Les fondations</span><span class="sub">LLM · Token · Contexte · Température</span></div>
+          <span class="dur">20 min</span>
+        </div>
+        <div class="row">
+          <span class="n">02</span>
+          <div><span class="name">Les agents</span><span class="sub">RAG · Tools · Planning · ReAct</span></div>
+          <span class="dur">25 min</span>
+        </div>
+        <div class="row">
+          <span class="n">03</span>
+          <div><span class="name">Démos live</span><span class="sub">RAG chatbot · Researcher · Claude Code</span></div>
+          <span class="dur">25 min</span>
+        </div>
+        <div class="row">
+          <span class="n">04</span>
+          <div><span class="name">Q&amp;R</span><span class="sub">Questions ouvertes · Ressources</span></div>
+          <span class="dur">10 min</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3 · DÉFINITION  —  un concept = une slide
+  ============================================================ -->
+  <section data-label="03 Définition">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Fondations · 01</div>
+      <div class="folio">03 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>LLM — Large Language Model</span></div>
+    </div>
+
+    <div class="body define">
+      <div class="head">
+        <div class="label">Large Language Model</div>
+        <h2 class="title">Il ne <em>comprend</em> pas —<br>il <span class="stroke">complète</span>.</h2>
+        <p class="lead" style="max-width:38ch;">Entraîné sur des centaines de milliards de mots pour prédire le token suivant. Toute la puissance vient de l'échelle.</p>
+      </div>
+
+      <div class="points">
+        <div class="point">
+          <span class="n">01</span>
+          <h3>Paramètres</h3>
+          <p>Les poids ajustés à l'entraînement. <span class="mono accent">7B → 1 000B+</span>. Plus de poids, plus de capacité, plus de coût.</p>
+        </div>
+        <div class="point">
+          <span class="n">02</span>
+          <h3>Inférence</h3>
+          <p>La phase de production : le modèle génère <span class="mono">token par token</span>, en streaming.</p>
+        </div>
+        <div class="point">
+          <span class="n">03</span>
+          <h3>Hallucination</h3>
+          <p>Du texte plausible mais faux. <span class="accent">Toujours sourcer</span> et vérifier les faits.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4 · CHIFFRE / IMPACT  —  slide sombre, le coup de poing chiffré
+  ============================================================ -->
+  <section data-label="04 Impact" class="ink">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> L'impact mesuré</div>
+      <div class="folio">04 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Automatiser les comptes-rendus RH</span></div>
+    </div>
+
+    <div class="body stat">
+      <div class="top">Cas métier · ressources humaines</div>
+      <div class="mid">
+        <div class="big">&minus;3<span class="unit">h / semaine</span></div>
+        <div class="ctx">de rédaction de comptes-rendus, repris par un agent. <em>Déployable dès le lendemain.</em></div>
+      </div>
+      <div class="foot">
+        <span>Avant : <b>4 h</b> / semaine</span>
+        <span>Après : <b>1 h</b> de relecture</span>
+        <span>Mise en place : <b>2 jours</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5 · SCHÉMA SIMPLE  —  un flux 3–4 étapes
+  ============================================================ -->
+  <section data-label="05 Schéma">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Les agents · 02</div>
+      <div class="folio">05 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>RAG — Retrieval-Augmented Generation</span></div>
+    </div>
+
+    <div class="body flow-wrap">
+      <div class="head" style="display:flex; flex-direction:column; gap:24px;">
+        <div class="label">Le pipeline RAG</div>
+        <h2 class="title">Du <span class="stroke">document</span> à la réponse, en 4 temps.</h2>
+      </div>
+
+      <div class="flow">
+        <div class="step">
+          <span class="n">01</span>
+          <h3>Chunk</h3>
+          <p>On découpe les documents en passages courts et cohérents.</p>
+        </div>
+        <div class="step">
+          <span class="n">02</span>
+          <h3><span class="arrow">→</span> Embed</h3>
+          <p>Chaque passage devient un vecteur, stocké dans une base.</p>
+        </div>
+        <div class="step">
+          <span class="n">03</span>
+          <h3><span class="arrow">→</span> Retrieve</h3>
+          <p>À la question, on récupère les passages les plus proches.</p>
+        </div>
+        <div class="step">
+          <span class="n">04</span>
+          <h3><span class="arrow">→</span> Generate</h3>
+          <p>Le LLM répond, ancré sur les passages retrouvés.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6 · COMPARAISON  —  avant / après (sans IA / avec IA)
+  ============================================================ -->
+  <section data-label="06 Comparaison">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Avant · après</div>
+      <div class="folio">06 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Le décalage promesse / réalité</span></div>
+    </div>
+
+    <div class="body compare-wrap">
+      <div class="head" style="display:flex; flex-direction:column; gap:24px;">
+        <div class="label">Recherche documentaire</div>
+        <h2 class="title">Ce que ça change, <span class="stroke">concrètement</span>.</h2>
+      </div>
+
+      <div class="compare">
+        <div class="side before">
+          <span class="tag">Sans IA</span>
+          <div class="head">Le manuel</div>
+          <ul>
+            <li>Fouiller 200 pages de CGV à la main</li>
+            <li>20 min par question client</li>
+            <li>Réponse incertaine, non sourcée</li>
+          </ul>
+        </div>
+        <div class="arrow">→</div>
+        <div class="side after">
+          <span class="tag">Avec IA</span>
+          <div class="head">L'agent RAG</div>
+          <ul>
+            <li><b>3 secondes</b> pour la même réponse</li>
+            <li>Citation exacte : page et paragraphe</li>
+            <li>Vérifiable, donc opposable</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7 · DÉMO  —  cadrage + un seul terminal focal
+  ============================================================ -->
+  <section data-label="07 Démo">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Démos live · 03</div>
+      <div class="folio">07 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Démo — RAG chatbot</span></div>
+    </div>
+
+    <div class="body demo">
+      <div class="frame">
+        <div class="marker"><span class="seq">Nº 01</span> · Démo live</div>
+        <h2 class="title">Un chatbot qui <span class="stroke">cite</span> ses sources.</h2>
+        <div class="build">
+          <div class="row"><span class="b">→</span><span>Indexer un dossier de PDF métier</span></div>
+          <div class="row"><span class="b">→</span><span>Brancher la recherche vectorielle</span></div>
+          <div class="row"><span class="b">→</span><span>Répondre avec citations vérifiables</span></div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div><span class="p">›</span> ai-coffee rag index ./docs <span class="c"># 142 chunks</span></div>
+        <div><span class="p">›</span> ai-coffee chat <span class="dim">"délai de rétractation ?"</span></div>
+        <div>&nbsp;</div>
+        <div class="dim">↳ 14 jours à compter de la livraison.</div>
+        <div class="c">  source: cgv.pdf · p.3 §2</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8 · GLOSSAIRE  —  les termes clés de l'épisode
+  ============================================================ -->
+  <section data-label="08 Glossaire">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Glossaire</div>
+      <div class="folio">08 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Les mots de ce soir</span></div>
+    </div>
+
+    <div class="body gloss-wrap">
+      <div class="head" style="display:flex; flex-direction:column; gap:24px;">
+        <div class="label">À retenir</div>
+        <h2 class="title">Six mots, <span class="stroke">un</span> vocabulaire.</h2>
+      </div>
+
+      <div class="gloss">
+        <div class="term"><span class="name">Token</span><span class="def">L'unité de texte que le modèle lit et génère, un fragment de mot.</span></div>
+        <div class="term"><span class="name">Contexte</span><span class="def">Tout ce que le modèle « voit » à un instant : la mémoire de travail.</span></div>
+        <div class="term"><span class="name">RAG</span><span class="def">Augmenter le modèle avec tes documents, récupérés à la volée.</span></div>
+        <div class="term"><span class="name">Agent</span><span class="def">Un LLM qui agit en boucle : décide, utilise un outil, observe.</span></div>
+        <div class="term"><span class="name">Tool</span><span class="def">Une capacité branchée à l'agent : fonction, API, recherche.</span></div>
+        <div class="term"><span class="name">MCP</span><span class="def">Le protocole qui relie un agent à ses outils, de façon standard.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9 · CLÔTURE / RESSOURCES
+  ============================================================ -->
+  <section data-label="09 Clôture">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Pour aller plus loin</div>
+      <div class="folio">09 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Merci · à le mois prochain</span></div>
+    </div>
+
+    <div class="body close">
+      <div class="label">Ce qu'on retient</div>
+      <div class="recap">
+        Token <span class="sep">·</span> LLM <span class="sep">·</span> RAG <span class="sep">·</span> Agent <span class="sep">·</span> <em>Multi-agent</em>
+      </div>
+
+      <div class="grid">
+        <div class="res">
+          <div class="item"><span class="src">Replay &amp; slides</span><span class="url">luma.com/ai-coffee</span></div>
+          <div class="item"><span class="src">Code des démos</span><span class="url">github.com/ai-coffee</span></div>
+          <div class="item"><span class="src">Glossaire</span><span class="url">notion.so/ai-coffee</span></div>
+          <div class="item"><span class="src">Feedback 3 questions</span><span class="url">tally.so/ai-coffee</span></div>
+        </div>
+
+        <div class="next">
+          <span class="ep">Prochain épisode · Nº 02</span>
+          <span class="t">L'IA qui parle.</span>
+          <span class="cta">Assistants vocaux, interview live · 23 juin</span>
+        </div>
+
+        <div class="support">
+          <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee — soutenir IA Coffee">
+          <span class="cap">Offrez-nous un café</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>
