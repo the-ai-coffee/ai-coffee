@@ -1,7 +1,7 @@
 # ☕ IA Coffee — Guide de génération des decks
 
-> **Objectif** : produire le deck d'un épisode à partir de son `sessions/NN.md`, de façon **déterministe et cohérente**, en réutilisant les archétypes de `IA Coffee — Template Light.html`.
-> **Prérequis** : le contenu de l'épisode existe dans `sessions/NN.md` (résumé + une section par talk). Le composant `deck-stage.js` est partagé, ne pas le modifier.
+> **Objectif** : produire le deck d'un épisode à partir de son `sessions/NN.md`, de façon **déterministe et cohérente**, en réutilisant les archétypes de `decks/_template/template.html`.
+> **Prérequis** : le contenu de l'épisode existe dans `sessions/NN.md` (résumé + une section par talk). Le composant `decks/deck-stage.js` est partagé, ne pas le modifier.
 
 ------
 
@@ -75,10 +75,11 @@ Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les cla
 
 1. Lire `sessions/NN.md`, lister les blocs dans l'ordre.
 2. Mapper chaque bloc à un archétype (table ci-dessus).
-3. Copier `IA Coffee — Template Light.html` → `IA Coffee NN — <Thème>.html`.
+3. Créer le dossier de l'épisode `decks/NN-theme/` et copier `decks/_template/template.html` → `decks/NN-theme/deck.html` (le chemin `../deck-stage.js` reste valide à ce niveau).
 4. Pour chaque slide : garder la `<section>` de l'archétype voulu, remplacer le contenu, mettre à jour `data-label`, le `.folio` (`NN / total`) et la `.baseline`.
 5. Supprimer les `<section>` d'archétypes non utilisés ; dupliquer celles répétées.
 6. Vérifier au navigateur (via `deck-stage`) : aucun débordement, le folio compte juste, **une seule** slide `ink` (l'Impact).
+7. Artefacts de l'épisode (screenshots, `export.pdf`, anciennes versions dans `archive/`) restent dans `decks/NN-theme/`.
 
 ------
 
@@ -92,5 +93,5 @@ Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les cla
 - [ ] Export PDF OK (Print → Save as PDF via `deck-stage`).
 
 > **Document créé le** : 2026-06-19
-> **Couvre** : `IA Coffee — Template Light.html` (9 archétypes)
+> **Couvre** : `decks/_template/template.html` (9 archétypes)
 > **Voir aussi** : `CLAUDE.md` (flux `sessions/NN.md` → deck), `CONTEXT.md` (glossaire projet)

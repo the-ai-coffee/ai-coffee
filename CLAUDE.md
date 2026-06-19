@@ -13,10 +13,11 @@ Content and slide-deck source for **AI Coffee**, a monthly French-language meetu
 - `CONTEXT.md` — glossary of project-specific terms (e.g. `Session`, `Cohort cap`, `Prompt Bar`, `Use Case Catalog`) maintained alongside `project-vision.md`. Defines what each term means and which competing terms to avoid. Consult it before using ambiguous terminology, and keep it in sync when a term's meaning changes.
 - `product-presentation.md` — long-form product presentation, published to Notion (see below).
 - `sessions/NN.md` — content source per episode (summary + per-talk notes), used to generate that episode's slide deck. Written in finished, narrative form as soon as content is planned — which may be *before* the session actually happens, so past tense doesn't imply the session occurred. `02.md` shows the expected structure (Summary, then a `### N. Talk title` section per presentation with a blockquote tagline and bolded sub-sections).
-- `ai coffee (Template)/` — self-contained HTML slide decks (one file per version: `.html`, `v2.html`, `v3.html`, plus a `- standalone.html` export) built on the shared `deck-stage.js` web component.
-- `ai coffee (Template)/deck-stage.js` — the `<deck-stage>` custom element used by every deck in this repo. It is the one piece of real code here; treat it as a shared library, not per-deck boilerplate.
-- `ai coffee (Template)/screenshots/`, `uploads/` — exported slide images and a PDF export of the deck; mostly build artifacts, not sources of truth.
-- `media/` — logo/cover images used in presentations.
+- `decks/` — all slide decks, organized as **shared system + one folder per episode**:
+  - `decks/deck-stage.js` — the `<deck-stage>` custom element used by every deck in this repo. It is the one piece of real code here; treat it as a shared library, not per-deck boilerplate. Decks reference it relatively (`../deck-stage.js`, or `../../deck-stage.js` from an `archive/`).
+  - `decks/_template/` — the generation system, stable across episodes: `template.html` (the light template, 9 archetypes) and `TEMPLATE-GUIDE.md` (the deterministic `sessions/NN.md` → deck contract). Underscore-prefixed so it sorts first and reads as "not an episode."
+  - `decks/NN-theme/` — one folder per episode (e.g. `01-agentic-ai/`, `02-hermes-ai/`). Contains `deck.html` (the current deck), optionally `archive/` (older versions like `v1.html`, `v2.html`, `standalone.html`), `export.pdf`, and `screenshots/`. Generating a session means creating one such folder by copying `_template/template.html`.
+- `media/` — logo/cover images used in presentations (shared across episodes).
 - `notion-publish.sh` — publishes a Markdown file to Notion.
 
 ## `deck-stage.js` — the slide deck component
@@ -28,10 +29,10 @@ Each deck HTML file declares slides as plain `<section>` children of a single `<
 - **Printing → PDF.** `@media print` re-lays slides into normal document flow at one page per slide; `_syncPrintPageRule()` injects the matching `@page` size into `<head>` (a no-op inside shadow DOM otherwise). Browser's Print → Save as PDF then "just works."
 - **Thumbnail rail.** A left-hand column of lazily-materialized slide clones; supports drag-to-reorder, skip, and delete via a right-click context menu. Mutations dispatch a `deckchange` CustomEvent; navigation dispatches `slidechange`. The rail is suppressed in presenting mode, the host's Preview mode, `noscale`, or via the `no-rail` attribute.
 - **Host integration via `postMessage`.** The component listens for messages like `__omelette_presenting`, `__omelette_preview_mode`, `__deck_rail_visible`, and `__omelette_rail_enabled` from a parent window (an external editor/presenter app), and broadcasts `slideIndexChanged` back out. Slide content can listen for the in-page `slidechange` CustomEvent instead of postMessage.
-- **Per-deck "Tweaks" panel.** Decks (e.g. the v3 HTML file) embed their own small live-tweak panel (cover variation, background palette) that posts `__edit_mode_*` messages to the parent and re-applies via `data-cover`/`data-bg` attributes on `<html>`. This is deck-specific script in the HTML file, separate from `deck-stage.js`.
+- **Per-deck "Tweaks" panel.** Some decks (e.g. `decks/01-agentic-ai/deck.html`) embed their own small live-tweak panel (cover variation, background palette) that posts `__edit_mode_*` messages to the parent and re-applies via `data-cover`/`data-bg` attributes on `<html>`. This is deck-specific script in the HTML file, separate from `deck-stage.js`.
 - Author CSS for slides is snapshotted and rewritten (`:root` → `:host`, `html` → `:host(...)`) so it also applies inside each thumbnail's nested shadow root — keep this in mind if a deck's stylesheet relies on document-level selectors not covered by that rewrite.
 
-When editing a deck, prefer copying patterns from the existing versions (`v2`, `v3`) rather than starting from the standalone export, which is a flattened/simplified snapshot.
+When generating a new episode deck, start from `decks/_template/template.html` and follow `decks/_template/TEMPLATE-GUIDE.md`. When editing an existing deck's `deck-stage.js` integration, prefer copying patterns from a current `deck.html` rather than from an `archive/standalone.html`, which is a flattened/simplified snapshot.
 
 ## Publishing to Notion
 
