@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorer interactif des use cases IA</title>
+
+<h2 class="sr-only">Explorer interactif des use cases IA — de simple à complexe, par secteur</h2>
+
+<style>
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --color-background-primary: #FFFFFF;
+  --color-background-secondary: #F4F2EC;
+
+  --color-text-primary: #2C2C2A;
+  --color-text-secondary: #6F6E68;
+  --color-text-danger: #993C1D;
+
+  --color-border-primary: #B7B4AA;
+  --color-border-secondary: #D8D5CB;
+  --color-border-tertiary: #E7E4DB;
+
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: #FAF9F5; }
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background: #FAF9F5;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.4;
+}
+.wrap { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; padding-top: 1rem; }
+.filter-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.filter-label { font-size: 12px; color: var(--color-text-secondary); font-weight: 500; margin-right: 2px; }
+.pill { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; user-select: none; }
+.pill:hover { background: var(--color-background-secondary); }
+.pill.active { background: #2C2C2A; color: #F1EFE8; border-color: #2C2C2A; }
+.pill.active.c-teal { background: #0F6E56; color: #E1F5EE; border-color: #0F6E56; }
+.pill.active.c-amber { background: #854F0B; color: #FAEEDA; border-color: #854F0B; }
+.pill.active.c-coral { background: #993C1D; color: #FAECE7; border-color: #993C1D; }
+.pill.active.c-purple { background: #534AB7; color: #EEEDFE; border-color: #534AB7; }
+.pill.active.c-blue { background: #185FA5; color: #E6F1FB; border-color: #185FA5; }
+
+.stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+.stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; }
+.stat-n { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.stat-l { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; align-items: start; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; position: relative; overflow: hidden; box-shadow: 0 1px 2px rgba(44,44,42,0.04); }
+.card:hover { border-color: var(--color-border-primary); box-shadow: 0 2px 8px rgba(44,44,42,0.08); }
+.card.expanded { border-color: var(--color-border-secondary); }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.card-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+.badge-sector { background: #E6F1FB; color: #185FA5; }
+.badge-level-1 { background: #EAF3DE; color: #3B6D11; }
+.badge-level-2 { background: #FAEEDA; color: #854F0B; }
+.badge-level-3 { background: #FAECE7; color: #993C1D; }
+.badge-type { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+.card-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.card-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+.card-roi { margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; gap: 8px; }
+.roi-val { font-size: 18px; font-weight: 500; color: #3B6D11; }
+.roi-label { font-size: 12px; color: var(--color-text-secondary); }
+.expand-btn { font-size: 11px; color: var(--color-text-secondary); background: var(--color-background-secondary); border: none; border-radius: var(--border-radius-md); padding: 4px 10px; cursor: pointer; white-space: nowrap; margin-left: auto; }
+
+.detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 0.5px solid var(--color-border-tertiary); }
+.detail.open { display: block; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.detail-item { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; }
+.detail-item-label { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+.detail-item-val { font-size: 13px; color: var(--color-text-primary); }
+.detail-item-val.green { color: #3B6D11; font-weight: 500; }
+.detail-item-val.amber { color: #854F0B; }
+.detail-item-val.red { color: #993C1D; }
+.detail-section { margin-bottom: 12px; }
+.detail-section-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.detail-list { display: flex; flex-direction: column; gap: 4px; }
+.detail-list-item { font-size: 13px; color: var(--color-text-primary); display: flex; gap: 6px; }
+.detail-list-item::before { content: "›"; color: var(--color-text-secondary); flex-shrink: 0; }
+.proof { background: #EAF3DE; border-radius: var(--border-radius-md); padding: 10px 12px; margin-bottom: 14px; font-size: 12.5px; color: #2C4708; line-height: 1.5; }
+.proof b { color: #3B6D11; font-weight: 600; }
+.model-pill { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 999px; background: #EEEDFE; color: #534AB7; font-weight: 500; margin: 2px; }
+.effort-bar { display: flex; gap: 3px; margin-top: 4px; }
+.effort-dot { width: 10px; height: 10px; border-radius: 50%; }
+.effort-dot.filled { background: #2C2C2A; }
+.effort-dot.empty { background: var(--color-border-secondary); }
+.no-results { text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary); font-size: 14px; }
+.no-results code { background: var(--color-background-secondary); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+.sep { width: 0.5px; height: 16px; background: var(--color-border-tertiary); margin: 0 2px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="filters">
+  <div class="filter-group">
+    <span class="filter-label">Secteur</span>
+    <span class="pill active" data-filter="sector" data-val="all">Tous</span>
+    <span class="pill c-blue" data-filter="sector" data-val="Service Client">Service Client</span>
+    <span class="pill c-teal" data-filter="sector" data-val="Finance">Finance</span>
+    <span class="pill c-purple" data-filter="sector" data-val="RH">RH</span>
+    <span class="pill c-coral" data-filter="sector" data-val="Juridique">Juridique</span>
+    <span class="pill c-blue" data-filter="sector" data-val="IT">IT</span>
+    <span class="pill c-amber" data-filter="sector" data-val="Marketing">Marketing</span>
+    <span class="pill c-teal" data-filter="sector" data-val="Commercial">Commercial</span>
+    <span class="pill c-amber" data-filter="sector" data-val="Opérations">Opérations</span>
+  </div>
+  <div class="sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Complexité</span>
+    <span class="pill c-teal" data-filter="level" data-val="all">Tous</span>
+    <span class="pill c-teal" data-filter="level" data-val="1">Simple</span>
+    <span class="pill c-amber" data-filter="level" data-val="2">Intermédiaire</span>
+    <span class="pill c-coral" data-filter="level" data-val="3">Complexe</span>
+  </div>
+  <div class="sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Type</span>
+    <span class="pill" data-filter="type" data-val="all">Tous</span>
+    <span class="pill" data-filter="type" data-val="Chatbot">Chatbot</span>
+    <span class="pill" data-filter="type" data-val="RAG">RAG</span>
+    <span class="pill" data-filter="type" data-val="Agent">Agent</span>
+    <span class="pill" data-filter="type" data-val="Automation">Automation</span>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-n" id="stat-count">0</div><div class="stat-l">use cases</div></div>
+  <div class="stat"><div class="stat-n" id="stat-roi">—</div><div class="stat-l">ROI typique</div></div>
+  <div class="stat"><div class="stat-n" id="stat-cost">—</div><div class="stat-l">Rentabilité médiane</div></div>
+  <div class="stat"><div class="stat-n" id="stat-effort">—</div><div class="stat-l">Effort médian</div></div>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="no-results" id="no-results" style="display:none;">Aucun use case pour cette combinaison de filtres.</div>
+
+</div>
+
+<script>
+let DATA = [];
+
+const EFFORT_LABELS = ["", "Simple (sem)", "Intermédiaire (sem-mois)", "Complexe (mois)"];
+
+function effortDots(n) {
+  return Array.from({length:3}, (_,i) => `<div class="effort-dot ${i<n?'filled':'empty'}"></div>`).join('');
+}
+
+function levelBadgeClass(l) {
+  return l===1?'badge-level-1':l===2?'badge-level-2':'badge-level-3';
+}
+function levelLabel(l) {
+  return l===1?'Simple':l===2?'Intermédiaire':'Complexe';
+}
+
+let filters = { sector:'all', level:'all', type:'all' };
+let expanded = new Set();
+
+function renderCards() {
+  const filtered = DATA.filter(d =>
+    (filters.sector==='all' || d.sector===filters.sector) &&
+    (filters.level==='all' || d.level===parseInt(filters.level)) &&
+    (filters.type==='all' || d.type===filters.type)
+  );
+
+  const grid = document.getElementById('grid');
+  const noRes = document.getElementById('no-results');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+    if (DATA.length) noRes.textContent = 'Aucun use case pour cette combinaison de filtres.';
+    document.getElementById('stat-count').textContent = '0';
+    document.getElementById('stat-roi').textContent = '—';
+    document.getElementById('stat-cost').textContent = '—';
+    document.getElementById('stat-effort').textContent = '—';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  const avgEffort = Math.round(filtered.reduce((s,d) => s+d.effort, 0) / filtered.length * 10) / 10;
+  document.getElementById('stat-count').textContent = filtered.length;
+  document.getElementById('stat-roi').textContent = 'Élevé';
+  document.getElementById('stat-cost').textContent = '< 12 mois';
+  document.getElementById('stat-effort').textContent = avgEffort <= 1.5 ? 'Simple' : avgEffort <= 2.2 ? 'Modéré' : 'Complexe';
+
+  grid.innerHTML = filtered.map(d => {
+    const isExp = expanded.has(d.id);
+    return `<div class="card ${isExp?'expanded':''}" data-id="${d.id}">
+      <div class="card-top">
+        <div class="card-badges">
+          <span class="badge badge-sector">${d.sector}</span>
+          <span class="badge ${levelBadgeClass(d.level)}">${levelLabel(d.level)}</span>
+          <span class="badge badge-type">${d.type}</span>
+        </div>
+        <button class="expand-btn" data-id="${d.id}">${isExp ? 'Réduire ↑' : 'Détails ↓'}</button>
+      </div>
+      <div class="card-title">${d.title}</div>
+      <div class="card-desc">${d.desc}</div>
+      <div class="card-roi">
+        <div>
+          <div class="roi-val">${d.roi}</div>
+          <div class="roi-label">Gain estimé${d.payback ? ` · rentable en ${d.payback}` : ''}</div>
+        </div>
+        <div style="margin-left:auto; text-align:right">
+          <div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">${d.cost_monthly}</div>
+          <div style="font-size:11px;color:var(--color-text-secondary)">Coût mensuel</div>
+        </div>
+      </div>
+      <div class="detail ${isExp?'open':''}">
+        ${d.proof ? `<div class="proof"><b>Preuve terrain</b> — ${d.proof}</div>` : ''}
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-item-label">Valeur ajoutée</div>
+            <div class="detail-item-val green">${d.va}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">Déploiement</div>
+            <div class="detail-item-val">${d.deploy}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">Coût setup</div>
+            <div class="detail-item-val amber">${d.cost_setup}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-item-label">Effort · Rentabilité</div>
+            <div class="detail-item-val">${d.effort_label}${d.payback ? ` — rentable en ${d.payback}` : ''}</div>
+            <div class="effort-bar">${effortDots(d.effort)}</div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">Modèles recommandés</div>
+          <div>${d.models.map(m => `<span class="model-pill">${m}</span>`).join('')}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">Étapes d'implémentation</div>
+          <div class="detail-list">${d.steps.map(s => `<div class="detail-list-item">${s}</div>`).join('')}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">Risques et précautions</div>
+          <div class="detail-list">${d.risks.map(r => `<div class="detail-list-item" style="color:var(--color-text-danger,#993C1D)">${r}</div>`).join('')}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">KPIs à suivre</div>
+          <div class="detail-list">${d.kpi.map(k => `<div class="detail-list-item">${k}</div>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.addEventListener('click', e => {
+  const pill = e.target.closest('[data-filter]');
+  if (pill) {
+    const f = pill.dataset.filter;
+    const v = pill.dataset.val;
+    filters[f] = v;
+    document.querySelectorAll(`[data-filter="${f}"]`).forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    renderCards();
+    return;
+  }
+  const btn = e.target.closest('[data-id]');
+  if (btn) {
+    const id = parseInt(btn.dataset.id);
+    if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
+    renderCards();
+  }
+});
+
+// Load use cases from the external JSON file.
+fetch('usecases.json')
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(data => { DATA = data; renderCards(); })
+  .catch(err => {
+    console.error('Impossible de charger usecases.json :', err);
+    const noRes = document.getElementById('no-results');
+    noRes.style.display = 'block';
+    noRes.innerHTML = "Impossible de charger <code>usecases.json</code>.<br>" +
+      "Ouvrez cette page via un serveur web (les navigateurs bloquent <code>fetch</code> en <code>file://</code>).<br>" +
+      "Ex. : <code>python3 -m http.server</code> dans ce dossier, puis ouvrez l'URL <code>localhost</code>.";
+  });
+</script>
+
+</body>
+</html>
