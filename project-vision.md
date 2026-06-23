@@ -74,9 +74,10 @@ Pour les participants qui veulent aller plus loin sur leur propre cas, le chemin
 | Phase | Durée approx. | Description |
 |---|---|---|
 | Expresso d'accueil | 5 min | 2 questions flash pour jauger la salle + actu ou chiffre choc de la semaine |
-| Instant Théorie | 30-40 min | Fondations du sujet du mois, vocabulaire et concepts clés expliqués par l'analogie |
-| Démos live | 25-35 min | 2-3 démos préparées sur des cas d'usage réels — gains concrets chiffrés quand possible |
-| Glossaire & Q&R | 10-15 min | Récap des termes clés, questions ouvertes, teaser du prochain épisode |
+| Instant Théorie | 05-10 min | Fondations du sujet du mois, vocabulaire et concepts clés expliqués par l'analogie |
+| Démos live | 25-40 min | 2-3 démos préparées sur des cas d'usage réels — gains concrets chiffrés quand possible |
+| Coffee bar Q&A | 15-30 min | Questions, partage d'expériences, live testing, solutions alternatives |
+| Glossaire | 5 min | Récap des termes clés, questions ouvertes, QR code, Feedback |
 
 ---
 

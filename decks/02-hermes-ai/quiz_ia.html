@@ -1,0 +1,316 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--c-blue:#378ADD;--c-blue-bg:#E6F1FB;--c-green:#3B6D11;--c-green-bg:#EAF3DE;--c-red:#A32D2D;--c-red-bg:#FCEBEB;--c-amber:#854F0B;--c-amber-bg:#FAEEDA}
+#app{font-family:var(--font-sans);padding:1rem 0;max-width:680px}
+.screen{display:none}.screen.active{display:block}
+
+/* INTRO */
+#intro{text-align:center;padding:2.5rem 1rem}
+.big-emoji{font-size:56px;margin-bottom:1rem;display:block}
+.intro-title{font-size:24px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+.intro-meta{font-size:15px;color:var(--color-text-secondary);margin-bottom:2rem;line-height:1.7}
+.pill-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:2.5rem}
+.pill{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:100px;padding:6px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;align-items:center;gap:6px}
+.pill i{font-size:14px}
+.btn-play{display:inline-flex;align-items:center;gap:10px;background:var(--c-blue);color:#fff;border:none;padding:16px 40px;font-size:17px;font-weight:500;border-radius:var(--border-radius-lg);cursor:pointer;transition:transform .1s,opacity .15s}
+.btn-play:hover{opacity:.9}.btn-play:active{transform:scale(.97)}
+.btn-play i{font-size:20px}
+
+/* QUIZ */
+#quiz{padding:.25rem 0}
+.q-topbar{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
+.q-label{font-size:13px;color:var(--color-text-secondary);font-weight:500}
+.progress-track{flex:1;height:6px;background:var(--color-border-tertiary);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:var(--c-blue);border-radius:100px;transition:width .4s ease}
+.timer-pill{display:flex;align-items:center;gap:5px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:100px;padding:5px 12px;font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:58px;justify-content:center;transition:background .3s,color .3s}
+.timer-pill.urgent{background:var(--c-red-bg);color:var(--c-red);border-color:#F7C1C1}
+.timer-pill i{font-size:14px}
+
+.score-strip{display:flex;justify-content:space-between;margin-bottom:1.5rem}
+.score-chip{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 16px;text-align:center}
+.score-chip-val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.score-chip-lbl{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+
+.q-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.25rem 1rem;margin-bottom:1.25rem}
+.q-num{font-size:12px;color:var(--color-text-secondary);font-weight:500;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
+.q-text{font-size:18px;font-weight:500;color:var(--color-text-primary);line-height:1.5}
+
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.choice{padding:18px 16px;border-radius:var(--border-radius-lg);border:2px solid var(--color-border-tertiary);background:var(--color-background-primary);cursor:pointer;font-size:15px;font-weight:500;color:var(--color-text-primary);text-align:center;line-height:1.4;transition:border-color .12s,background .12s,transform .08s;position:relative;min-height:76px;display:flex;align-items:center;justify-content:center}
+.choice:hover:not(:disabled){border-color:var(--c-blue);background:var(--c-blue-bg);transform:translateY(-1px)}
+.choice:active:not(:disabled){transform:scale(.97)}
+.choice.correct{border-color:#639922!important;background:var(--c-green-bg)!important;color:var(--c-green)!important}
+.choice.wrong{border-color:#A32D2D!important;background:var(--c-red-bg)!important;color:var(--c-red)!important}
+.choice.dimmed{opacity:.45}
+.choice .letter{position:absolute;top:7px;left:11px;font-size:11px;font-weight:500;color:var(--color-text-secondary);font-family:var(--font-mono)}
+.choice.correct .letter{color:var(--c-green)}
+.choice.wrong .letter{color:var(--c-red)}
+
+.feedback-bar{border-radius:var(--border-radius-md);padding:12px 16px;font-size:14px;line-height:1.5;margin-bottom:1rem;display:none;align-items:flex-start;gap:10px}
+.feedback-bar.show{display:flex}
+.feedback-bar.ok{background:var(--c-green-bg);color:var(--c-green)}
+.feedback-bar.nok{background:var(--c-red-bg);color:var(--c-red)}
+.feedback-bar.timeout{background:var(--c-amber-bg);color:var(--c-amber)}
+.feedback-bar i{font-size:18px;margin-top:1px;flex-shrink:0}
+.fb-body strong{display:block;font-weight:500;margin-bottom:2px}
+
+.btn-next{width:100%;padding:14px;border-radius:var(--border-radius-lg);border:none;background:var(--c-blue);color:#fff;font-size:16px;font-weight:500;cursor:pointer;display:none;align-items:center;justify-content:center;gap:8px;transition:opacity .15s,transform .08s}
+.btn-next:hover{opacity:.9}.btn-next:active{transform:scale(.98)}
+.btn-next i{font-size:17px}
+
+/* RESULTS */
+#results{padding:1rem 0}
+.res-hero{text-align:center;padding:1.5rem 1rem 2rem}
+.res-emoji{font-size:52px;display:block;margin-bottom:.75rem}
+.res-score{font-size:48px;font-weight:500;color:var(--c-blue);line-height:1}
+.res-total{font-size:16px;color:var(--color-text-secondary);margin:.25rem 0 .75rem}
+.res-msg{font-size:16px;color:var(--color-text-primary);font-weight:500}
+.xp-bar-wrap{background:var(--color-border-tertiary);border-radius:100px;height:10px;margin:1.25rem auto;max-width:300px;overflow:hidden}
+.xp-bar{height:100%;background:var(--c-blue);border-radius:100px;width:0;transition:width 1.2s ease}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.stat-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;text-align:center}
+.stat-val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-lbl{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+.recap-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+.recap-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;line-height:1.5;background:var(--color-background-primary)}
+.recap-row.ok{border-left:3px solid #639922}.recap-row.nok{border-left:3px solid #A32D2D}
+.recap-row i{font-size:16px;margin-top:1px;flex-shrink:0;color:#639922}.recap-row.nok i{color:#A32D2D}
+.btn-restart{width:100%;padding:14px;border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-secondary);background:transparent;font-size:16px;font-weight:500;cursor:pointer;color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.btn-restart:hover{background:var(--color-background-secondary)}
+.btn-restart i{font-size:17px}
+</style>
+
+<div id="app">
+
+<div class="screen active" id="intro">
+  <span class="big-emoji">🤖</span>
+  <div class="intro-title">Quiz IA & Agents</div>
+  <div class="intro-meta">Testez vos connaissances sur les LLMs,<br>les agents et l'écosystème IA</div>
+  <div class="pill-row">
+    <div class="pill"><i class="ti ti-list-numbers" aria-hidden="true"></i> 6 questions</div>
+    <div class="pill"><i class="ti ti-clock" aria-hidden="true"></i> 20 sec chacune</div>
+    <div class="pill"><i class="ti ti-trophy" aria-hidden="true"></i> Score final</div>
+  </div>
+  <button class="btn-play" onclick="startQuiz()"><i class="ti ti-player-play" aria-hidden="true"></i> Lancer le quiz</button>
+</div>
+
+<div class="screen" id="quiz">
+  <div class="q-topbar">
+    <span class="q-label" id="q-label">1 / 6</span>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="timer-pill" id="timer-pill"><i class="ti ti-clock" aria-hidden="true"></i><span id="timer-num">20</span></div>
+  </div>
+  <div class="score-strip">
+    <div class="score-chip"><div class="score-chip-val" id="sc-score">0</div><div class="score-chip-lbl">points</div></div>
+    <div class="score-chip"><div class="score-chip-val" id="sc-streak">0</div><div class="score-chip-lbl">streak 🔥</div></div>
+    <div class="score-chip"><div class="score-chip-val" id="sc-best">0</div><div class="score-chip-lbl">meilleur streak</div></div>
+  </div>
+  <div class="q-card">
+    <div class="q-num" id="q-num">Question 1</div>
+    <div class="q-text" id="q-text"></div>
+  </div>
+  <div class="choices" id="choices"></div>
+  <div class="feedback-bar" id="feedback">
+    <i id="fb-icon" class="ti ti-check" aria-hidden="true"></i>
+    <div class="fb-body"><strong id="fb-title"></strong><span id="fb-detail"></span></div>
+  </div>
+  <button class="btn-next" id="btn-next" onclick="nextQ()">
+    <span id="btn-next-label">Question suivante</span><i class="ti ti-arrow-right" aria-hidden="true"></i>
+  </button>
+</div>
+
+<div class="screen" id="results">
+  <div class="res-hero">
+    <span class="res-emoji" id="res-emoji">🎉</span>
+    <div class="res-score" id="res-score">0</div>
+    <div class="res-total">points sur 60</div>
+    <div class="res-msg" id="res-msg"></div>
+    <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar"></div></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" id="st-correct">0/6</div><div class="stat-lbl">bonnes réponses</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-streak">0</div><div class="stat-lbl">meilleur streak</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-time">0s</div><div class="stat-lbl">temps moyen</div></div>
+  </div>
+  <div class="recap-list" id="recap"></div>
+  <button class="btn-restart" onclick="restart()"><i class="ti ti-refresh" aria-hidden="true"></i> Rejouer</button>
+</div>
+
+</div>
+
+<script>
+const LETTERS = ['A','B','C','D'];
+const QS = [
+  {
+    q:"GPT signifie…",
+    choices:["Generalized Processing Transformer","Generative Pre-trained Transformer","Global Predictive Technology","Guided Prompt Training"],
+    correct:1,
+    ok:"Exact ! Generative Pre-trained Transformer.",
+    nok:"C'est Generative Pre-trained Transformer — pré-entraîné sur d'immenses corpus de texte."
+  },
+  {
+    q:"Un « agent IA » se distingue d'un simple chatbot parce qu'il peut…",
+    choices:["Répondre plus vite","Générer des images","Planifier et utiliser des outils de façon autonome","Mémoriser toutes vos conversations"],
+    correct:2,
+    ok:"Exact ! Un agent planifie, agit et itère sans validation humaine à chaque étape.",
+    nok:"Un agent peut utiliser des outils (web, code, API…) et boucler des actions de façon autonome."
+  },
+  {
+    q:"Quel modèle a popularisé le concept de fenêtre de contexte à 1 million de tokens ?",
+    choices:["GPT-4o","Claude 3 Opus","Gemini 1.5 Pro","Mistral Large"],
+    correct:2,
+    ok:"Bien joué ! Google Gemini 1.5 Pro a atteint 1M de tokens de contexte en 2024.",
+    nok:"C'est Gemini 1.5 Pro de Google — un bond massif face aux 128k de GPT-4 à l'époque."
+  },
+  {
+    q:"Le protocole MCP (Model Context Protocol) sert à…",
+    choices:["Chiffrer les échanges avec un LLM","Connecter outils et données externes aux agents de façon standardisée","Mesurer la qualité des réponses","Entraîner un modèle sur ses propres outputs"],
+    correct:1,
+    ok:"Parfait ! MCP (lancé par Anthropic) est le standard ouvert pour brancher des tools aux agents.",
+    nok:"MCP = standard ouvert pour connecter APIs, bases de données et outils aux agents IA — lancé par Anthropic."
+  },
+  {
+    q:"RAG signifie…",
+    choices:["Rapid Agent Generation","Retrieval-Augmented Generation","Recursive Auto-Grounding","Real-time API Gateway"],
+    correct:1,
+    ok:"Exact ! RAG combine une base documentaire et un LLM pour des réponses ancrées dans des faits.",
+    nok:"RAG = Retrieval-Augmented Generation : on récupère des docs pertinents avant de les injecter dans le prompt."
+  },
+  {
+    q:"Quel terme désigne la tendance d'un LLM à inventer des faits convaincants mais faux ?",
+    choices:["Overfitting","Hallucination","Prompt injection","Tokenisation"],
+    correct:1,
+    ok:"Exact ! L'hallucination est le défi n°1 de fiabilité des LLMs en production.",
+    nok:"On parle d'hallucination — le modèle génère des informations fausses avec une confiance apparente."
+  }
+];
+
+let cur=0, score=0, streak=0, bestStreak=0, correct=0, answers=[], timers=[], totalTime=0, qStart=0;
+
+function startQuiz(){
+  cur=0;score=0;streak=0;bestStreak=0;correct=0;answers=[];totalTime=0;
+  show('quiz'); renderQ();
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQ(){
+  const q=QS[cur];
+  document.getElementById('q-label').textContent=`${cur+1} / ${QS.length}`;
+  document.getElementById('q-num').textContent=`Question ${cur+1}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('prog-fill').style.width=`${(cur/QS.length)*100}%`;
+  document.getElementById('feedback').className='feedback-bar';
+  document.getElementById('btn-next').style.display='none';
+  updateScoreChips();
+
+  const box=document.getElementById('choices');
+  box.innerHTML=q.choices.map((c,i)=>`
+    <button class="choice" id="ch${i}" onclick="pick(${i})">
+      <span class="letter">${LETTERS[i]}</span>${c}
+    </button>`).join('');
+
+  clearTimers();
+  let t=20; qStart=Date.now();
+  updateTimer(t);
+  const iv=setInterval(()=>{
+    t--;updateTimer(t);
+    if(t<=0){clearInterval(iv);autoFail();}
+  },1000);
+  timers.push(iv);
+}
+
+function updateTimer(t){
+  document.getElementById('timer-num').textContent=t;
+  const pill=document.getElementById('timer-pill');
+  pill.className='timer-pill'+(t<=5?' urgent':'');
+}
+
+function clearTimers(){timers.forEach(clearInterval);timers=[];}
+
+function pick(i){
+  clearTimers();
+  const elapsed=Math.round((Date.now()-qStart)/1000);
+  totalTime+=elapsed;
+  const q=QS[cur]; const ok=i===q.correct;
+  answers.push({q:q.q,ok,elapsed,correctIdx:q.correct,chosenIdx:i,choices:q.choices});
+  if(ok){score+=10+Math.max(0,(20-elapsed));streak++;bestStreak=Math.max(bestStreak,streak);correct++;}
+  else{streak=0;}
+  lockChoices(i,q.correct);
+  showFeedback(ok,ok?q.ok:q.nok);
+  document.getElementById('btn-next-label').textContent=cur<QS.length-1?'Question suivante':'Voir mes résultats';
+  document.getElementById('btn-next').style.display='flex';
+  updateScoreChips();
+}
+
+function autoFail(){
+  const q=QS[cur];
+  totalTime+=20;
+  answers.push({q:q.q,ok:false,elapsed:20,correctIdx:q.correct,chosenIdx:-1,choices:q.choices});
+  streak=0;
+  lockChoices(-1,q.correct);
+  showFeedback('timeout','⏱ Temps écoulé ! '+q.nok);
+  document.getElementById('btn-next-label').textContent=cur<QS.length-1?'Question suivante':'Voir mes résultats';
+  document.getElementById('btn-next').style.display='flex';
+  updateScoreChips();
+}
+
+function lockChoices(chosen,correct){
+  document.querySelectorAll('.choice').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===correct) b.classList.add('correct');
+    else if(j===chosen) b.classList.add('wrong');
+    else b.classList.add('dimmed');
+  });
+}
+
+function showFeedback(state,msg){
+  const fb=document.getElementById('feedback');
+  const icon=document.getElementById('fb-icon');
+  const title=document.getElementById('fb-title');
+  const detail=document.getElementById('fb-detail');
+  if(state===true){fb.className='feedback-bar show ok';icon.className='ti ti-check';title.textContent='Bonne réponse !';}
+  else if(state===false){fb.className='feedback-bar show nok';icon.className='ti ti-x';title.textContent='Mauvaise réponse';}
+  else{fb.className='feedback-bar show timeout';icon.className='ti ti-clock';title.textContent='Temps écoulé !';}
+  detail.textContent=msg;
+}
+
+function updateScoreChips(){
+  document.getElementById('sc-score').textContent=score;
+  document.getElementById('sc-streak').textContent=streak+(streak>1?' 🔥':'');
+  document.getElementById('sc-best').textContent=bestStreak;
+}
+
+function nextQ(){
+  cur++;
+  if(cur>=QS.length){showResults();return;}
+  renderQ();
+}
+
+function showResults(){
+  show('results');
+  const pct=score/60;
+  const emojis=['😬','🤔','💪','🎯','🏆'];
+  const msgs=['À réviser avant le prochain meetup !','Bonne base, continue !','Solide ! Tu suis l\'actu IA.','Très bien ! Expert confirmé.','Parfait ! Tu peux animer le prochain meetup 🚀'];
+  const idx=correct<=1?0:correct<=2?1:correct<=4?2:correct<=5?3:4;
+  document.getElementById('res-emoji').textContent=emojis[idx];
+  document.getElementById('res-score').textContent=score;
+  document.getElementById('res-msg').textContent=msgs[idx];
+  document.getElementById('st-correct').textContent=`${correct}/6`;
+  document.getElementById('st-streak').textContent=bestStreak+'🔥';
+  document.getElementById('st-time').textContent=Math.round(totalTime/QS.length)+'s';
+  setTimeout(()=>{document.getElementById('xp-bar').style.width=(pct*100)+'%';},200);
+  document.getElementById('recap').innerHTML=answers.map(a=>`
+    <div class="recap-row ${a.ok?'ok':'nok'}">
+      <i class="ti ${a.ok?'ti-check':'ti-x'}" aria-hidden="true"></i>
+      <div><strong style="display:block;margin-bottom:2px;font-size:13px">${a.q}</strong>
+      <span style="color:var(--color-text-secondary);font-size:12px">${a.ok?'Correct — '+a.elapsed+'s':'Réponse correcte : '+a.choices[a.correctIdx]}</span></div>
+    </div>`).join('');
+}
+
+function restart(){show('intro');}
+</script>
