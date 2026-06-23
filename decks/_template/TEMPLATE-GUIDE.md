@@ -28,7 +28,7 @@ Règle d'or : **le template est un système, pas une page à redécorer.** L'imp
 
 | Dimension | Règle | Pourquoi |
 |---|---|---|
-| Couleur | Neutres crème/encre tiédis (OKLCH) **+ un seul accent rust** (`--accent`). Aucune autre couleur. *Seule exception : le QR Buy Me a Coffee de la slide de clôture, artefact fonctionnel non décoratif.* | Stratégie *Restrained*. Cohérence inter-épisodes. |
+| Couleur | Neutres crème/encre tiédis (OKLCH) **+ un seul accent rust** (`--accent`). Aucune autre couleur. *Seule exception : le QR Buy Me a Coffee (cover + clôture), artefact fonctionnel non décoratif.* | Stratégie *Restrained*. Cohérence inter-épisodes. |
 | Accent | Rust = ponctuation : un mot clé, un chiffre, une flèche. S'engage à fond **uniquement** sur les slides Impact et Comparaison. | L'impact concentré frappe ; l'accent partout devient bruit. |
 | Typo | Serif éditorial (Instrument Serif) très grand pour les titres, italique rust en emphase. Mono (JetBrains) pour labels/folios. Sans (Geist 300) pour le corps. | La typo EST l'impact visuel. |
 | Geste signature | `<span class="stroke">mot</span>` = trait rust sous un mot clé du titre. Un par titre, pas plus. | Fil de marque récurrent. |
@@ -51,7 +51,7 @@ Règle d'or : **le template est un système, pas une page à redécorer.** L'imp
 | La liste des termes clés (phase « Glossaire ») | **Glossaire** | `.gloss` | 08 |
 | Récap + ressources + teaser épisode suivant | **Clôture** | `.close` | 09 |
 
-> 💡 **Note** : ces 9 archétypes couvrent le format de session standard (Expresso → Théorie → Démos → Glossaire & Q&R) plus le positionnement « impact mesuré ». Un épisode n'utilise pas forcément les 9, et peut répéter un archétype (ex. 3 définitions, 2 démos). Garder l'ordre narratif du `sessions/NN.md`.
+> 💡 **Note** : ces 9 archétypes couvrent le format de session standard (Expresso → Théorie → Démos → Partage & Q&R → Glossaire) plus le positionnement « impact mesuré ». Un épisode n'utilise pas forcément les 9, et peut répéter un archétype (ex. 3 définitions, 2 démos). Garder l'ordre narratif du `sessions/NN.md`.
 
 ------
 
@@ -59,7 +59,7 @@ Règle d'or : **le template est un système, pas une page à redécorer.** L'imp
 
 Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les classes de structure.
 
-- **Cover** `.cover` : `.episode` (n°), `h1` (titre, mot clé en `<span class="stroke">`), `.meta` (durée · démos · format), `.topics .chip` (mots clés ; le 1er en `.lead-chip`).
+- **Cover** `.cover` : `.episode` (n°), `h1` (titre, mot clé en `<span class="stroke">`), `.meta` (durée · démos · format), `.support` (QR Buy Me a Coffee + `.headline`/`.sub`/`.url`), `.topics .chip` (mots clés ; le 1er en `.lead-chip`). Le `.support` reprend le même `media/bmc_qr.png` et la même `.url` (`buymeacoffee.com/ai.coffee`) que la clôture : on amorce le soutien dès l'ouverture.
 - **Sommaire** `.toc` : `h2.title` (accroche), `.txt` (1 phrase), une `.row` par phase (`.n` numéro, `.name` titre, `.sub` sous-items mono, `.dur` durée).
 - **Définition** `.define` : `.label` (terme EN), `h2.title` (formule mémorable, emphase `<em>`/`.stroke`), `p.lead` (définition), 3 `.point` (`.n`, `h3`, `p`).
 - **Impact** `.stat` (+ `class="ink"`) : `.top` (cas métier), `.big` (le chiffre ; unité en `<span class="unit">`, signe en `<em>`), `.ctx` (ce que ça veut dire), `.foot` (2–3 repères avant/après en `<b>`). **Un seul chiffre par slide.**
@@ -67,7 +67,7 @@ Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les cla
 - **Comparaison** `.compare` : côté `.before` (atténué) et côté `.after` (accentué) ; chacun `.tag`, `.head`, `ul>li` (valeurs fortes du côté après en `<b>`).
 - **Démo** `.demo` : `.marker` (n° démo), `h2.title`, `.build .row` (étapes), `.terminal` (commandes ; `.p` prompt, `.c` commentaire vert, `.dim` sortie).
 - **Glossaire** `.gloss` : 4 à 8 `.term` (`.name` serif + `.def` sans). Au-delà de 8, faire 2 slides.
-- **Clôture** `.close` : `.recap` (chaîne de mots, dernier en `<em>`), `.res .item` (`.src` + `.url`), `.next` (épisode suivant), `.support` (QR Buy Me a Coffee `media/bmc_qr.png` + légende). Le QR reste **toujours** sur la slide de clôture, jamais ailleurs : c'est là qu'il a le plus de valeur (on scanne pour soutenir à la fin). Chemin depuis `decks/NN-theme/deck.html` : `../../media/bmc_qr.png`.
+- **Clôture** `.close` : tout est centré sur l'axe vertical. En haut, le `.support` (QR Buy Me a Coffee `media/bmc_qr.png` + `.cap` légende + `.url` `buymeacoffee.com/ai.coffee`), puis `.recap` (chaîne de mots, dernier en `<em>`), puis `.next` (épisode suivant). Le QR figure sur la cover **et** la clôture (ce sont les deux seuls endroits). Le bloc ressources `.grid > .res .item` (`.src` + `.url`) est **optionnel** : il est laissé en commentaire dans le template, à dé-commenter seulement si l'épisode a des liens à donner. Chemin du QR depuis `decks/NN-theme/deck.html` : `../../media/bmc_qr.png`.
 
 ------
 
@@ -90,7 +90,7 @@ Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les cla
 - [ ] La slide Impact (`.ink`) est unique et porte **un** chiffre.
 - [ ] Folios cohérents (`NN / total`), `.baseline` à jour sur chaque slide.
 - [ ] Aucun texte coupé par le bas (tester le rendu, surtout `.stat` et les titres longs).
-- [ ] Slide de clôture : QR Buy Me a Coffee présent (`.support`, `media/bmc_qr.png`), légende lisible, image non déformée.
+- [ ] QR Buy Me a Coffee présent sur la **cover** (call-out `.support` à gauche) **et** la **clôture** (`.support` en haut, centré), avec l'`.url` `buymeacoffee.com/ai.coffee`, légende lisible, image non déformée.
 - [ ] Export PDF OK (Print → Save as PDF via `deck-stage`).
 
 > **Document créé le** : 2026-06-19

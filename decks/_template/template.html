@@ -188,6 +188,13 @@
     padding: 9px 18px; border-radius: 999px;
   }
   .chip.lead-chip { color: var(--paper); background: var(--accent); border-color: var(--accent); }
+  /* QR « offrez-nous un café » sur la cover : artefact fonctionnel, exempté de la règle accent unique */
+  .cover .support { display: flex; align-items: center; gap: 24px; margin-top: 8px; }
+  .cover .support img { width: 148px; height: 148px; border-radius: 14px; display: block; }
+  .cover .support .lines { display: flex; flex-direction: column; gap: 8px; }
+  .cover .support .headline { font-family: var(--serif); font-style: italic; font-size: 40px; line-height: 1; color: var(--ink); }
+  .cover .support .sub { font-family: var(--mono); font-size: 17px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .cover .support .url { font-family: var(--mono); font-size: 20px; letter-spacing: 0.04em; color: var(--accent); }
 
   /* ============================================================
      2 · SOMMAIRE
@@ -299,9 +306,11 @@
   /* ============================================================
      9 · CLÔTURE / RESSOURCES
   ============================================================ */
-  .close { display: grid; grid-template-rows: auto auto auto; align-content: center; gap: 60px; height: 100%; }
+  /* QR en haut, centré ; recap et prochain épisode centrés dessous */
+  .close { display: grid; align-content: center; justify-items: center; gap: 60px; height: 100%; text-align: center; }
   .close .recap { font-family: var(--serif); font-size: 64px; line-height: 1.08; letter-spacing: -0.015em; color: var(--ink); }
   .close .recap .sep { color: var(--accent); font-family: var(--mono); font-size: 36px; margin: 0 14px; vertical-align: middle; }
+  /* grille ressources : optionnelle (voir guide), gardée disponible mais hors markup par défaut */
   .close .grid { display: grid; grid-template-columns: 1.2fr 0.9fr auto; gap: 64px; align-items: end; }
   .close .res { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px; }
   .close .res .item { display: flex; flex-direction: column; gap: 6px; }
@@ -318,6 +327,7 @@
   .close .support { display: flex; flex-direction: column; align-items: center; gap: 16px; }
   .close .support img { width: 210px; height: 210px; border-radius: 14px; display: block; }
   .close .support .cap { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
+  .close .support .url { font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--accent); }
 </style>
 </head>
 <body>
@@ -341,6 +351,15 @@
           <span>1h30</span><span class="pip"></span>
           <span>3 démos live</span><span class="pip"></span>
           <span>Q&amp;R ouverte</span>
+        </div>
+
+        <div class="support">
+          <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee — soutenir IA Coffee">
+          <div class="lines">
+            <span class="headline">Offrez-nous un café</span>
+            <span class="sub">Scannez pour nous soutenir</span>
+            <span class="url">buymeacoffee.com/ai.coffee</span>
+          </div>
         </div>
       </div>
 
@@ -615,30 +634,34 @@
     </div>
 
     <div class="body close">
+      <div class="support">
+        <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee — soutenir IA Coffee">
+        <span class="cap">Offrez-nous un café · scannez pour nous soutenir</span>
+        <span class="url">buymeacoffee.com/ai.coffee</span>
+      </div>
+
       <div class="label">Ce qu'on retient</div>
       <div class="recap">
         Token <span class="sep">·</span> LLM <span class="sep">·</span> RAG <span class="sep">·</span> Agent <span class="sep">·</span> <em>Multi-agent</em>
       </div>
 
-      <div class="grid">
+      <div class="next">
+        <span class="ep">Prochain épisode · Nº 02</span>
+        <span class="t">L'IA qui parle.</span>
+        <span class="cta">Assistants vocaux, interview live · 23 juin</span>
+      </div>
+
+      <!-- Bloc ressources OPTIONNEL : à insérer ici si l'épisode a des liens à donner.
+           Mettre du coup les éléments dans une .grid 2 colonnes plutôt que centrés.
+      <div class="grid" style="grid-template-columns:1fr; justify-items:center;">
         <div class="res">
           <div class="item"><span class="src">Replay &amp; slides</span><span class="url">luma.com/ai-coffee</span></div>
           <div class="item"><span class="src">Code des démos</span><span class="url">github.com/ai-coffee</span></div>
           <div class="item"><span class="src">Glossaire</span><span class="url">notion.so/ai-coffee</span></div>
           <div class="item"><span class="src">Feedback 3 questions</span><span class="url">tally.so/ai-coffee</span></div>
         </div>
-
-        <div class="next">
-          <span class="ep">Prochain épisode · Nº 02</span>
-          <span class="t">L'IA qui parle.</span>
-          <span class="cta">Assistants vocaux, interview live · 23 juin</span>
-        </div>
-
-        <div class="support">
-          <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee — soutenir IA Coffee">
-          <span class="cap">Offrez-nous un café</span>
-        </div>
       </div>
+      -->
     </div>
   </section>
 
