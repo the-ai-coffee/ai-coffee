@@ -1,212 +1,393 @@
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz IA — AI Coffee 02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--c-blue:#378ADD;--c-blue-bg:#E6F1FB;--c-green:#3B6D11;--c-green-bg:#EAF3DE;--c-red:#A32D2D;--c-red-bg:#FCEBEB;--c-amber:#854F0B;--c-amber-bg:#FAEEDA}
-#app{font-family:var(--font-sans);padding:1rem 0;max-width:680px}
-.screen{display:none}.screen.active{display:block}
 
-/* INTRO */
-#intro{text-align:center;padding:2.5rem 1rem}
-.big-emoji{font-size:56px;margin-bottom:1rem;display:block}
-.intro-title{font-size:24px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
-.intro-meta{font-size:15px;color:var(--color-text-secondary);margin-bottom:2rem;line-height:1.7}
-.pill-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:2.5rem}
-.pill{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:100px;padding:6px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;align-items:center;gap:6px}
-.pill i{font-size:14px}
-.btn-play{display:inline-flex;align-items:center;gap:10px;background:var(--c-blue);color:#fff;border:none;padding:16px 40px;font-size:17px;font-weight:500;border-radius:var(--border-radius-lg);cursor:pointer;transition:transform .1s,opacity .15s}
-.btn-play:hover{opacity:.9}.btn-play:active{transform:scale(.97)}
-.btn-play i{font-size:20px}
+:root{
+  /* ── Charte café AI Coffee (calquée sur le deck) ── */
+  --paper:oklch(0.945 0.018 86);
+  --paper-2:oklch(0.905 0.022 84);
+  --paper-3:oklch(0.985 0.008 88);
+  --ink:oklch(0.255 0.018 60);
+  --ink-2:oklch(0.430 0.022 58);
+  --ink-3:oklch(0.610 0.020 62);
+  --rule:oklch(0.860 0.018 82);
+  --rule-2:oklch(0.780 0.022 78);
+  --espresso:oklch(0.250 0.028 55);
+  --paper-on-ink:oklch(0.930 0.020 88);
 
-/* QUIZ */
-#quiz{padding:.25rem 0}
-.q-topbar{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
-.q-label{font-size:13px;color:var(--color-text-secondary);font-weight:500}
-.progress-track{flex:1;height:6px;background:var(--color-border-tertiary);border-radius:100px;overflow:hidden}
-.progress-fill{height:100%;background:var(--c-blue);border-radius:100px;transition:width .4s ease}
-.timer-pill{display:flex;align-items:center;gap:5px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:100px;padding:5px 12px;font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:58px;justify-content:center;transition:background .3s,color .3s}
-.timer-pill.urgent{background:var(--c-red-bg);color:var(--c-red);border-color:#F7C1C1}
-.timer-pill i{font-size:14px}
+  --accent:oklch(0.620 0.158 47);       /* rust-orange crema */
+  --accent-deep:oklch(0.520 0.150 45);
+  --accent-soft:oklch(0.930 0.045 60);
 
-.score-strip{display:flex;justify-content:space-between;margin-bottom:1.5rem}
-.score-chip{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 16px;text-align:center}
-.score-chip-val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
-.score-chip-lbl{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+  --ok:oklch(0.560 0.130 145);          /* vert sauge profond */
+  --ok-bg:oklch(0.940 0.045 140);
+  --bad:oklch(0.560 0.170 27);          /* rouge brique */
+  --bad-bg:oklch(0.945 0.040 30);
+  --warn:oklch(0.640 0.130 75);         /* ambre */
+  --warn-bg:oklch(0.945 0.055 80);
 
-.q-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem 1.25rem 1rem;margin-bottom:1.25rem}
-.q-num{font-size:12px;color:var(--color-text-secondary);font-weight:500;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em}
-.q-text{font-size:18px;font-weight:500;color:var(--color-text-primary);line-height:1.5}
+  --serif:"Instrument Serif","Times New Roman",serif;
+  --sans:"Geist","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,monospace;
 
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
-.choice{padding:18px 16px;border-radius:var(--border-radius-lg);border:2px solid var(--color-border-tertiary);background:var(--color-background-primary);cursor:pointer;font-size:15px;font-weight:500;color:var(--color-text-primary);text-align:center;line-height:1.4;transition:border-color .12s,background .12s,transform .08s;position:relative;min-height:76px;display:flex;align-items:center;justify-content:center}
-.choice:hover:not(:disabled){border-color:var(--c-blue);background:var(--c-blue-bg);transform:translateY(-1px)}
-.choice:active:not(:disabled){transform:scale(.97)}
-.choice.correct{border-color:#639922!important;background:var(--c-green-bg)!important;color:var(--c-green)!important}
-.choice.wrong{border-color:#A32D2D!important;background:var(--c-red-bg)!important;color:var(--c-red)!important}
-.choice.dimmed{opacity:.45}
-.choice .letter{position:absolute;top:7px;left:11px;font-size:11px;font-weight:500;color:var(--color-text-secondary);font-family:var(--font-mono)}
-.choice.correct .letter{color:var(--c-green)}
-.choice.wrong .letter{color:var(--c-red)}
+  --r-lg:22px;
+  --r-md:14px;
+}
 
-.feedback-bar{border-radius:var(--border-radius-md);padding:12px 16px;font-size:14px;line-height:1.5;margin-bottom:1rem;display:none;align-items:flex-start;gap:10px}
-.feedback-bar.show{display:flex}
-.feedback-bar.ok{background:var(--c-green-bg);color:var(--c-green)}
-.feedback-bar.nok{background:var(--c-red-bg);color:var(--c-red)}
-.feedback-bar.timeout{background:var(--c-amber-bg);color:var(--c-amber)}
-.feedback-bar i{font-size:18px;margin-top:1px;flex-shrink:0}
-.fb-body strong{display:block;font-weight:500;margin-bottom:2px}
+html,body{height:100%}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(120% 90% at 50% -10%, oklch(0.965 0.020 88) 0%, var(--paper) 55%) fixed;
+  min-height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px 16px;
+  -webkit-font-smoothing:antialiased;
+}
 
-.btn-next{width:100%;padding:14px;border-radius:var(--border-radius-lg);border:none;background:var(--c-blue);color:#fff;font-size:16px;font-weight:500;cursor:pointer;display:none;align-items:center;justify-content:center;gap:8px;transition:opacity .15s,transform .08s}
-.btn-next:hover{opacity:.9}.btn-next:active{transform:scale(.98)}
-.btn-next i{font-size:17px}
+#app{width:100%;max-width:760px}
+.screen{display:none;animation:rise .45s cubic-bezier(.2,.8,.2,1)}
+.screen.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-/* RESULTS */
-#results{padding:1rem 0}
-.res-hero{text-align:center;padding:1.5rem 1rem 2rem}
-.res-emoji{font-size:52px;display:block;margin-bottom:.75rem}
-.res-score{font-size:48px;font-weight:500;color:var(--c-blue);line-height:1}
-.res-total{font-size:16px;color:var(--color-text-secondary);margin:.25rem 0 .75rem}
-.res-msg{font-size:16px;color:var(--color-text-primary);font-weight:500}
-.xp-bar-wrap{background:var(--color-border-tertiary);border-radius:100px;height:10px;margin:1.25rem auto;max-width:300px;overflow:hidden}
-.xp-bar{height:100%;background:var(--c-blue);border-radius:100px;width:0;transition:width 1.2s ease}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
-.stat-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;text-align:center}
-.stat-val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
-.stat-lbl{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
-.recap-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
-.recap-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;line-height:1.5;background:var(--color-background-primary)}
-.recap-row.ok{border-left:3px solid #639922}.recap-row.nok{border-left:3px solid #A32D2D}
-.recap-row i{font-size:16px;margin-top:1px;flex-shrink:0;color:#639922}.recap-row.nok i{color:#A32D2D}
-.btn-restart{width:100%;padding:14px;border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-secondary);background:transparent;font-size:16px;font-weight:500;cursor:pointer;color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
-.btn-restart:hover{background:var(--color-background-secondary)}
-.btn-restart i{font-size:17px}
+/* ─────────── INTRO ─────────── */
+#intro{text-align:center;padding:2rem 1rem}
+.brand-tag{
+  font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);font-weight:500;margin-bottom:1.5rem
+}
+.brand-tag::before{content:"● ";font-size:.7em;vertical-align:middle}
+.intro-mug{font-size:84px;line-height:1;display:block;margin-bottom:.5rem;filter:drop-shadow(0 8px 18px oklch(0.620 0.158 47 / .25))}
+.intro-title{font-family:var(--serif);font-size:clamp(54px,11vw,96px);font-weight:400;line-height:.95;letter-spacing:-.01em;margin-bottom:.6rem}
+.intro-title em{font-style:italic;color:var(--accent)}
+.intro-sub{font-size:clamp(17px,2.6vw,21px);color:var(--ink-2);line-height:1.5;max-width:36ch;margin:0 auto 2.5rem;font-weight:300}
+
+.pill-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:2.75rem}
+.pill{
+  background:var(--paper-3);border:1.5px solid var(--rule);border-radius:100px;
+  padding:11px 20px;font-size:15px;font-weight:500;color:var(--ink);
+  display:inline-flex;align-items:center;gap:9px
+}
+.pill i{font-size:19px;color:var(--accent)}
+
+.btn-play{
+  display:inline-flex;align-items:center;gap:14px;
+  background:var(--accent);color:var(--paper-3);border:none;
+  padding:22px 52px;font-family:var(--sans);font-size:22px;font-weight:600;
+  border-radius:100px;cursor:pointer;
+  box-shadow:0 14px 30px -8px oklch(0.620 0.158 47 / .55);
+  transition:transform .12s,box-shadow .2s,background .15s
+}
+.btn-play:hover{background:var(--accent-deep);transform:translateY(-3px);box-shadow:0 22px 40px -10px oklch(0.620 0.158 47 / .6)}
+.btn-play:active{transform:translateY(0) scale(.97)}
+.btn-play i{font-size:26px}
+
+/* ─────────── QUIZ ─────────── */
+#quiz{padding:.5rem 0}
+.q-topbar{display:flex;align-items:center;gap:16px;margin-bottom:1.4rem}
+.q-label{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);white-space:nowrap}
+.q-label span{color:var(--ink-3)}
+.progress-track{flex:1;height:10px;background:var(--paper-2);border:1px solid var(--rule);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-soft),var(--accent));border-radius:100px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+
+.timer-pill{
+  display:flex;align-items:center;gap:7px;background:var(--paper-3);border:1.5px solid var(--rule);
+  border-radius:100px;padding:8px 16px;font-family:var(--mono);font-size:17px;font-weight:700;
+  color:var(--ink);min-width:72px;justify-content:center;
+  transition:background .3s,color .3s,border-color .3s,transform .2s
+}
+.timer-pill i{font-size:18px}
+.timer-pill.urgent{background:var(--bad-bg);color:var(--bad);border-color:var(--bad);animation:pulse .9s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+.score-strip{display:flex;gap:12px;margin-bottom:1.6rem}
+.score-chip{flex:1;background:var(--paper-3);border:1.5px solid var(--rule);border-radius:var(--r-md);padding:12px 8px;text-align:center}
+.score-chip-val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink);line-height:1}
+.score-chip-lbl{font-size:12px;color:var(--ink-3);margin-top:5px;letter-spacing:.02em}
+.score-chip.flash .score-chip-val{animation:bump .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.35);color:var(--accent)}100%{transform:scale(1)}}
+
+.q-card{
+  background:var(--paper-3);border:1.5px solid var(--rule);border-radius:var(--r-lg);
+  padding:1.6rem 1.7rem;margin-bottom:1.4rem;position:relative;overflow:hidden
+}
+.q-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent)}
+.q-num{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:700;margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.12em}
+.q-text{font-family:var(--serif);font-size:clamp(28px,4.4vw,40px);font-weight:400;line-height:1.15;letter-spacing:-.01em}
+
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.2rem}
+.choice{
+  padding:22px 20px 22px 56px;border-radius:var(--r-lg);border:2px solid var(--rule-2);
+  background:var(--paper-3);cursor:pointer;font-family:var(--sans);font-size:18px;font-weight:500;
+  color:var(--ink);text-align:left;line-height:1.3;position:relative;min-height:84px;
+  display:flex;align-items:center;
+  transition:border-color .14s,background .14s,transform .1s,box-shadow .14s
+}
+.choice:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);transform:translateY(-2px);box-shadow:0 10px 22px -12px oklch(0.620 0.158 47 / .5)}
+.choice:active:not(:disabled){transform:scale(.98)}
+.choice .letter{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:30px;height:30px;border-radius:8px;background:var(--paper-2);border:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink-2);transition:all .14s
+}
+.choice:hover:not(:disabled) .letter{background:var(--accent);color:var(--paper-3);border-color:var(--accent)}
+.choice.correct{border-color:var(--ok)!important;background:var(--ok-bg)!important;color:var(--ok)!important}
+.choice.correct .letter{background:var(--ok)!important;color:var(--paper-3)!important;border-color:var(--ok)!important}
+.choice.wrong{border-color:var(--bad)!important;background:var(--bad-bg)!important;color:var(--bad)!important}
+.choice.wrong .letter{background:var(--bad)!important;color:var(--paper-3)!important;border-color:var(--bad)!important}
+.choice.dimmed{opacity:.4}
+.choice.pop{animation:bump .45s cubic-bezier(.2,1.6,.4,1)}
+
+.feedback-bar{
+  border-radius:var(--r-md);padding:16px 20px;font-size:16px;line-height:1.5;margin-bottom:1.2rem;
+  display:none;align-items:flex-start;gap:13px;border:1.5px solid transparent
+}
+.feedback-bar.show{display:flex;animation:rise .35s}
+.feedback-bar.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.feedback-bar.nok{background:var(--bad-bg);color:var(--bad);border-color:var(--bad)}
+.feedback-bar.timeout{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+.feedback-bar i{font-size:24px;margin-top:1px;flex-shrink:0}
+.fb-body strong{display:block;font-weight:600;margin-bottom:3px;font-size:17px}
+
+.btn-next{
+  width:100%;padding:18px;border-radius:100px;border:none;background:var(--ink);color:var(--paper-3);
+  font-family:var(--sans);font-size:18px;font-weight:600;cursor:pointer;display:none;
+  align-items:center;justify-content:center;gap:10px;transition:opacity .15s,transform .1s,background .15s
+}
+.btn-next.show{display:flex;animation:rise .3s}
+.btn-next:hover{background:var(--espresso);transform:translateY(-2px)}
+.btn-next:active{transform:scale(.98)}
+.btn-next i{font-size:20px}
+
+/* points flottants */
+.float-gain{
+  position:absolute;font-family:var(--mono);font-weight:700;font-size:28px;color:var(--accent);
+  pointer-events:none;animation:floatUp 1.1s ease-out forwards
+}
+@keyframes floatUp{0%{opacity:0;transform:translateY(8px) scale(.8)}20%{opacity:1}100%{opacity:0;transform:translateY(-46px) scale(1.1)}}
+
+/* ─────────── RÉSULTATS ─────────── */
+#results{padding:1rem 0;text-align:center}
+.res-emoji{font-size:80px;display:block;margin-bottom:.5rem;filter:drop-shadow(0 8px 18px oklch(0.620 0.158 47 / .25))}
+.res-eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:.4rem}
+.res-score{font-family:var(--serif);font-size:clamp(72px,16vw,128px);font-weight:400;color:var(--accent);line-height:.9}
+.res-total{font-size:16px;color:var(--ink-3);margin:.3rem 0 1rem;font-family:var(--mono)}
+.res-msg{font-family:var(--serif);font-style:italic;font-size:clamp(24px,4vw,34px);color:var(--ink);max-width:24ch;margin:0 auto 1.5rem;line-height:1.2}
+.xp-bar-wrap{background:var(--paper-2);border:1px solid var(--rule);border-radius:100px;height:14px;margin:0 auto 2rem;max-width:340px;overflow:hidden}
+.xp-bar{height:100%;background:linear-gradient(90deg,var(--accent-soft),var(--accent));border-radius:100px;width:0;transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:2rem}
+.stat-card{background:var(--paper-3);border:1.5px solid var(--rule);border-radius:var(--r-lg);padding:18px 10px}
+.stat-val{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--ink);line-height:1}
+.stat-lbl{font-size:12px;color:var(--ink-3);margin-top:6px}
+
+.recap-list{display:flex;flex-direction:column;gap:10px;margin-bottom:2rem;text-align:left}
+.recap-row{
+  display:flex;align-items:flex-start;gap:13px;padding:15px 18px;border-radius:var(--r-md);
+  border:1.5px solid var(--rule);font-size:14px;line-height:1.5;background:var(--paper-3)
+}
+.recap-row.ok{border-left:5px solid var(--ok)}
+.recap-row.nok{border-left:5px solid var(--bad)}
+.recap-row>i{font-size:20px;margin-top:1px;flex-shrink:0;color:var(--ok)}
+.recap-row.nok>i{color:var(--bad)}
+.recap-q{display:block;font-weight:600;margin-bottom:3px;color:var(--ink)}
+.recap-a{color:var(--ink-3);font-size:13px}
+.recap-a.good{color:var(--ok)}
+
+.btn-restart{
+  width:100%;padding:18px;border-radius:100px;border:2px solid var(--ink);background:transparent;
+  font-family:var(--sans);font-size:18px;font-weight:600;cursor:pointer;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s,color .15s
+}
+.btn-restart:hover{background:var(--ink);color:var(--paper-3)}
+.btn-restart i{font-size:20px}
+
+@media(max-width:560px){
+  .choices{grid-template-columns:1fr}
+  .score-chip-val{font-size:22px}
+}
 </style>
+</head>
+<body>
 
 <div id="app">
 
-<div class="screen active" id="intro">
-  <span class="big-emoji">🤖</span>
-  <div class="intro-title">Quiz IA & Agents</div>
-  <div class="intro-meta">Testez vos connaissances sur les LLMs,<br>les agents et l'écosystème IA</div>
-  <div class="pill-row">
-    <div class="pill"><i class="ti ti-list-numbers" aria-hidden="true"></i> 6 questions</div>
-    <div class="pill"><i class="ti ti-clock" aria-hidden="true"></i> 20 sec chacune</div>
-    <div class="pill"><i class="ti ti-trophy" aria-hidden="true"></i> Score final</div>
-  </div>
-  <button class="btn-play" onclick="startQuiz()"><i class="ti ti-player-play" aria-hidden="true"></i> Lancer le quiz</button>
-</div>
+  <!-- INTRO -->
+  <section class="screen active" id="intro">
+    <div class="brand-tag">AI Coffee · Épisode 02</div>
+    <span class="intro-mug">☕️🤖</span>
+    <h1 class="intro-title">AI <em>Coffee</em> Quiz</h1>
+    <div class="pill-row">
+      <span class="pill"><i class="ti ti-list-numbers"></i> 10 questions</span>
+      <span class="pill"><i class="ti ti-clock-bolt"></i> 20 sec / question</span>
+      <span class="pill"><i class="ti ti-flame"></i> Bonus de vitesse</span>
+    </div>
+    <button class="btn-play" onclick="startQuiz()"><i class="ti ti-player-play-filled"></i> Lancer le quiz</button>
+  </section>
 
-<div class="screen" id="quiz">
-  <div class="q-topbar">
-    <span class="q-label" id="q-label">1 / 6</span>
-    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="timer-pill" id="timer-pill"><i class="ti ti-clock" aria-hidden="true"></i><span id="timer-num">20</span></div>
-  </div>
-  <div class="score-strip">
-    <div class="score-chip"><div class="score-chip-val" id="sc-score">0</div><div class="score-chip-lbl">points</div></div>
-    <div class="score-chip"><div class="score-chip-val" id="sc-streak">0</div><div class="score-chip-lbl">streak 🔥</div></div>
-    <div class="score-chip"><div class="score-chip-val" id="sc-best">0</div><div class="score-chip-lbl">meilleur streak</div></div>
-  </div>
-  <div class="q-card">
-    <div class="q-num" id="q-num">Question 1</div>
-    <div class="q-text" id="q-text"></div>
-  </div>
-  <div class="choices" id="choices"></div>
-  <div class="feedback-bar" id="feedback">
-    <i id="fb-icon" class="ti ti-check" aria-hidden="true"></i>
-    <div class="fb-body"><strong id="fb-title"></strong><span id="fb-detail"></span></div>
-  </div>
-  <button class="btn-next" id="btn-next" onclick="nextQ()">
-    <span id="btn-next-label">Question suivante</span><i class="ti ti-arrow-right" aria-hidden="true"></i>
-  </button>
-</div>
+  <!-- QUIZ -->
+  <section class="screen" id="quiz">
+    <div class="q-topbar">
+      <span class="q-label" id="q-label">1<span> / 6</span></span>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="timer-pill" id="timer-pill"><i class="ti ti-clock"></i><span id="timer-num">20</span></div>
+    </div>
+    <div class="score-strip">
+      <div class="score-chip" id="chip-score"><div class="score-chip-val" id="sc-score">0</div><div class="score-chip-lbl">points</div></div>
+      <div class="score-chip" id="chip-streak"><div class="score-chip-val" id="sc-streak">0</div><div class="score-chip-lbl">série 🔥</div></div>
+      <div class="score-chip"><div class="score-chip-val" id="sc-best">0</div><div class="score-chip-lbl">meilleure série</div></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num" id="q-num">Question 1</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback-bar" id="feedback">
+      <i id="fb-icon" class="ti ti-check"></i>
+      <div class="fb-body"><strong id="fb-title"></strong><span id="fb-detail"></span></div>
+    </div>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">
+      <span id="btn-next-label">Question suivante</span><i class="ti ti-arrow-right"></i>
+    </button>
+  </section>
 
-<div class="screen" id="results">
-  <div class="res-hero">
+  <!-- RÉSULTATS -->
+  <section class="screen" id="results">
     <span class="res-emoji" id="res-emoji">🎉</span>
+    <div class="res-eyebrow">Score final</div>
     <div class="res-score" id="res-score">0</div>
-    <div class="res-total">points sur 60</div>
+    <div class="res-total" id="res-total">points sur 200</div>
     <div class="res-msg" id="res-msg"></div>
     <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar"></div></div>
-  </div>
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-val" id="st-correct">0/6</div><div class="stat-lbl">bonnes réponses</div></div>
-    <div class="stat-card"><div class="stat-val" id="st-streak">0</div><div class="stat-lbl">meilleur streak</div></div>
-    <div class="stat-card"><div class="stat-val" id="st-time">0s</div><div class="stat-lbl">temps moyen</div></div>
-  </div>
-  <div class="recap-list" id="recap"></div>
-  <button class="btn-restart" onclick="restart()"><i class="ti ti-refresh" aria-hidden="true"></i> Rejouer</button>
-</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="st-correct">0/6</div><div class="stat-lbl">bonnes réponses</div></div>
+      <div class="stat-card"><div class="stat-val" id="st-streak">0🔥</div><div class="stat-lbl">meilleure série</div></div>
+      <div class="stat-card"><div class="stat-val" id="st-time">0s</div><div class="stat-lbl">temps moyen</div></div>
+    </div>
+    <div class="recap-list" id="recap"></div>
+    <button class="btn-restart" onclick="restart()"><i class="ti ti-refresh"></i> Rejouer</button>
+  </section>
 
 </div>
 
 <script>
-const LETTERS = ['A','B','C','D'];
-const QS = [
-  {
-    q:"GPT signifie…",
-    choices:["Generalized Processing Transformer","Generative Pre-trained Transformer","Global Predictive Technology","Guided Prompt Training"],
-    correct:1,
-    ok:"Exact ! Generative Pre-trained Transformer.",
-    nok:"C'est Generative Pre-trained Transformer — pré-entraîné sur d'immenses corpus de texte."
-  },
-  {
-    q:"Un « agent IA » se distingue d'un simple chatbot parce qu'il peut…",
-    choices:["Répondre plus vite","Générer des images","Planifier et utiliser des outils de façon autonome","Mémoriser toutes vos conversations"],
-    correct:2,
-    ok:"Exact ! Un agent planifie, agit et itère sans validation humaine à chaque étape.",
-    nok:"Un agent peut utiliser des outils (web, code, API…) et boucler des actions de façon autonome."
-  },
-  {
-    q:"Quel modèle a popularisé le concept de fenêtre de contexte à 1 million de tokens ?",
-    choices:["GPT-4o","Claude 3 Opus","Gemini 1.5 Pro","Mistral Large"],
-    correct:2,
-    ok:"Bien joué ! Google Gemini 1.5 Pro a atteint 1M de tokens de contexte en 2024.",
-    nok:"C'est Gemini 1.5 Pro de Google — un bond massif face aux 128k de GPT-4 à l'époque."
-  },
-  {
-    q:"Le protocole MCP (Model Context Protocol) sert à…",
-    choices:["Chiffrer les échanges avec un LLM","Connecter outils et données externes aux agents de façon standardisée","Mesurer la qualité des réponses","Entraîner un modèle sur ses propres outputs"],
-    correct:1,
-    ok:"Parfait ! MCP (lancé par Anthropic) est le standard ouvert pour brancher des tools aux agents.",
-    nok:"MCP = standard ouvert pour connecter APIs, bases de données et outils aux agents IA — lancé par Anthropic."
-  },
-  {
-    q:"RAG signifie…",
-    choices:["Rapid Agent Generation","Retrieval-Augmented Generation","Recursive Auto-Grounding","Real-time API Gateway"],
-    correct:1,
-    ok:"Exact ! RAG combine une base documentaire et un LLM pour des réponses ancrées dans des faits.",
-    nok:"RAG = Retrieval-Augmented Generation : on récupère des docs pertinents avant de les injecter dans le prompt."
-  },
-  {
-    q:"Quel terme désigne la tendance d'un LLM à inventer des faits convaincants mais faux ?",
-    choices:["Overfitting","Hallucination","Prompt injection","Tokenisation"],
-    correct:1,
-    ok:"Exact ! L'hallucination est le défi n°1 de fiabilité des LLMs en production.",
-    nok:"On parle d'hallucination — le modèle génère des informations fausses avec une confiance apparente."
-  }
+const LETTERS=['A','B','C','D'];
+const TIME=20;            // secondes par question
+const BASE=10;            // points de base par bonne réponse
+const SPEED_MAX=20;       // bonus de vitesse max
+const MAX_PER_Q=BASE+SPEED_MAX;
+
+// Difficulté croissante : les 3 premières sont faciles, les dernières sont pointues.
+const QS=[
+  // 1 — facile
+  {q:"GPT, ça veut dire…",
+   choices:["Generalized Processing Transformer","Generative Pre-trained Transformer","Global Predictive Technology","Guided Prompt Training"],
+   correct:1,
+   ok:"Generative Pre-trained Transformer — pré-entraîné sur d'immenses corpus de texte.",
+   nok:"C'est Generative Pre-trained Transformer."},
+  // 2 — facile
+  {q:"Comment s'appelle l'instruction qu'on écrit à une IA pour obtenir une réponse ?",
+   choices:["Un prompt","Un cookie","Un token","Un patch"],
+   correct:0,
+   ok:"Un prompt — la consigne en langage naturel qu'on donne au modèle.",
+   nok:"On parle d'un prompt : la consigne donnée au modèle en langage naturel."},
+  // 3 — facile
+  {q:"Un « agent IA » se distingue d'un simple chatbot parce qu'il peut…",
+   choices:["Répondre plus vite","Générer des images","Planifier et utiliser des outils en autonomie","Mémoriser toutes vos conversations"],
+   correct:2,
+   ok:"Un agent planifie, agit et itère sans validation humaine à chaque étape.",
+   nok:"Un agent utilise des outils (web, code, API…) et boucle ses actions de façon autonome."},
+  // 4 — moyen
+  {q:"Comment appelle-t-on la tendance d'un LLM à inventer des faits faux mais convaincants ?",
+   choices:["Overfitting","Hallucination","Prompt injection","Tokenisation"],
+   correct:1,
+   ok:"L'hallucination est le défi n°1 de fiabilité des LLMs en production.",
+   nok:"On parle d'hallucination — le modèle génère des infos fausses avec une confiance apparente."},
+  // 5 — moyen
+  {q:"Dans un LLM, un « token » correspond grosso modo à…",
+   choices:["Une phrase entière","Un mot ou un fragment de mot","Un octet de données","Une requête API"],
+   correct:1,
+   ok:"Un token ≈ un morceau de mot (~¾ d'un mot en anglais). Le coût et le contexte se comptent en tokens.",
+   nok:"Un token est un fragment de mot — l'unité de base que le modèle lit et génère."},
+  // 6 — moyen
+  {q:"RAG, ça veut dire…",
+   choices:["Rapid Agent Generation","Retrieval-Augmented Generation","Recursive Auto-Grounding","Real-time API Gateway"],
+   correct:1,
+   ok:"RAG combine une base documentaire et un LLM pour des réponses ancrées dans des faits.",
+   nok:"RAG = Retrieval-Augmented Generation : on récupère des docs avant de les injecter dans le prompt."},
+  // 7 — moyen-difficile
+  {q:"À quoi sert le paramètre « température » lors de la génération ?",
+   choices:["À limiter la longueur de la réponse","À régler l'aléa / la créativité des sorties","À accélérer l'inférence","À chiffrer le prompt"],
+   correct:1,
+   ok:"La température contrôle l'aléa : basse = réponses sûres et déterministes, haute = plus créatives.",
+   nok:"La température règle l'aléa des sorties : 0 = déterministe, plus haut = plus créatif et varié."},
+  // 8 — difficile
+  {q:"Le protocole MCP (Model Context Protocol) sert à…",
+   choices:["Chiffrer les échanges avec un LLM","Brancher outils et données aux agents, de façon standardisée","Mesurer la qualité des réponses","Entraîner un modèle sur ses propres sorties"],
+   correct:1,
+   ok:"MCP (lancé par Anthropic) est le standard ouvert pour connecter des outils aux agents.",
+   nok:"MCP = standard ouvert pour brancher APIs, bases de données et outils aux agents IA."},
+  // 9 — difficile
+  {q:"L'article fondateur de 2017 qui a introduit l'architecture Transformer s'intitule…",
+   choices:["Deep Residual Learning","Attention Is All You Need","Generative Adversarial Nets","Playing Atari with Deep RL"],
+   correct:1,
+   ok:"« Attention Is All You Need » (Google, 2017) — le papier qui a lancé toute l'ère des Transformers.",
+   nok:"C'est « Attention Is All You Need » (2017), à l'origine de l'architecture Transformer."},
+  // 10 — difficile
+  {q:"Que désigne une architecture « Mixture of Experts » (MoE) ?",
+   choices:["Plusieurs modèles qui votent ensemble","Un routeur n'activant qu'une partie des paramètres par token","Un panel d'humains qui annotent les réponses","Un assemblage de plusieurs fenêtres de contexte"],
+   correct:1,
+   ok:"En MoE, un routeur n'active qu'un sous-ensemble d'« experts » par token : beaucoup de paramètres, peu activés.",
+   nok:"Le MoE route chaque token vers quelques « experts » seulement — on n'active qu'une fraction des paramètres."}
 ];
 
-let cur=0, score=0, streak=0, bestStreak=0, correct=0, answers=[], timers=[], totalTime=0, qStart=0;
+const MAX_SCORE=QS.length*MAX_PER_Q;
+
+let RQ=[],cur=0,score=0,streak=0,bestStreak=0,correct=0,answers=[],iv=null,totalTime=0,qStart=0,locked=false;
+
+// Mélange les réponses pour que la bonne ne soit pas toujours la même lettre.
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildRQ(){
+  RQ=QS.map(q=>{
+    const order=shuffle(q.choices.map((_,i)=>i));
+    return {...q,choices:order.map(i=>q.choices[i]),correct:order.indexOf(q.correct)};
+  });
+}
 
 function startQuiz(){
   cur=0;score=0;streak=0;bestStreak=0;correct=0;answers=[];totalTime=0;
-  show('quiz'); renderQ();
+  buildRQ();show('quiz');renderQ();
 }
 
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function renderQ(){
-  const q=QS[cur];
-  document.getElementById('q-label').textContent=`${cur+1} / ${QS.length}`;
+  locked=false;
+  const q=RQ[cur];
+  document.getElementById('q-label').innerHTML=`${cur+1}<span> / ${QS.length}</span>`;
   document.getElementById('q-num').textContent=`Question ${cur+1}`;
   document.getElementById('q-text').textContent=q.q;
-  document.getElementById('prog-fill').style.width=`${(cur/QS.length)*100}%`;
+  document.getElementById('prog-fill').style.width=`${((cur+1)/QS.length)*100}%`;
   document.getElementById('feedback').className='feedback-bar';
-  document.getElementById('btn-next').style.display='none';
-  updateScoreChips();
+  document.getElementById('btn-next').className='btn-next';
+  updateChips();
 
   const box=document.getElementById('choices');
   box.innerHTML=q.choices.map((c,i)=>`
@@ -214,74 +395,86 @@ function renderQ(){
       <span class="letter">${LETTERS[i]}</span>${c}
     </button>`).join('');
 
-  clearTimers();
-  let t=20; qStart=Date.now();
+  clearTimer();
+  let t=TIME;qStart=Date.now();
   updateTimer(t);
-  const iv=setInterval(()=>{
-    t--;updateTimer(t);
-    if(t<=0){clearInterval(iv);autoFail();}
-  },1000);
-  timers.push(iv);
+  iv=setInterval(()=>{t--;updateTimer(t);if(t<=0){clearTimer();autoFail();}},1000);
 }
 
 function updateTimer(t){
-  document.getElementById('timer-num').textContent=t;
+  document.getElementById('timer-num').textContent=Math.max(t,0);
   const pill=document.getElementById('timer-pill');
   pill.className='timer-pill'+(t<=5?' urgent':'');
 }
-
-function clearTimers(){timers.forEach(clearInterval);timers=[];}
+function clearTimer(){if(iv){clearInterval(iv);iv=null;}}
 
 function pick(i){
-  clearTimers();
-  const elapsed=Math.round((Date.now()-qStart)/1000);
+  if(locked)return;locked=true;
+  clearTimer();
+  const elapsed=Math.min(Math.round((Date.now()-qStart)/1000),TIME);
   totalTime+=elapsed;
-  const q=QS[cur]; const ok=i===q.correct;
+  const q=RQ[cur],ok=i===q.correct;
   answers.push({q:q.q,ok,elapsed,correctIdx:q.correct,chosenIdx:i,choices:q.choices});
-  if(ok){score+=10+Math.max(0,(20-elapsed));streak++;bestStreak=Math.max(bestStreak,streak);correct++;}
-  else{streak=0;}
+  if(ok){
+    const gain=BASE+Math.max(0,SPEED_MAX-elapsed);
+    score+=gain;streak++;bestStreak=Math.max(bestStreak,streak);correct++;
+    floatGain(`ch${i}`,gain);flashChip('chip-score');if(streak>1)flashChip('chip-streak');
+  }else streak=0;
+  document.getElementById(`ch${i}`).classList.add('pop');
   lockChoices(i,q.correct);
   showFeedback(ok,ok?q.ok:q.nok);
-  document.getElementById('btn-next-label').textContent=cur<QS.length-1?'Question suivante':'Voir mes résultats';
-  document.getElementById('btn-next').style.display='flex';
-  updateScoreChips();
+  showNext();updateChips();
 }
 
 function autoFail(){
-  const q=QS[cur];
-  totalTime+=20;
-  answers.push({q:q.q,ok:false,elapsed:20,correctIdx:q.correct,chosenIdx:-1,choices:q.choices});
+  if(locked)return;locked=true;
+  const q=RQ[cur];totalTime+=TIME;
+  answers.push({q:q.q,ok:false,elapsed:TIME,correctIdx:q.correct,chosenIdx:-1,choices:q.choices});
   streak=0;
   lockChoices(-1,q.correct);
-  showFeedback('timeout','⏱ Temps écoulé ! '+q.nok);
+  showFeedback('timeout',q.nok);
+  showNext();updateChips();
+}
+
+function showNext(){
   document.getElementById('btn-next-label').textContent=cur<QS.length-1?'Question suivante':'Voir mes résultats';
-  document.getElementById('btn-next').style.display='flex';
-  updateScoreChips();
+  document.getElementById('btn-next').className='btn-next show';
 }
 
 function lockChoices(chosen,correct){
   document.querySelectorAll('.choice').forEach((b,j)=>{
     b.disabled=true;
-    if(j===correct) b.classList.add('correct');
-    else if(j===chosen) b.classList.add('wrong');
+    if(j===correct)b.classList.add('correct');
+    else if(j===chosen)b.classList.add('wrong');
     else b.classList.add('dimmed');
   });
 }
 
 function showFeedback(state,msg){
-  const fb=document.getElementById('feedback');
-  const icon=document.getElementById('fb-icon');
-  const title=document.getElementById('fb-title');
-  const detail=document.getElementById('fb-detail');
-  if(state===true){fb.className='feedback-bar show ok';icon.className='ti ti-check';title.textContent='Bonne réponse !';}
-  else if(state===false){fb.className='feedback-bar show nok';icon.className='ti ti-x';title.textContent='Mauvaise réponse';}
-  else{fb.className='feedback-bar show timeout';icon.className='ti ti-clock';title.textContent='Temps écoulé !';}
+  const fb=document.getElementById('feedback'),icon=document.getElementById('fb-icon'),
+        title=document.getElementById('fb-title'),detail=document.getElementById('fb-detail');
+  if(state===true){fb.className='feedback-bar show ok';icon.className='ti ti-circle-check-filled';title.textContent=streak>2?`Bonne réponse ! Série de ${streak} 🔥`:'Bonne réponse !';}
+  else if(state===false){fb.className='feedback-bar show nok';icon.className='ti ti-circle-x-filled';title.textContent='Mauvaise réponse';}
+  else{fb.className='feedback-bar show timeout';icon.className='ti ti-clock-x';title.textContent='Temps écoulé !';}
   detail.textContent=msg;
 }
 
-function updateScoreChips(){
+function floatGain(choiceId,gain){
+  const el=document.getElementById(choiceId);
+  const f=document.createElement('span');
+  f.className='float-gain';f.textContent='+'+gain;
+  f.style.left='50%';f.style.top='6px';f.style.transform='translateX(-50%)';
+  el.appendChild(f);setTimeout(()=>f.remove(),1100);
+}
+
+function flashChip(id){
+  const c=document.getElementById(id);
+  c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash');
+}
+
+function updateChips(){
   document.getElementById('sc-score').textContent=score;
-  document.getElementById('sc-streak').textContent=streak+(streak>1?' 🔥':'');
+  document.getElementById('sc-streak').textContent=streak;
   document.getElementById('sc-best').textContent=bestStreak;
 }
 
@@ -293,24 +486,27 @@ function nextQ(){
 
 function showResults(){
   show('results');
-  const pct=score/60;
+  const pct=score/MAX_SCORE;
   const emojis=['😬','🤔','💪','🎯','🏆'];
-  const msgs=['À réviser avant le prochain meetup !','Bonne base, continue !','Solide ! Tu suis l\'actu IA.','Très bien ! Expert confirmé.','Parfait ! Tu peux animer le prochain meetup 🚀'];
-  const idx=correct<=1?0:correct<=2?1:correct<=4?2:correct<=5?3:4;
+  const msgs=['À réviser avant le prochain meetup !','Bonne base, continue !','Solide — tu suis l\'actu IA.','Très bien, expert confirmé.','Parfait ! Tu peux animer le prochain AI Coffee 🚀'];
+  const idx=correct<=2?0:correct<=4?1:correct<=6?2:correct<=8?3:4;
   document.getElementById('res-emoji').textContent=emojis[idx];
   document.getElementById('res-score').textContent=score;
+  document.getElementById('res-total').textContent=`points sur ${MAX_SCORE}`;
   document.getElementById('res-msg').textContent=msgs[idx];
-  document.getElementById('st-correct').textContent=`${correct}/6`;
+  document.getElementById('st-correct').textContent=`${correct}/${QS.length}`;
   document.getElementById('st-streak').textContent=bestStreak+'🔥';
   document.getElementById('st-time').textContent=Math.round(totalTime/QS.length)+'s';
-  setTimeout(()=>{document.getElementById('xp-bar').style.width=(pct*100)+'%';},200);
+  setTimeout(()=>{document.getElementById('xp-bar').style.width=(pct*100)+'%';},250);
   document.getElementById('recap').innerHTML=answers.map(a=>`
     <div class="recap-row ${a.ok?'ok':'nok'}">
-      <i class="ti ${a.ok?'ti-check':'ti-x'}" aria-hidden="true"></i>
-      <div><strong style="display:block;margin-bottom:2px;font-size:13px">${a.q}</strong>
-      <span style="color:var(--color-text-secondary);font-size:12px">${a.ok?'Correct — '+a.elapsed+'s':'Réponse correcte : '+a.choices[a.correctIdx]}</span></div>
+      <i class="ti ${a.ok?'ti-circle-check-filled':'ti-circle-x-filled'}"></i>
+      <div><span class="recap-q">${a.q}</span>
+      <span class="recap-a ${a.ok?'good':''}">${a.ok?'Correct · '+a.elapsed+'s':'Bonne réponse : '+a.choices[a.correctIdx]}</span></div>
     </div>`).join('');
 }
 
-function restart(){show('intro');}
+function restart(){clearTimer();show('intro');}
 </script>
+</body>
+</html>
