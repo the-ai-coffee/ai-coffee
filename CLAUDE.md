@@ -34,6 +34,16 @@ Each deck HTML file declares slides as plain `<section>` children of a single `<
 
 When generating a new episode deck, start from `decks/_template/template.html` and follow `decks/_template/TEMPLATE-GUIDE.md`. When editing an existing deck's `deck-stage.js` integration, prefer copying patterns from a current `deck.html` rather than from an `archive/standalone.html`, which is a flattened/simplified snapshot.
 
+## Pull request flow
+
+When asked to open a PR for the current session's changes:
+
+1. Commit any uncommitted work with a message describing what changed and why.
+2. Push the current branch to `origin`.
+3. Check whether a PR already exists for the branch (`gh pr list --head <branch>`); if so, just push new commits to it and report its existing URL instead of creating a duplicate.
+4. Otherwise open a new PR with `gh pr create --base main` — ready for review, not `--draft`, unless the user explicitly asked for a draft.
+5. Report the PR URL back to the user.
+
 ## Publishing to Notion
 
 `./notion-publish.sh [file] [page_id]` pushes a local Markdown file to a Notion page using the `ntn` CLI (requires `NOTION_API_TOKEN`/`NOTION_API_KEY` in the environment). Defaults to publishing `product-presentation.md`. The script's actual strategy is: create a brand-new page under the parent page from the Markdown, archive the old page, then rewrite its own `PAGE_ID` default in-place via `sed` — so re-running it after a successful publish targets the newly created page automatically.

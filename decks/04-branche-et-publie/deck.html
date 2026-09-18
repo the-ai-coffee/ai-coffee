@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>IA Coffee · Épisode 04 — Branché, publié</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="../deck-stage.js"></script>
+<style>
+  :root {
+    /* ── Restrained palette (OKLCH) : neutres tiédis + un seul accent ── */
+    --paper:    oklch(0.945 0.018 86);   /* crème, canvas        */
+    --paper-2:  oklch(0.905 0.022 84);   /* inset léger          */
+    --paper-3:  oklch(0.975 0.010 88);   /* surface relevée      */
+    --ink:      oklch(0.255 0.018 60);   /* near-black tiède     */
+    --ink-2:    oklch(0.430 0.022 58);   /* texte secondaire     */
+    --ink-3:    oklch(0.610 0.020 62);   /* labels / muted       */
+    --rule:     oklch(0.860 0.018 82);   /* hairline             */
+    --rule-2:   oklch(0.780 0.022 78);   /* hairline appuyée     */
+    --espresso: oklch(0.250 0.028 55);   /* fond sombre / focal  */
+
+    /* l'accent unique — crema espresso, rust-orange */
+    --accent:      oklch(0.620 0.158 47);
+    --accent-soft: oklch(0.760 0.110 55);
+    /* sur fond sombre */
+    --paper-on-ink: oklch(0.930 0.020 88);
+    --muted-on-ink: oklch(0.700 0.020 80);
+
+    /* échelle typo (canvas 1920×1080) — dramatique, contraste fort */
+    --t-mega:    300px;   /* chiffre géant       */
+    --t-display: 224px;   /* cover               */
+    --t-title:   108px;   /* titre de slide      */
+    --t-h2:      64px;
+    --t-lead:    46px;
+    --t-body:    30px;
+    --t-small:   23px;
+    --t-micro:   18px;
+
+    --pad-x: 132px;
+
+    --serif: "Instrument Serif", "Times New Roman", serif;
+    --sans:  "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono:  "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+  }
+
+  html, body { margin: 0; padding: 0; background: oklch(0.18 0.012 60); color: var(--ink); font-family: var(--sans); }
+  * { box-sizing: border-box; }
+
+  deck-stage section {
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+    position: relative;
+  }
+  /* slide sombre — beat de contraste (réutilisable via class="ink") */
+  deck-stage section.ink { background: var(--espresso); color: var(--paper-on-ink); }
+
+  /* ── chrome partagé ────────────────────────────────────────── */
+  .chrome { position: absolute; inset: 0; pointer-events: none; }
+  .chrome .kicker {
+    position: absolute; top: 52px; left: var(--pad-x);
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .chrome .kicker .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .chrome .folio {
+    position: absolute; top: 52px; right: var(--pad-x);
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.18em; color: var(--ink-3);
+  }
+  .chrome .baseline {
+    position: absolute; bottom: 52px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.14em; color: var(--ink-3);
+  }
+  .chrome .baseline .mark {
+    font-family: var(--serif); font-style: italic; font-size: 24px;
+    letter-spacing: 0; color: var(--ink); text-transform: none;
+  }
+  /* chrome sur fond sombre */
+  section.ink .chrome .kicker,
+  section.ink .chrome .folio,
+  section.ink .chrome .baseline { color: var(--muted-on-ink); }
+  section.ink .chrome .baseline .mark { color: var(--paper-on-ink); }
+
+  .body { position: absolute; inset: 132px var(--pad-x) 120px var(--pad-x); }
+
+  /* ── primitives typo ──────────────────────────────────────── */
+  .label {
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3);
+  }
+  section.ink .label { color: var(--muted-on-ink); }
+  h1.display, h2.title {
+    font-family: var(--serif); font-weight: 400; margin: 0;
+    letter-spacing: -0.025em; line-height: 0.98;
+  }
+  h2.title { font-size: var(--t-title); }
+  em { font-style: italic; color: var(--accent); }
+  /* geste signature : trait rust sous le mot-clé en italique d'un titre */
+  .stroke { position: relative; font-style: italic; color: var(--accent); }
+  .stroke::after {
+    content: ""; position: absolute; left: 0.02em; right: 0.02em; bottom: 0.12em;
+    height: 0.06em; background: var(--accent); opacity: 0.32; border-radius: 2px;
+  }
+  p.lead {
+    font-family: var(--serif); font-size: var(--t-lead); line-height: 1.26;
+    color: var(--ink-2); margin: 0; max-width: 24ch;
+  }
+  section.ink p.lead { color: var(--paper-on-ink); }
+  p.txt {
+    font-family: var(--sans); font-weight: 300; font-size: var(--t-body);
+    line-height: 1.5; color: var(--ink-2); margin: 0; max-width: 34ch;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  /* ============================================================
+     1 · COVER
+  ============================================================ */
+  .cover {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: 64px;
+    padding: 104px var(--pad-x);
+  }
+  .cover .topbar {
+    position: absolute; top: 52px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .cover .topbar .brand {
+    display: flex; align-items: center; gap: 16px;
+    font-family: var(--serif); font-style: italic; font-size: 30px;
+    letter-spacing: 0; text-transform: none; color: var(--ink);
+  }
+  .seal {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    display: grid; place-items: center;
+    font-family: var(--mono); font-style: normal; font-size: 15px;
+  }
+  .cover .left { display: flex; flex-direction: column; gap: 40px; }
+  .cover .episode { font-family: var(--mono); font-size: 24px; letter-spacing: 0.32em; color: var(--ink-3); }
+  .cover h1 { font-family: var(--serif); font-weight: 400; font-size: var(--t-display); line-height: 0.86; letter-spacing: -0.045em; margin: 0; }
+  .cover .meta {
+    display: flex; gap: 28px; align-items: center;
+    font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--ink-2);
+  }
+  .cover .meta .pip { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); }
+
+  /* disque espresso simplifié — un seul geste, plus présent */
+  .cover .right { display: grid; place-items: center; }
+  .espresso-disc {
+    position: relative; width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle at 36% 30%, oklch(0.42 0.07 50) 0%, var(--espresso) 56%, oklch(0.17 0.02 55) 100%);
+    box-shadow: 0 36px 90px -34px oklch(0.25 0.03 55 / 0.55);
+  }
+  .espresso-disc::before {
+    content: ""; position: absolute; inset: -38px;
+    border: 1px solid var(--rule-2); border-radius: 50%;
+  }
+  .espresso-disc .crema {
+    position: absolute; width: 132px; height: 132px; border-radius: 50%;
+    top: 100px; right: 116px;
+    background: radial-gradient(circle at 40% 38%, var(--accent-soft) 0%, var(--accent) 72%);
+    opacity: 0.92;
+  }
+  .espresso-disc .steam {
+    position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.4em; color: var(--paper); opacity: 0.5;
+  }
+
+  .cover .topics {
+    grid-column: 1 / -1; align-self: end;
+    display: flex; gap: 12px; flex-wrap: wrap;
+    border-top: 1px solid var(--rule); padding-top: 28px;
+  }
+  .chip {
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.04em;
+    color: var(--ink-2); border: 1px solid var(--rule-2);
+    padding: 9px 18px; border-radius: 999px;
+  }
+  .chip.lead-chip { color: var(--paper); background: var(--accent); border-color: var(--accent); }
+  /* QR « offrez-nous un café » sur la cover : artefact fonctionnel, exempté de la règle accent unique */
+  .cover .support { display: flex; align-items: center; gap: 24px; margin-top: 8px; }
+  .cover .support img { width: 148px; height: 148px; border-radius: 14px; display: block; }
+  .cover .support .lines { display: flex; flex-direction: column; gap: 8px; }
+  .cover .support .headline { font-family: var(--serif); font-style: italic; font-size: 40px; line-height: 1; color: var(--ink); }
+  .cover .support .sub { font-family: var(--mono); font-size: 17px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .cover .support .url { font-family: var(--mono); font-size: 20px; letter-spacing: 0.04em; color: var(--accent); }
+
+  /* ============================================================
+     2 · SOMMAIRE
+  ============================================================ */
+  .toc { display: grid; grid-template-columns: 1fr 1.25fr; gap: 96px; height: 100%; align-items: center; }
+  .toc .intro { display: flex; flex-direction: column; gap: 32px; }
+  .toc .list { display: flex; flex-direction: column; }
+  .toc .row {
+    display: grid; grid-template-columns: 72px 1fr auto; gap: 32px;
+    align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--rule);
+  }
+  .toc .row:first-child { border-top: 1px solid var(--rule); }
+  .toc .row .n { font-family: var(--mono); font-size: 20px; color: var(--ink-3); letter-spacing: 0.08em; }
+  .toc .row .name { font-family: var(--serif); font-size: 52px; line-height: 1; letter-spacing: -0.015em; }
+  .toc .row .sub { display: block; font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.05em; margin-top: 8px; }
+  .toc .row .dur { font-family: var(--mono); font-size: 18px; letter-spacing: 0.1em; color: var(--accent); }
+
+  /* ============================================================
+     3 · DÉFINITION (un concept)
+  ============================================================ */
+  .define { display: grid; grid-template-rows: auto 1fr; gap: 60px; height: 100%; }
+  .define .head { display: flex; flex-direction: column; gap: 24px; }
+  .define .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 72px; align-items: start; align-content: center; }
+  .define .point { display: flex; flex-direction: column; gap: 16px; }
+  .define .point .n { font-family: var(--mono); font-size: 17px; letter-spacing: 0.18em; color: var(--accent); }
+  .define .point h3 { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; letter-spacing: -0.01em; }
+  .define .point p { font-family: var(--sans); font-weight: 300; font-size: 24px; line-height: 1.5; color: var(--ink-2); margin: 0; }
+
+  /* ============================================================
+     4 · CHIFFRE / IMPACT  (slide sombre, drenched)
+  ============================================================ */
+  .stat { height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+  .stat .top { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted-on-ink); }
+  .stat .big {
+    font-family: var(--serif); font-weight: 400; font-size: var(--t-mega);
+    line-height: 0.84; letter-spacing: -0.04em; color: var(--paper-on-ink);
+  }
+  .stat .big em { color: var(--accent); font-style: italic; }
+  .stat .big .unit { font-size: 0.32em; color: var(--accent); letter-spacing: 0; }
+  .stat .ctx {
+    font-family: var(--serif); font-size: var(--t-lead); line-height: 1.24;
+    color: var(--paper-on-ink); max-width: 26ch; margin-top: 32px;
+  }
+  .stat .foot { display: flex; gap: 40px; font-family: var(--mono); font-size: var(--t-small); color: var(--muted-on-ink); letter-spacing: 0.04em; }
+  .stat .foot b { color: var(--accent-soft); font-weight: 500; }
+
+  /* ============================================================
+     5 · SCHÉMA SIMPLE (3–4 étapes)
+  ============================================================ */
+  .flow-wrap { display: grid; grid-template-rows: auto 1fr; gap: 64px; height: 100%; }
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; }
+  .flow .step { padding-right: 44px; display: flex; flex-direction: column; gap: 18px; }
+  .flow .step + .step { padding-left: 44px; border-left: 1px solid var(--rule); }
+  .flow .step .n { font-family: var(--mono); font-size: 16px; letter-spacing: 0.2em; color: var(--ink-3); }
+  .flow .step h3 { font-family: var(--serif); font-weight: 400; font-size: 50px; line-height: 1; margin: 0; letter-spacing: -0.01em; }
+  .flow .step h3 .arrow { color: var(--accent); }
+  .flow .step p { font-family: var(--sans); font-weight: 300; font-size: 22px; line-height: 1.45; color: var(--ink-2); margin: 0; }
+
+  /* ============================================================
+     6 · COMPARAISON (avant / après)
+  ============================================================ */
+  .compare-wrap { display: grid; grid-template-rows: auto 1fr; gap: 56px; height: 100%; }
+  .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 40px; align-items: stretch; }
+  .compare .side { display: flex; flex-direction: column; gap: 22px; padding-top: 28px; border-top: 2px solid var(--rule-2); }
+  .compare .side .tag { font-family: var(--mono); font-size: 17px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .compare .side .head { font-family: var(--serif); font-size: 56px; line-height: 1; letter-spacing: -0.015em; }
+  .compare .side ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .compare .side li { font-family: var(--sans); font-weight: 300; font-size: 25px; line-height: 1.4; color: var(--ink-2); }
+  /* avant : atténué.  après : accentué. (asymétrie volontaire, pas deux cartes identiques) */
+  .compare .side.before { opacity: 0.62; }
+  .compare .side.after { border-top-color: var(--accent); }
+  .compare .side.after .head { color: var(--ink); }
+  .compare .side.after .tag { color: var(--accent); }
+  .compare .side.after li b { color: var(--accent); font-weight: 500; }
+  .compare .arrow { align-self: center; font-family: var(--serif); font-style: italic; font-size: 72px; color: var(--accent); }
+
+  /* ============================================================
+     7 · DÉMO
+  ============================================================ */
+  .demo { display: grid; grid-template-columns: 1fr 1.1fr; gap: 88px; height: 100%; align-items: center; }
+  .demo .frame { display: flex; flex-direction: column; gap: 32px; }
+  .demo .marker { font-family: var(--mono); font-size: 22px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); }
+  .demo .marker .seq { color: var(--ink-3); }
+  .demo .build { display: flex; flex-direction: column; gap: 14px; }
+  .demo .build .row { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: baseline; font-family: var(--sans); font-weight: 300; font-size: 26px; color: var(--ink-2); }
+  .demo .build .row .b { font-family: var(--mono); font-size: 17px; color: var(--accent); letter-spacing: 0.1em; }
+  .terminal {
+    background: var(--espresso); color: var(--paper-on-ink);
+    border-radius: 10px; padding: 36px 40px;
+    font-family: var(--mono); font-size: 22px; line-height: 1.7;
+    box-shadow: 0 30px 70px -34px oklch(0.25 0.03 55 / 0.55);
+  }
+  .terminal .p { color: var(--accent-soft); }
+  .terminal .c { color: oklch(0.72 0.05 150); }
+  .terminal .dim { color: var(--muted-on-ink); }
+
+  /* ============================================================
+     8 · GLOSSAIRE / TERMES
+  ============================================================ */
+  .gloss-wrap { display: grid; grid-template-rows: auto 1fr; gap: 56px; height: 100%; }
+  .gloss { display: grid; grid-template-columns: 1fr 1fr; gap: 0 80px; align-content: center; }
+  .gloss .term {
+    display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: baseline;
+    padding: 24px 0; border-bottom: 1px solid var(--rule);
+  }
+  .gloss .term .name { font-family: var(--serif); font-size: 40px; line-height: 1; letter-spacing: -0.01em; white-space: nowrap; }
+  .gloss .term .def { font-family: var(--sans); font-weight: 300; font-size: 21px; line-height: 1.4; color: var(--ink-2); }
+
+  /* ============================================================
+     9 · CLÔTURE / RESSOURCES
+  ============================================================ */
+  /* QR en haut, centré ; recap et prochain épisode centrés dessous */
+  .close { display: grid; align-content: center; justify-items: center; gap: 60px; height: 100%; text-align: center; }
+  .close .recap { font-family: var(--serif); font-size: 64px; line-height: 1.08; letter-spacing: -0.015em; color: var(--ink); }
+  .close .recap .sep { color: var(--accent); font-family: var(--mono); font-size: 36px; margin: 0 14px; vertical-align: middle; }
+  /* grille ressources : optionnelle (voir guide), gardée disponible mais hors markup par défaut */
+  .close .grid { display: grid; grid-template-columns: 1.2fr 0.9fr auto; gap: 64px; align-items: end; }
+  .close .res { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px; }
+  .close .res .item { display: flex; flex-direction: column; gap: 6px; }
+  .close .res .src { font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+  .close .res .url { font-family: var(--mono); font-size: 22px; color: var(--ink); }
+  .close .next {
+    background: var(--espresso); color: var(--paper-on-ink); border-radius: 10px;
+    padding: 36px 44px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .close .next .ep { font-family: var(--mono); font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-soft); }
+  .close .next .t { font-family: var(--serif); font-style: italic; font-size: 48px; line-height: 1; }
+  .close .next .cta { font-family: var(--sans); font-weight: 300; font-size: 19px; color: var(--paper-on-ink); opacity: 0.68; }
+  /* QR « offrez-nous un café » : artefact fonctionnel, exempté de la règle accent unique */
+  .close .support { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .close .support img { width: 210px; height: 210px; border-radius: 14px; display: block; }
+  .close .support .cap { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
+  .close .support .url { font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--accent); }
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ============================================================
+       1 · COVER  —  ouverture de l'épisode
+  ============================================================ -->
+  <section data-label="01 Cover">
+    <div class="cover">
+      <div class="topbar">
+        <div class="brand"><span class="seal">IA</span> IA Coffee</div>
+        <div>Épisode 04 · 1h30 · 22 septembre 2026</div>
+      </div>
+
+      <div class="left">
+        <div class="episode">— ÉPISODE Nº 04 —</div>
+        <h1>Branché,<br><span class="stroke">publié.</span></h1>
+        <div class="meta">
+          <span>1h30</span><span class="pip"></span>
+          <span>2 présentations</span><span class="pip"></span>
+          <span>Michael P.O.</span><span class="pip"></span>
+          <span>Xavier G.</span>
+        </div>
+
+        <div class="support">
+          <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee, soutenir IA Coffee">
+          <div class="lines">
+            <span class="headline">Offrez-nous un café</span>
+            <span class="sub">Scannez pour nous soutenir</span>
+            <span class="url">buymeacoffee.com/ai.coffee</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="espresso-disc">
+          <span class="steam">~~~</span>
+          <div class="crema"></div>
+        </div>
+      </div>
+
+      <div class="topics">
+        <span class="chip lead-chip">Plugins</span>
+        <span class="chip">Marketplace</span>
+        <span class="chip">Skills</span>
+        <span class="chip">MCP</span>
+        <span class="chip">Connecteurs</span>
+        <span class="chip">Claude Design</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2 · SOMMAIRE  —  le programme
+  ============================================================ -->
+  <section data-label="02 Sommaire">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme</div>
+      <div class="folio">02 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 04 · Branché, publié</span></div>
+    </div>
+
+    <div class="body toc">
+      <div class="intro">
+        <div class="label">Ce soir</div>
+        <h2 class="title">Deux façons<br>de <span class="stroke">brancher</span> Claude.</h2>
+        <p class="txt">Des connecteurs officiels à un dépôt GitHub perso, puis d'une idée à un site réellement publié.</p>
+      </div>
+
+      <div class="list">
+        <div class="row">
+          <span class="n">01</span>
+          <div><span class="name">Expresso</span><span class="sub">2 questions flash · plugin, marketplace, connecteur</span></div>
+          <span class="dur">10 min</span>
+        </div>
+        <div class="row">
+          <span class="n">02</span>
+          <div><span class="name">Marketplace de plugins</span><span class="sub">Agentmail · Linear · bonus dépôt GitHub</span></div>
+          <span class="dur">40 min</span>
+        </div>
+        <div class="row">
+          <span class="n">03</span>
+          <div><span class="name">Claude Design</span><span class="sub">Xavier Gueret</span></div>
+          <span class="dur">30 min</span>
+        </div>
+        <div class="row">
+          <span class="n">04</span>
+          <div><span class="name">Coffee bar</span><span class="sub">Q&amp;R · retours d'XP · glossaire</span></div>
+          <span class="dur">10 min</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3 · DÉFINITION  —  un concept = une slide
+  ============================================================ -->
+  <section data-label="03 Définition">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Expresso · rappel</div>
+      <div class="folio">03 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Plugin marketplace</span></div>
+    </div>
+
+    <div class="body define">
+      <div class="head">
+        <div class="label">Plugin marketplace</div>
+        <h2 class="title">Pas de <em>magie</em>,<br>juste un <span class="stroke">paquet</span>.</h2>
+        <p class="lead" style="max-width:38ch;">Un plugin s'installe en une commande. Il peut apporter des Skills, des agents, des hooks, ou un serveur MCP.</p>
+      </div>
+
+      <div class="points">
+        <div class="point">
+          <span class="n">01</span>
+          <h3>Plugin</h3>
+          <p>Le paquet. Apporte des <span class="accent">Skills</span>, des agents, des hooks, ou un serveur MCP.</p>
+        </div>
+        <div class="point">
+          <span class="n">02</span>
+          <h3>Marketplace</h3>
+          <p>Le catalogue. Officielle, <span class="mono">communautaire</span>, ou un simple dépôt GitHub avec son <span class="mono">marketplace.json</span>.</p>
+        </div>
+        <div class="point">
+          <span class="n">03</span>
+          <h3>Connecteur</h3>
+          <p>Le plugin qui parle à un service tiers. Ses outils <span class="accent">deviennent utilisables</span> dans la conversation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4 · CHIFFRE / IMPACT  —  slide sombre, le coup de poing chiffré
+  ============================================================ -->
+  <section data-label="04 Impact" class="ink">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Présentation · 01</div>
+      <div class="folio">04 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Connecteurs Agentmail &amp; Linear</span></div>
+    </div>
+
+    <div class="body stat">
+      <div class="top">Une fois la marketplace ajoutée</div>
+      <div class="mid">
+        <div class="big">1<span class="unit">ligne</span></div>
+        <div class="ctx">pour installer un connecteur complet. <em>Auth et outils déjà branchés.</em></div>
+      </div>
+      <div class="foot">
+        <span>Marketplace : <b>1 fois</b></span>
+        <span>Agentmail : <b>1 install</b></span>
+        <span>Linear : <b>1 install</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5 · SCHÉMA SIMPLE  —  un flux 3–4 étapes
+  ============================================================ -->
+  <section data-label="05 Comparaison">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Présentation · 01</div>
+      <div class="folio">05 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Brancher un service tiers</span></div>
+    </div>
+
+    <div class="body compare-wrap">
+      <div class="head" style="display:flex; flex-direction:column; gap:24px;">
+        <div class="label">Brancher un service tiers</div>
+        <h2 class="title">Le code qu'on n'écrit <span class="stroke">plus</span>.</h2>
+      </div>
+
+      <div class="compare">
+        <div class="side before">
+          <span class="tag">Sans connecteur</span>
+          <div class="head">On code soi-même</div>
+          <ul>
+            <li>Écrire un client API par service</li>
+            <li>Gérer l'auth, les clés, les erreurs</li>
+            <li>Recommencer pour chaque nouvel outil</li>
+          </ul>
+        </div>
+        <div class="arrow">→</div>
+        <div class="side after">
+          <span class="tag">Avec connecteur</span>
+          <div class="head">On installe un plugin</div>
+          <ul>
+            <li><b>Une commande</b> : /plugin install</li>
+            <li>Auth et outils déjà branchés</li>
+            <li>Le même geste, officiel ou perso</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7 · DÉMO  —  cadrage + un seul terminal focal
+  ============================================================ -->
+  <section data-label="06 Démo · Agentmail & Linear">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Démos live · 01</div>
+      <div class="folio">06 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Démo · Agentmail &amp; Linear</span></div>
+    </div>
+
+    <div class="body demo">
+      <div class="frame">
+        <div class="marker"><span class="seq">Nº 01</span> · Démo live</div>
+        <h2 class="title">Un email lu, un <span class="stroke">ticket</span> créé.</h2>
+        <div class="build">
+          <div class="row"><span class="b">→</span><span>Ajouter la marketplace officielle</span></div>
+          <div class="row"><span class="b">→</span><span>Installer Agentmail et Linear</span></div>
+          <div class="row"><span class="b">→</span><span>Lire un email, créer le ticket Linear</span></div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div><span class="p">›</span> /plugin marketplace add anthropics/claude-plugins-official</div>
+        <div><span class="p">›</span> /plugin install agentmail@claude-plugins-official</div>
+        <div><span class="p">›</span> /plugin install linear@claude-plugins-official</div>
+        <div>&nbsp;</div>
+        <div><span class="p">›</span> claude <span class="dim">"résume mes emails non lus, crée un ticket Linear pour ce bug"</span></div>
+        <div class="dim">↳ ticket AIC-142 créé · priorité haute</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7 · DÉMO 2  —  bonus, plugin tiers depuis un repo GitHub
+  ============================================================ -->
+  <section data-label="07 Démo · business-presentation">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Démos live · 01 · bonus</div>
+      <div class="folio">07 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Démo · business-presentation</span></div>
+    </div>
+
+    <div class="body demo">
+      <div class="frame">
+        <div class="marker"><span class="seq">Nº 02</span> · Démo live · bonus</div>
+        <h2 class="title">Une idée dite, un <span class="stroke">dossier</span> prêt.</h2>
+        <div class="build">
+          <div class="row"><span class="b">→</span><span>Ajouter la marketplace mikamboo/agent-skills</span></div>
+          <div class="row"><span class="b">→</span><span>Installer le plugin business-skills</span></div>
+          <div class="row"><span class="b">→</span><span>Décrire une idée à voix haute</span></div>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div><span class="p">›</span> /plugin marketplace add mikamboo/agent-skills</div>
+        <div><span class="p">›</span> /plugin install business-skills@kevatech-agent-skills</div>
+        <div>&nbsp;</div>
+        <div><span class="p">›</span> claude <span class="dim">"idée café-resto à Vieux-Habitants, prépare un dossier pour la banque"</span></div>
+        <div class="dim">↳ business-presentation.html · marché, SWOT, financials, roadmap</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8 · PASSATION  —  présentation 02, Claude Design
+  ============================================================ -->
+  <section data-label="08 Présentation 02">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Présentation · 02</div>
+      <div class="folio">08 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Xavier Gueret</span></div>
+    </div>
+
+    <div class="body" style="display:flex; flex-direction:column; justify-content:center; gap:48px;">
+      <div class="label">Présentation Nº 02</div>
+      <h2 class="title">Claude Design : de l'idée<br>au site <span class="stroke">publié</span>.</h2>
+      <p class="lead" style="max-width:32ch;">Xavier Gueret prend la main.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8 · GLOSSAIRE  —  les termes clés de l'épisode
+  ============================================================ -->
+  <section data-label="09 Glossaire">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Glossaire</div>
+      <div class="folio">09 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Les mots de ce soir</span></div>
+    </div>
+
+    <div class="body gloss-wrap">
+      <div class="head" style="display:flex; flex-direction:column; gap:24px;">
+        <div class="label">À retenir</div>
+        <h2 class="title">Cinq mots, <span class="stroke">un</span> vocabulaire.</h2>
+      </div>
+
+      <div class="gloss">
+        <div class="term"><span class="name">Plugin</span><span class="def">Paquet installable en une commande : Skills, agents, hooks ou serveur MCP.</span></div>
+        <div class="term"><span class="name">Marketplace</span><span class="def">Catalogue de plugins ; officielle, communautaire, ou tout dépôt GitHub.</span></div>
+        <div class="term"><span class="name">Connecteur</span><span class="def">Plugin qui expose, via MCP, les outils d'un service tiers.</span></div>
+        <div class="term"><span class="name">MCP</span><span class="def">Protocole standard par lequel un modèle appelle les outils d'un service.</span></div>
+        <div class="term"><span class="name">Skill</span><span class="def">Compétence qui se déclenche seule, sans commande à retenir.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9 · CLÔTURE / RESSOURCES
+  ============================================================ -->
+  <section data-label="10 Clôture">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Pour aller plus loin</div>
+      <div class="folio">10 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Merci · à le mois prochain</span></div>
+    </div>
+
+    <div class="body close">
+      <div class="support">
+        <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee, soutenir IA Coffee">
+        <span class="cap">Offrez-nous un café · scannez pour nous soutenir</span>
+        <span class="url">buymeacoffee.com/ai.coffee</span>
+      </div>
+
+      <div class="label">Ce qu'on retient</div>
+      <div class="recap">
+        Plugin <span class="sep">·</span> Marketplace <span class="sep">·</span> Connecteur <span class="sep">·</span> MCP <span class="sep">·</span> <em>Skill</em>
+      </div>
+
+      <div class="next">
+        <span class="ep">Prochain épisode · Nº 05</span>
+        <span class="t">On se retrouve en octobre.</span>
+        <span class="cta">Thème annoncé bientôt · cohorte limitée à 12</span>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>
