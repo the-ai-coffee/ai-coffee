@@ -443,7 +443,7 @@
       <div class="head">
         <div class="label">Plugin marketplace</div>
         <h2 class="title">Pas de <em>magie</em>,<br>juste un <span class="stroke">paquet</span>.</h2>
-        <p class="lead" style="max-width:38ch;">Un plugin s'installe en une commande. Il peut apporter des Skills, des agents, des hooks, ou un serveur MCP.</p>
+        <p class="lead" style="max-width:38ch;">Un plugin s'installe en un clic. Il peut apporter des Skills, des agents, des hooks, ou un serveur MCP.</p>
       </div>
 
       <div class="points">
@@ -460,7 +460,7 @@
         <div class="point">
           <span class="n">03</span>
           <h3>Connecteur</h3>
-          <p>Le plugin qui parle à un service tiers. Ses outils <span class="accent">deviennent utilisables</span> dans la conversation.</p>
+          <p>Le plugin qui parle à un service tiers, <span class="accent">OAuth compris</span> — plus de clé API à créer à la main.</p>
         </div>
       </div>
     </div>
@@ -477,15 +477,15 @@
     </div>
 
     <div class="body stat">
-      <div class="top">Une fois la marketplace ajoutée</div>
+      <div class="top">Depuis Claude Desktop</div>
       <div class="mid">
-        <div class="big">1<span class="unit">ligne</span></div>
-        <div class="ctx">pour installer un connecteur complet. <em>Auth et outils déjà branchés.</em></div>
+        <div class="big">1<span class="unit">clic</span></div>
+        <div class="ctx">pour installer un connecteur complet. <em>OAuth compris, pas de clé API à coller.</em></div>
       </div>
       <div class="foot">
-        <span>Marketplace : <b>1 fois</b></span>
-        <span>Agentmail : <b>1 install</b></span>
-        <span>Linear : <b>1 install</b></span>
+        <span>Agentmail : <b>OAuth 1 clic</b></span>
+        <span>Linear : <b>OAuth 1 clic</b></span>
+        <span>CLI : <b>en option</b></span>
       </div>
     </div>
   </section>
@@ -521,9 +521,9 @@
           <span class="tag">Avec connecteur</span>
           <div class="head">On installe un plugin</div>
           <ul>
-            <li><b>Une commande</b> : /plugin install</li>
-            <li>Auth et outils déjà branchés</li>
-            <li>Le même geste, officiel ou perso</li>
+            <li><b>Un clic</b>, depuis Claude Desktop</li>
+            <li>OAuth compris : Linear, Agentmail</li>
+            <li>La commande existe aussi, pour Claude Code</li>
           </ul>
         </div>
       </div>
@@ -545,13 +545,14 @@
         <div class="marker"><span class="seq">Nº 01</span> · Démo live</div>
         <h2 class="title">Un email lu, un <span class="stroke">ticket</span> créé.</h2>
         <div class="build">
-          <div class="row"><span class="b">→</span><span>Ajouter la marketplace officielle</span></div>
-          <div class="row"><span class="b">→</span><span>Installer Agentmail et Linear</span></div>
+          <div class="row"><span class="b">→</span><span>Ouvrir le panneau Customize de Claude Desktop</span></div>
+          <div class="row"><span class="b">→</span><span>Installer Agentmail et Linear en un clic</span></div>
           <div class="row"><span class="b">→</span><span>Lire un email, créer le ticket Linear</span></div>
         </div>
       </div>
 
       <div class="terminal">
+        <div class="c"># équivalent CLI, en option</div>
         <div><span class="p">›</span> /plugin marketplace add anthropics/claude-plugins-official</div>
         <div><span class="p">›</span> /plugin install agentmail@claude-plugins-official</div>
         <div><span class="p">›</span> /plugin install linear@claude-plugins-official</div>
@@ -644,9 +645,9 @@
       </div>
 
       <div class="gloss">
-        <div class="term"><span class="name">Plugin</span><span class="def">Paquet installable en une commande : Skills, agents, hooks ou serveur MCP.</span></div>
+        <div class="term"><span class="name">Plugin</span><span class="def">Paquet installable en un clic : Skills, agents, hooks ou serveur MCP.</span></div>
         <div class="term"><span class="name">Marketplace</span><span class="def">Catalogue de plugins ; officielle, communautaire, ou tout dépôt GitHub.</span></div>
-        <div class="term"><span class="name">Connecteur</span><span class="def">Plugin qui expose, via MCP, les outils d'un service tiers.</span></div>
+        <div class="term"><span class="name">Connecteur</span><span class="def">Plugin qui expose, via MCP, les outils d'un service tiers, OAuth compris.</span></div>
         <div class="term"><span class="name">MCP</span><span class="def">Protocole standard par lequel un modèle appelle les outils d'un service.</span></div>
         <div class="term"><span class="name">Skill</span><span class="def">Compétence qui se déclenche seule, sans commande à retenir.</span></div>
       </div>
