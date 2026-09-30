@@ -11,6 +11,8 @@ Content and slide-deck source for **AI Coffee**, a monthly French-language meetu
 - `README.md` — one-paragraph pitch for the event, in French.
 - `project-vision.md` — the living product vision/strategy doc (problem, format, growth model, signature offerings, metrics, roadmap, risks). Plain Markdown. This is the source of truth for what the project actually is and where it's headed — check it before assuming a session format or business model detail from an older artifact (e.g. a deck) is still current.
 - `CONTEXT.md` — glossary of project-specific terms (e.g. `Session`, `Cohort cap`, `Prompt Bar`, `Use Case Catalog`) maintained alongside `project-vision.md`. Defines what each term means and which competing terms to avoid. Consult it before using ambiguous terminology, and keep it in sync when a term's meaning changes.
+- `DESIGN.md` — the visual signature shared by every artifact, in the [DESIGN.md format](https://github.com/google-labs-code/design.md): machine-readable tokens in the YAML front matter (source of truth) + rationale. Read it before styling anything. Lint with `pnpm dlx @google/design.md lint DESIGN.md`.
+- `design/tokens.css` — runtime mirror of the DESIGN.md colour and font tokens as CSS custom properties. Loaded by `index.html` and every deck **before** `deck-stage.js` (so thumbnails snapshot it). Pages must not redeclare these tokens; change them here and in `DESIGN.md` together.
 - `product-presentation.md` — long-form product presentation, published to Notion (see below).
 - `sessions/NN.md` — content source per episode (summary + per-talk notes), used to generate that episode's slide deck. Written in finished, narrative form as soon as content is planned — which may be *before* the session actually happens, so past tense doesn't imply the session occurred. `02.md` shows the expected structure (Summary, then a `### N. Talk title` section per presentation with a blockquote tagline and bolded sub-sections).
 - `decks/` — all slide decks, organized as **shared system + one folder per episode**:
@@ -18,7 +20,7 @@ Content and slide-deck source for **AI Coffee**, a monthly French-language meetu
   - `decks/_template/` — the generation system, stable across episodes: `template.html` (the light template, 9 archetypes) and `TEMPLATE-GUIDE.md` (the deterministic `sessions/NN.md` → deck contract). Underscore-prefixed so it sorts first and reads as "not an episode."
   - `decks/NN-theme/` — one folder per episode (e.g. `01-agentic-ai/`, `02-hermes-ai/`). Contains `deck.html` (the current deck), optionally `archive/` (older versions like `v1.html`, `v2.html`, `standalone.html`), `export.pdf`, and `screenshots/`. Generating a session means creating one such folder by copying `_template/template.html`.
 - `media/` — logo/cover images used in presentations (shared across episodes).
-- `notion-publish.sh` — publishes a Markdown file to Notion.
+- `scripts/` — Notion publishing helpers (`notion-publish.sh`, `publish-vision.sh`). They need `NOTION_API_KEY` in the environment (see `.env.example`).
 
 ## `deck-stage.js` — the slide deck component
 
@@ -46,4 +48,8 @@ When asked to open a PR for the current session's changes:
 
 ## Publishing to Notion
 
-`./notion-publish.sh [file] [page_id]` pushes a local Markdown file to a Notion page using the `ntn` CLI (requires `NOTION_API_TOKEN`/`NOTION_API_KEY` in the environment). Defaults to publishing `product-presentation.md`. The script's actual strategy is: create a brand-new page under the parent page from the Markdown, archive the old page, then rewrite its own `PAGE_ID` default in-place via `sed` — so re-running it after a successful publish targets the newly created page automatically.
+`scripts/notion-publish.sh [file] [page_id]` pushes a local Markdown file to a Notion page using the `ntn` CLI (requires `NOTION_API_TOKEN`/`NOTION_API_KEY` in the environment). Defaults to publishing `product-presentation.md`. The script's actual strategy is: create a brand-new page under the parent page from the Markdown, archive the old page, then rewrite its own `PAGE_ID` default in-place via `sed` — so re-running it after a successful publish targets the newly created page automatically.
+
+> ⚠️ Known issue: the script resolves `[file]` relative to `scripts/`, and the default `product-presentation.md` does not exist anywhere in the repo — always pass an explicit file path until this is fixed.
+>
+> 📝 TODO: reconcile the strategy described above with the script. This section says it creates a new page then archives the old one; the script actually deletes the existing page's blocks, then creates a new page. Check which behavior is intended and fix either the doc or the script.
