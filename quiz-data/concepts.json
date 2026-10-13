@@ -1,0 +1,23 @@
+{
+  "concepts": [
+    { "id": "tokenization", "label": "Tokenisation", "family": "fondamentaux", "definition": "Le modèle découpe le texte en tokens (morceaux de mots) : il ne voit pas les lettres une à une." },
+    { "id": "next-token", "label": "Prédiction du mot suivant", "family": "fondamentaux", "definition": "Un LLM génère son texte token par token, en prédisant la suite la plus probable." },
+    { "id": "context-window", "label": "Fenêtre de contexte", "family": "fondamentaux", "definition": "La quantité de texte que le modèle peut prendre en compte à la fois ; au-delà, il oublie ou se perd." },
+    { "id": "training-cutoff", "label": "Date de coupure", "family": "fondamentaux", "definition": "Le modèle ne sait que ce qu'il a vu à l'entraînement ; sans outil, il ignore l'actualité." },
+    { "id": "non-determinism", "label": "Non-déterminisme", "family": "fondamentaux", "definition": "La même question peut donner des réponses différentes d'une fois sur l'autre." },
+    { "id": "hallucination", "label": "Hallucination", "family": "limites", "definition": "Le modèle produit une information fausse avec assurance." },
+    { "id": "sycophancy", "label": "Complaisance", "family": "limites", "definition": "Le modèle tend à donner raison à l'utilisateur, même quand celui-ci a tort." },
+    { "id": "bias", "label": "Biais", "family": "limites", "definition": "Le modèle reproduit les biais présents dans ses données d'entraînement." },
+    { "id": "ai-detection", "label": "Repérer l'IA", "family": "limites", "definition": "Les indices qui trahissent un contenu généré, et les limites de cette détection." },
+    { "id": "prompt-context", "label": "Donner du contexte", "family": "prompting", "definition": "Plus la tâche est située (but, public, contraintes), meilleure est la réponse." },
+    { "id": "prompt-examples", "label": "Montrer des exemples", "family": "prompting", "definition": "Quelques exemples de la sortie attendue (few-shot) guident mieux qu'une longue consigne." },
+    { "id": "prompt-role", "label": "Donner un rôle", "family": "prompting", "definition": "Attribuer un rôle ou un public cible oriente le ton et le niveau de détail." },
+    { "id": "prompt-format", "label": "Préciser le format", "family": "prompting", "definition": "Demander une forme de sortie explicite (puces, tableau, longueur) rend la réponse exploitable." },
+    { "id": "video-generation", "label": "Vidéo générée", "family": "usages", "definition": "Les modèles vidéo produisent des scènes crédibles, mais trahissent souvent la physique, les mains ou le texte." },
+    { "id": "agent", "label": "Agent", "family": "usages", "definition": "Un modèle qui enchaîne des actions (lire, chercher, exécuter) pour atteindre un objectif." },
+    { "id": "tool-use", "label": "Appel d'outils", "family": "usages", "definition": "Le modèle appelle des outils externes (recherche web, API) pour agir ou s'informer." },
+    { "id": "mcp", "label": "MCP", "family": "usages", "definition": "Un protocole standard pour brancher un modèle sur des outils et des services tiers." },
+    { "id": "skills", "label": "Skills", "family": "usages", "definition": "Des paquets d'instructions et de ressources qui apprennent un savoir-faire à l'assistant." },
+    { "id": "rag", "label": "RAG", "family": "usages", "definition": "Le modèle répond en s'appuyant sur des documents retrouvés au moment de la question." }
+  ]
+}
