@@ -6,7 +6,7 @@
 
 **Architecture :** front statique en vanilla JS (modules ES, sans build) servi par Netlify depuis la racine du repo. Une seule fonction Netlify (`/api/quiz/*`) porte toute la logique serveur, écrite comme une fabrique `createApi({store, content, …})` testable avec un store en mémoire. L'état live vit dans Netlify Blobs. Le contenu (`quiz-data/`) est importé et embarqué dans la fonction, et jamais servi publiquement. Les fonctions pures (scoring, profils, pseudo) sont partagées entre le front et la fonction.
 
-**Tech Stack :** Node 22, `node:test`, Netlify Functions (syntaxe moderne `export default async (req) => Response` + `config.path`), `@netlify/blobs` ^11, `netlify-cli` 27 via `pnpm dlx` (dev local, non installé dans le projet pour ne pas alourdir les builds Netlify), pnpm, `qrcode-generator` 1.4.4 (cdnjs), tokens de `design/tokens.css`.
+**Tech Stack :** Node 22, `node:test`, Netlify Functions (syntaxe moderne `export default async (req) => Response` + `config.path`), `@netlify/blobs` ^11, `netlify-cli` 27 via `pnpm --package=netlify-cli@27 dlx netlify` (dev local, non installé dans le projet pour ne pas alourdir les builds Netlify), pnpm, `qrcode-generator` 1.4.4 (cdnjs), tokens de `design/tokens.css`.
 
 **Spec :** `docs/superpowers/specs/2026-10-13-quiz-brise-glace-design.md`
 
@@ -27,6 +27,10 @@
 
 1. **État initial `closed`** avant `open` : une partie n'est jouable qu'après le clic animateur « Ouvrir la partie ». Cela évite les réponses parasites avant la session.
 2. **QR code sur l'écran animateur** et non dans le deck. Le deck reçoit une diapo d'archétype *Démo* avec l'URL, puisque l'animateur partage l'écran animateur pendant le jeu. Le système de deck reste inchangé.
+3. **Une seule fonction `/api/quiz/*`** avec une table de routes, au lieu de 7 fonctions nommées : un seul bundle, un seul point d'entrée pour la validation et les erreurs.
+4. **Contenu embarqué par des imports JSON esbuild** (attributs d'import `with { type: "json" }`) au lieu de `included_files` : les parties et l'historique sont figés dans le bundle au moment du build.
+5. **Script `dev`** : `pnpm --package=netlify-cli@27 dlx netlify dev`. La forme `pnpm dlx netlify-cli@27 dev` échoue avec `ERR_PNPM_DLX_MULTIPLE_BINS`, car le paquet expose plusieurs binaires.
+6. **Un blob par réponse** (`games/NN/answers/<pid>/<qid>`) en plus du blob d'identité par joueur (`games/NN/players/<pid>`, sans `answers`) : deux réponses envoyées en parallèle par le même téléphone écrasaient sinon l'une l'autre dans le blob joueur. L'API reconstitue `answers` à la lecture.
 
 ---
 
@@ -35,7 +39,7 @@
 | Fichier | Responsabilité |
 |---|---|
 | `package.json`, `pnpm-lock.yaml` | Dépendance `@netlify/blobs`, scripts `test` / `dev` / `quiz:*` |
-| `netlify.toml` | Bundler des fonctions, 404 forcés sur `quiz-data/`, `node_modules/`, `netlify/`, `tests/` |
+| `netlify.toml` | Bundler des fonctions, `NODE_VERSION`, 404 forcés sur `quiz-data/`, `node_modules/`, `netlify/`, `tests/`, `scripts/`, `.superpowers/`, `.env*` |
 | `quiz-data/concepts.json` | Référentiel des concepts |
 | `quiz-data/sessions/<id>.json` | Une partie par session (contrat) |
 | `quiz-data/sessions/index.mjs` | Registre : importe chaque partie (embarquée par esbuild) |
@@ -77,7 +81,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test \"tests/**/*.test.mjs\"",
-    "dev": "pnpm dlx netlify-cli@27 dev",
+    "dev": "pnpm --package=netlify-cli@27 dlx netlify dev",
     "quiz:validate": "node scripts/quiz-validate.mjs",
     "quiz:export": "node scripts/quiz-export.mjs",
     "quiz:simulate": "node scripts/quiz-simulate.mjs"
@@ -1809,7 +1813,7 @@ console.log("✅ Simulation terminée");
 Créer un `.env` local (ignoré par git) avec `QUIZ_HOST_KEY=dev-key`.
 
 Run (terminal 1) : `pnpm dev`
-Expected : `netlify dev` écoute sur `http://localhost:8888` et liste la fonction `quiz-api`. Si une erreur Blobs mentionne un site non lié, lancer `pnpm dlx netlify-cli@27 link` une fois, puis relancer.
+Expected : `netlify dev` écoute sur `http://localhost:8888` et liste la fonction `quiz-api`. Si une erreur Blobs mentionne un site non lié, lancer `pnpm --package=netlify-cli@27 dlx netlify link` une fois, puis relancer.
 
 Run (terminal 2) : `QUIZ_HOST_KEY=dev-key pnpm quiz:simulate demo`
 Expected : 3 lignes `Sim … : NN/100 — <profil>`, `Niveau du jour : NN/100 (3 joueurs)`, un JSON d'export avec `"session": "demo"`, puis `✅ Simulation terminée`.
@@ -3074,11 +3078,19 @@ Netlify → *Site configuration* → *Environment variables* : créer `QUIZ_HOST
 SITE=https://deploy-preview-<n>--<site>.netlify.app
 curl -s -o /dev/null -w "%{http_code}\n" "$SITE/quiz-data/sessions/demo.json"   # attendu : 404
 curl -s -o /dev/null -w "%{http_code}\n" "$SITE/node_modules/@netlify/blobs/package.json"   # attendu : 404
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE/quiz-data/concepts.json"   # attendu : 404
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE/quiz-data/sessions/index.mjs"   # attendu : 404
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE/Quiz-Data/sessions/demo.json"   # attendu : 404 (ou aucun contenu)
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE//quiz-data/sessions/demo.json"   # attendu : 404 (ou aucun contenu)
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE/quiz%2Ddata/sessions/demo.json"   # attendu : 404 (ou aucun contenu)
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.env"   # attendu : 404
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.superpowers/"   # attendu : 404
 curl -s "$SITE/api/quiz/state?s=demo"   # attendu : {"status":"closed","revealIndex":0} (ou l'état courant)
+curl -s -w " %{http_code}\n" "$SITE/api/quiz/game?s=inconnue"   # attendu : 404 ; noter le code renvoyé (R10)
 QUIZ_HOST_KEY=<clé> pnpm quiz:simulate demo --url "$SITE"   # attendu : ✅ Simulation terminée
 ```
 
-Expected : les deux 404, l'état JSON, puis la simulation complète.
+Expected : tous les 404 (ou aucun contenu de fichier), l'état JSON, puis la simulation complète. La réponse de `/api/quiz/state` prouve aussi qu'esbuild a bien embarqué les imports JSON avec attributs d'import (la fonction répond au lieu d'échouer au chargement). Noter le statut et le code qu'un 404 de la fonction renvoie en production (R10) : `{"error":"unknown_session"}` attendu ; sous `netlify dev`, le CLI rejoue les 404 de la fonction et affiche `not_found`. Les clients ne se fient qu'au statut 404.
 
 - [ ] **Step 3 : générer la partie 05**
 
@@ -3102,8 +3114,9 @@ Sur le deploy preview ou en production, avec `?s=05` :
 1. Animateur : `/quiz/host/?s=05#key=<clé>` en partage d'écran Meet. **Réinitialiser**, puis **Ouvrir la partie**. Démarrer le chrono.
 2. Joueurs : 1 iPhone (Safari), 1 Android (Chrome), 1 ordinateur. Scanner le QR et jouer. Vérifier que la vidéo d'échauffement se lit sur les deux mobiles.
 3. **Révéler** à ~6:00 et débriefer en parcourant les questions (◀ ▶), puis afficher **Niveau du jour**.
-4. Arrêter le chrono : **≤ 12:00** attendu. Si c'est plus long, retirer une question ou raccourcir des explications.
-5. **Réinitialiser** à la fin de la répétition. Les joueurs de test vident leur stockage local ou utilisent une fenêtre privée le jour J.
+4. Pendant la partie, sur un des téléphones : répondre très vite à plusieurs questions d'affilée, couper le réseau (mode avion) pour une ou deux réponses, constater l'indication « réponse non envoyée », puis rétablir le réseau. L'écran animateur doit finir par compter toutes les réponses de ce joueur.
+5. Arrêter le chrono : **≤ 12:00** attendu. Si c'est plus long, retirer une question ou raccourcir des explications.
+6. **Réinitialiser** à la fin de la répétition. Les joueurs de test vident leur stockage local ou utilisent une fenêtre privée le jour J.
 
 Expected : déroulé complet, temps ≤ 12 min, aucun blocage sur mobile.
 
@@ -3136,7 +3149,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 | §2.3 history + export | 4, 6, 11 |
 | §3.1 front vanilla, un module par jeu | 8, 9, 10 |
 | §3.2 endpoints, clé animateur, validation des entrées | 5, 6, 7 |
-| §3.3 Blobs (un blob par joueur, `members/<uid>`) | 5, 6 |
+| §3.3 Blobs (un blob par joueur, un blob par réponse — écart 6 —, `members/<uid>`) | 5, 6 |
 | §3.4 scoring, niveau du jour, comparaison historique | 2, 4, 6 |
 | §3.5 profils, badge, pseudo | 3 |
 | §4.1 skill `quiz` (rappels, contenus vérifiables, validation) | 12 |

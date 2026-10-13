@@ -20,10 +20,10 @@ Content and slide-deck source for **AI Coffee**, a monthly French-language meetu
   - `decks/_template/` — the generation system, stable across episodes: `template.html` (the light template, 9 archetypes) and `TEMPLATE-GUIDE.md` (the deterministic `sessions/NN.md` → deck contract). Underscore-prefixed so it sorts first and reads as "not an episode."
   - `decks/NN-theme/` — one folder per episode (e.g. `01-agentic-ai/`, `02-hermes-ai/`). Contains `deck.html` (the current deck), optionally `archive/` (older versions like `v1.html`, `v2.html`, `standalone.html`), `export.pdf`, and `screenshots/`. Generating a session means creating one such folder by copying `_template/template.html`.
 - `media/` — logo/cover images used in presentations (shared across episodes).
-- `scripts/` — Notion publishing helpers (`notion-publish.sh`, `publish-vision.sh`). They need `NOTION_API_KEY` in the environment (see `.env.example`).
+- `scripts/` — Notion publishing helpers (`notion-publish.sh`, `publish-vision.sh`), which need `NOTION_API_KEY` in the environment (see `.env.example`), and the quiz scripts: `quiz-validate.mjs` (`pnpm quiz:validate`), `quiz-simulate.mjs` (`pnpm quiz:simulate`, plays a full game against a running API) and `quiz-export.mjs` (`pnpm quiz:export`, appends a finished game's aggregates to `quiz-data/history.json`). Never published (forced 404).
 - `quiz/` — quiz brise-glace front: player app (`index.html`, `app.js`), host screen (`host/`), shared pure modules (`lib/scoring.js`, `lib/profiles.js`, `lib/pseudo.js`) and one module per game (`lib/games/`).
 - `netlify/` — `functions/quiz-api.mjs` (the `/api/quiz/*` function) and `lib/quiz/` (testable API, content access, validator).
-- `quiz-data/` — the quiz content contract: `concepts.json`, `sessions/NN.json` (+ `sessions/index.mjs` registry), `history.json`. **Never published** (forced 404 in `netlify.toml`); generated with the `quiz` skill, validated with `pnpm quiz:validate`.
+- `quiz-data/` — the quiz content contract: `concepts.json`, `sessions/NN.json` (+ `sessions/index.mjs` registry), `history.json`. **Never published** (forced 404 in `netlify.toml`); generated with the `quiz` skill, validated with `pnpm quiz:validate`. These files are bundled into the function at build time: after `pnpm quiz:export`, the host screen's history comparison only updates once `history.json` is committed and the site redeployed.
 
 ## `deck-stage.js` — the slide deck component
 

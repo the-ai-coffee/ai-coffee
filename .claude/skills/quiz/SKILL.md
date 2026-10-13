@@ -57,4 +57,6 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
 ## Après la session
 
 `QUIZ_HOST_KEY=… pnpm quiz:export NN --url https://<site>`, puis commiter
-`quiz-data/history.json`.
+`quiz-data/history.json`. Ce fichier est embarqué dans la fonction au moment du
+build : la comparaison avec l'historique sur l'écran animateur ne se met à jour
+qu'après ce commit **et** un redéploiement.

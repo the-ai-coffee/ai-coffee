@@ -12,7 +12,8 @@ test("shipped concepts.json is valid", () => {
 for (const [key, game] of Object.entries(registry)) {
   test(`shipped session « ${key} » is valid and registered under its own id`, () => {
     assert.equal(game.session, key);
-    const { errors } = validateGame(game, conceptsDoc);
+    // Real sessions must be fully verified (no `verify: true` left); the demo may keep drafts.
+    const { errors } = validateGame(game, conceptsDoc, { strict: key !== "demo" });
     assert.deepEqual(errors, []);
   });
 }
