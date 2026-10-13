@@ -26,20 +26,31 @@ function write(key, value) {
     /* state stays in memory for this tab */
   }
 }
+// crypto.randomUUID is only available in secure contexts (not plain http on a LAN IP).
+function uuid() {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const x = [...b].map((n) => n.toString(16).padStart(2, "0")).join("");
+  return `${x.slice(0, 8)}-${x.slice(8, 12)}-${x.slice(12, 16)}-${x.slice(16, 20)}-${x.slice(20)}`;
+}
 function uid() {
   let id = read(UID_KEY, null);
   if (!id) {
-    id = crypto.randomUUID();
+    id = uuid();
     write(UID_KEY, id);
   }
   return id;
 }
 
 const blank = () => ({ pid: null, pseudo: null, answers: {} });
-let me = read(STORE_KEY, blank());
+const stored = read(STORE_KEY, null);
+let me = stored && typeof stored === "object" && stored.answers && typeof stored.answers === "object" ? stored : blank();
 let game = null;
 let state = null;
 let results = null;
+const UNAVAILABLE = Symbol("results-unavailable");
 const save = () => write(STORE_KEY, me);
 const allAnswered = () => game.questions.every((q) => me.answers[q.id]);
 
@@ -55,6 +66,10 @@ async function main() {
     return message(err.status === 404 ? "Partie introuvable" : "Connexion impossible", "Vérifie le lien puis recharge la page.");
   }
   state = game.state;
+  if (state.status === "closed" && Object.keys(me.answers).length) {
+    me = blank(); // answers only exist after an open game: the host reset while we were away
+    save();
+  }
   if (!me.pid && !REVEALED.has(state.status)) renderJoin();
   else render();
   poll(refresh, 3000);
@@ -189,10 +204,17 @@ function renderWaiting() {
 
 async function loadResults() {
   if (!me.pid) return null;
+  if (results === UNAVAILABLE) return null;
   if (!results) {
     try {
       results = await api.me(session, me.pid);
     } catch (err) {
+      if (err.code === "unknown_player") {
+        me = blank(); // game was reset while we were away: carry on as a spectator
+        save();
+        results = UNAVAILABLE;
+        return null;
+      }
       console.warn("[quiz] résultats indisponibles", err);
     }
   }
@@ -201,6 +223,7 @@ async function loadResults() {
 
 async function renderReveal() {
   const r = await loadResults();
+  if (!REVEALED.has(state.status)) return; // a reset/reopen happened meanwhile
   const i = state.revealIndex;
   if (i >= game.questions.length) return renderProfile(r);
   const q = game.questions[i];
