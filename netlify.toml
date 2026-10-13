@@ -1,6 +1,9 @@
 [build]
   publish = "."
 
+[build.environment]
+  NODE_VERSION = "22"
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -38,6 +41,30 @@
 
 [[redirects]]
   from = "/tests/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.superpowers/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.env"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.env.*"
   to = "/404"
   status = 404
   force = true
