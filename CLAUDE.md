@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Content and slide-deck source for **AI Coffee**, a monthly French-language meetup/anti-conference about practical AI. There is no build system, package manager, or test suite — this is a documentation/presentation repo, not an application.
+Content and slide-deck source for **AI Coffee**, a monthly French-language meetup/anti-conference about practical AI. It is mostly a documentation/presentation repo. The one application is the **quiz brise-glace** (`quiz/`, `netlify/`, `quiz-data/`): vanilla JS without a build step, one Netlify Function + Netlify Blobs, `pnpm test` (node:test). Spec: `docs/superpowers/specs/2026-10-13-quiz-brise-glace-design.md`.
 
 ## Layout
 
@@ -21,6 +21,9 @@ Content and slide-deck source for **AI Coffee**, a monthly French-language meetu
   - `decks/NN-theme/` — one folder per episode (e.g. `01-agentic-ai/`, `02-hermes-ai/`). Contains `deck.html` (the current deck), optionally `archive/` (older versions like `v1.html`, `v2.html`, `standalone.html`), `export.pdf`, and `screenshots/`. Generating a session means creating one such folder by copying `_template/template.html`.
 - `media/` — logo/cover images used in presentations (shared across episodes).
 - `scripts/` — Notion publishing helpers (`notion-publish.sh`, `publish-vision.sh`). They need `NOTION_API_KEY` in the environment (see `.env.example`).
+- `quiz/` — quiz brise-glace front: player app (`index.html`, `app.js`), host screen (`host/`), shared pure modules (`lib/scoring.js`, `lib/profiles.js`, `lib/pseudo.js`) and one module per game (`lib/games/`).
+- `netlify/` — `functions/quiz-api.mjs` (the `/api/quiz/*` function) and `lib/quiz/` (testable API, content access, validator).
+- `quiz-data/` — the quiz content contract: `concepts.json`, `sessions/NN.json` (+ `sessions/index.mjs` registry), `history.json`. **Never published** (forced 404 in `netlify.toml`); generated with the `quiz` skill, validated with `pnpm quiz:validate`.
 
 ## `deck-stage.js` — the slide deck component
 
