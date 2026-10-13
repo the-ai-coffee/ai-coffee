@@ -54,8 +54,18 @@ const UNAVAILABLE = Symbol("results-unavailable");
 const save = () => write(STORE_KEY, me);
 const allAnswered = () => game.questions.every((q) => me.answers[q.id]);
 
-function message(title, text) {
-  mount(root, h("section", { class: "screen center" }, h("h1", {}, title), text ? h("p", { class: "lead" }, text) : null));
+// Answers are sent one at a time through a single chain; `inFlight` holds the
+// qids queued or being sent, so a poll never sends the same answer twice.
+let sendQueue = Promise.resolve();
+const inFlight = new Set();
+let unsentNote = null; // the « non envoyée » span of the current question screen
+const unsentCount = () => Object.entries(me.answers).filter(([qid, a]) => !a.sent && !a.late && !inFlight.has(qid)).length;
+const unsentLabel = (n) => (n === 0 ? "" : n === 1 ? " · 1 réponse non envoyée" : ` · ${n} réponses non envoyées`);
+const LATE = "Trop tard : la révélation avait commencé.";
+const lateNote = (late) => (late ? h("p", { class: "error" }, LATE) : null);
+
+function message(title, text, extra = null) {
+  mount(root, h("section", { class: "screen center" }, h("h1", {}, title), text ? h("p", { class: "lead" }, text) : null, extra));
 }
 
 async function main() {
@@ -88,7 +98,9 @@ async function refresh() {
     }
   }
   state = next;
-  if (state.status === "open") flushUnsent();
+  // While open, unsent answers are retried; once revealed, one last try gets
+  // the 409 « not_open » that marks them as too late.
+  if (state.status !== "closed") flushUnsent();
   if (!statusChanged && next.revealIndex === previous.revealIndex) return;
   if (!me.pid && !REVEALED.has(state.status)) {
     // back from a reveal, or the host reset the game: show the join screen again;
@@ -157,39 +169,68 @@ function renderPlay() {
       );
     }),
   );
-  mount(root, h("section", { class: "screen" }, h("p", { class: "kicker" }, `Question ${index + 1} / ${game.questions.length}`), stage));
+  unsentNote = h("span", {}, unsentLabel(unsentCount()));
+  mount(root, h("section", { class: "screen" }, h("p", { class: "kicker" }, `Question ${index + 1} / ${game.questions.length}`, unsentNote), stage));
 }
 
 function record(qid, choice, confidence) {
   me.answers[qid] = { choice, confidence, sent: false };
   save();
+  send(qid); // queued first, so the next screen does not flag it as unsent
   renderPlay();
-  send(qid);
 }
 
-async function send(qid) {
+function send(qid) {
+  if (inFlight.has(qid)) return;
+  inFlight.add(qid);
+  sendQueue = sendQueue.then(async () => {
+    try {
+      await deliver(qid);
+    } finally {
+      inFlight.delete(qid);
+    }
+    showUnsent();
+  });
+}
+
+async function deliver(qid) {
+  const pid = me.pid;
   const answer = me.answers[qid];
+  if (!pid || !answer || answer.sent || answer.late) return; // reset meanwhile, or nothing left to send
   try {
-    await api.answer(session, me.pid, qid, answer.choice, answer.confidence);
+    await api.answer(session, pid, qid, answer.choice, answer.confidence);
     answer.sent = true;
     save();
   } catch (err) {
     if (err.code === "unknown_player") {
+      if (me.pid !== pid) return; // an earlier send already showed the join screen
       me = blank(); // game was reset while we were away
       save();
       return renderJoin();
     }
-    if (err.code !== "not_open") console.warn("[quiz] réponse non envoyée, nouvel essai au prochain cycle", err);
+    if (err.code === "not_open") {
+      answer.late = true; // the reveal has started: never resent
+      save();
+      if (REVEALED.has(state.status)) render();
+      return;
+    }
+    console.warn("[quiz] réponse non envoyée, nouvel essai au prochain cycle", err);
   }
-  if (state.status === "open" && allAnswered()) renderWaiting();
+}
+
+// Refreshes the « non envoyée » indicator without redrawing the question being answered.
+function showUnsent() {
+  if (!me.pid || state.status !== "open") return;
+  if (allAnswered()) return renderWaiting();
+  if (unsentNote?.isConnected) unsentNote.textContent = unsentLabel(unsentCount());
 }
 
 function flushUnsent() {
-  for (const [qid, answer] of Object.entries(me.answers)) if (!answer.sent) send(qid);
+  for (const [qid, answer] of Object.entries(me.answers)) if (!answer.sent && !answer.late) send(qid);
 }
 
 function renderWaiting() {
-  const unsent = Object.values(me.answers).filter((a) => !a.sent).length;
+  const unsent = unsentCount();
   mount(
     root,
     h(
@@ -234,12 +275,14 @@ async function renderReveal() {
       { class: "screen" },
       h("p", { class: "kicker" }, `Révélation · ${i + 1} / ${game.questions.length}`),
       GAMES[q.game].renderReveal(q, game.stats?.[q.id], r?.answers?.[q.id]),
+      lateNote(me.answers[q.id]?.late),
     ),
   );
 }
 
 function renderProfile(r) {
-  if (!r || r.score === null) return message("Merci d'avoir suivi !", "Pas de réponse comptée cette fois. À la prochaine session !");
+  const late = lateNote(Object.values(me.answers).some((a) => a.late));
+  if (!r || r.score === null) return message("Merci d'avoir suivi !", "Pas de réponse comptée cette fois. À la prochaine session !", late);
   const p = r.profile;
   mount(
     root,
@@ -254,6 +297,7 @@ function renderProfile(r) {
       h("p", {}, `${r.correct} bonne(s) réponse(s) sur ${r.answered}`),
       r.badges.length ? h("p", { class: "badges" }, r.badges.map((b) => `${b.emoji} ${b.title}`).join(" · ")) : null,
       r.missedConcepts.length ? h("p", { class: "revise" }, `À revoir : ${r.missedConcepts.join(", ")}`) : null,
+      late,
       r.progression.length > 1
         ? h(
             "div",
