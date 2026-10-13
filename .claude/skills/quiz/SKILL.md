@@ -40,6 +40,10 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
      puis retire le drapeau. Ajouter `media.fallback` (image) si possible.
    - `investigation` : la ligne fautive doit être une ligne `ai` ; une question
      « rien ne cloche » (`answer: null`) par partie au plus.
+   - Le média ne doit pas trahir la réponse : noms de fichiers neutres (pas de
+     « ai », « human » ni de nom d'outil dans `src`), aucun champ de crédit ou de
+     source dans `media` (l'attribution va uniquement dans `explanation`), et
+     vérifier que le titre des vidéos ne donne pas la réponse.
 5. **Écrire** `quiz-data/sessions/NN.json` (`"session": "NN"`) et ajouter au registre
    `quiz-data/sessions/index.mjs` :
    `import sNN from "./NN.json" with { type: "json" };` et la clé `"NN": sNN` dans

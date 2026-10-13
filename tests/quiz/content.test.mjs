@@ -27,6 +27,15 @@ test("publicGame hides answers, explanations, outputs and concepts before the re
   assert.equal(pub.questions[4].prompts.length, 2);
 });
 
+test("publicGame keeps only known media sub-fields before the reveal", () => {
+  const media = { kind: "video", provider: "youtube", id: "abc", start: 3, end: 9, alt: "Un chat", fallback: "Texte", source: "Midjourney", credit: "IA" };
+  const game = { ...fixtureGame, questions: [{ ...fixtureGame.questions[1], media }] };
+  const hidden = content.publicGame(game, { revealed: false }).questions[0].media;
+  assert.deepEqual(hidden, { kind: "video", alt: "Un chat", provider: "youtube", id: "abc", start: 3, end: 9, fallback: "Texte" });
+  assert.deepEqual(content.publicGame(game, { revealed: true }).questions[0].media, media);
+  assert.ok(!("media" in content.publicGame(fixtureGame, { revealed: false }).questions[2]));
+});
+
 test("publicGame reveals everything plus concept labels afterwards, without mutating the source", () => {
   const q3 = content.publicGame(fixtureGame, { revealed: true }).questions[3];
   assert.equal(q3.answer, 2);
