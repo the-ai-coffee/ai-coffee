@@ -21,7 +21,18 @@ test("join validates the pseudo and returns a pid", async () => {
   assert.deepEqual(await call("POST", "join?s=test", { pseudo: "   " }), { status: 400, body: { error: "invalid_pseudo" } });
   const r = await call("POST", "join?s=test", { pseudo: "Token  Têtu", uid: UID });
   assert.deepEqual(r, { status: 200, body: { pid: "p1", pseudo: "Token Têtu", status: "closed" } });
-  assert.equal((await call("POST", "join?s=test", "not json")).status, 400);
+});
+
+test("malformed or non-object JSON bodies are refused with invalid_json", async () => {
+  const { api, call } = setup();
+  const raw = (path, body) =>
+    api(new Request(`http://localhost/api/quiz/${path}`, { method: "POST", headers: { "content-type": "application/json" }, body }));
+  const r = await raw("join?s=test", "{oops");
+  assert.deepEqual({ status: r.status, body: await r.json() }, { status: 400, body: { error: "invalid_json" } });
+  for (const bad of [null, [], "x", 42]) {
+    assert.deepEqual(await call("POST", "join?s=test", bad), { status: 400, body: { error: "invalid_json" } });
+    assert.deepEqual(await call("POST", "answer?s=test", bad), { status: 400, body: { error: "invalid_json" } });
+  }
 });
 
 test("join refuses players beyond maxPlayers", async () => {

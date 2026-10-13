@@ -62,11 +62,14 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
   }
 
   async function readBody(req) {
+    let body;
     try {
-      return await req.json();
+      body = await req.json();
     } catch {
       throw new HttpError(400, "invalid_json");
     }
+    if (body === null || typeof body !== "object" || Array.isArray(body)) throw new HttpError(400, "invalid_json");
+    return body;
   }
 
   async function requirePlayer(s, pid) {

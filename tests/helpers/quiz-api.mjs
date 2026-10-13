@@ -35,5 +35,5 @@ export function setup({ hostKey = "secret", maxPlayers } = {}) {
     }
     return body.pid;
   };
-  return { store, call, host, play };
+  return { store, api, call, host, play };
 }
