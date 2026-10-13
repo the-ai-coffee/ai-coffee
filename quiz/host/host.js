@@ -37,21 +37,30 @@ function showError(text) {
   mount(els.main, h("section", { class: "screen" }, h("h1", {}, "Écran animateur"), h("p", { class: "error" }, text)));
 }
 
+let busy = false; // ignore control clicks while an action (POST + refresh) is pending
 async function action(name, extra) {
+  if (busy) return;
+  busy = true;
   try {
     await api.host(session, key, name, extra);
     await refresh();
   } catch (err) {
     alert(`Action impossible : ${err.code ?? err.message}`);
+  } finally {
+    busy = false;
   }
 }
 
+let refreshSeq = 0; // a response older than the latest request must not overwrite newer state
 async function refresh() {
+  const seq = ++refreshSeq;
   if (!key) return showError(`Clé animateur manquante : ouvrez /quiz/host/?s=${session}#key=<QUIZ_HOST_KEY>`);
   let data;
   try {
     data = await api.hostState(session, key);
+    if (seq !== refreshSeq) return;
   } catch (err) {
+    if (seq !== refreshSeq) return;
     if (err.status === 401) return showError("Clé animateur invalide.");
     if (err.status === 503) return showError("QUIZ_HOST_KEY n'est pas configurée sur Netlify.");
     if (err.status === 404) return showError(`Partie « ${session} » introuvable.`);
