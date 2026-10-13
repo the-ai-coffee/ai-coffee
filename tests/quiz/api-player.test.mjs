@@ -1,0 +1,110 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { isValidChoice } from "../../netlify/lib/quiz/api.mjs";
+import { fixtureGame } from "../fixtures/quiz.mjs";
+import { A, setup, UID } from "../helpers/quiz-api.mjs";
+
+test("unknown session, unknown route and wrong method", async () => {
+  const { call } = setup();
+  assert.deepEqual(await call("GET", "game?s=nope"), { status: 404, body: { error: "unknown_session" } });
+  assert.equal((await call("GET", "nope?s=test")).status, 404);
+  assert.deepEqual(await call("GET", "join?s=test"), { status: 405, body: { error: "method_not_allowed" } });
+});
+
+test("state defaults to closed", async () => {
+  const { call } = setup();
+  assert.deepEqual((await call("GET", "state?s=test")).body, { status: "closed", revealIndex: 0 });
+});
+
+test("join validates the pseudo and returns a pid", async () => {
+  const { call } = setup();
+  assert.deepEqual(await call("POST", "join?s=test", { pseudo: "   " }), { status: 400, body: { error: "invalid_pseudo" } });
+  const r = await call("POST", "join?s=test", { pseudo: "Token  Têtu", uid: UID });
+  assert.deepEqual(r, { status: 200, body: { pid: "p1", pseudo: "Token Têtu", status: "closed" } });
+  assert.equal((await call("POST", "join?s=test", "not json")).status, 400);
+});
+
+test("join refuses players beyond maxPlayers", async () => {
+  const { call } = setup({ maxPlayers: 1 });
+  assert.equal((await call("POST", "join?s=test", { pseudo: "Un" })).status, 200);
+  assert.deepEqual(await call("POST", "join?s=test", { pseudo: "Deux" }), { status: 403, body: { error: "game_full" } });
+});
+
+test("answers are refused until the game is open", async () => {
+  const { call } = setup();
+  const { body } = await call("POST", "join?s=test", { pseudo: "Un" });
+  const r = await call("POST", "answer?s=test", { pid: body.pid, qid: "q1", choice: "ai", confidence: 1 });
+  assert.deepEqual(r, { status: 409, body: { error: "not_open" } });
+});
+
+test("answer validation", async () => {
+  const { call, host } = setup();
+  await host("open");
+  const { body } = await call("POST", "join?s=test", { pseudo: "Un" });
+  const answer = (patch) => call("POST", "answer?s=test", { pid: body.pid, qid: "q2", choice: "a", confidence: 2, ...patch });
+  assert.deepEqual(await answer({ choice: "z" }), { status: 400, body: { error: "invalid_choice" } });
+  assert.deepEqual(await answer({ confidence: 4 }), { status: 400, body: { error: "invalid_confidence" } });
+  assert.deepEqual(await answer({ confidence: "2" }), { status: 400, body: { error: "invalid_confidence" } });
+  assert.deepEqual(await answer({ qid: "qx" }), { status: 400, body: { error: "unknown_question" } });
+  assert.deepEqual(await answer({ pid: "ghost" }), { status: 404, body: { error: "unknown_player" } });
+  assert.deepEqual(await answer({}), { status: 200, body: { ok: true } });
+  assert.deepEqual(await answer({ qid: "q5", choice: null }), { status: 200, body: { ok: true } });
+});
+
+test("game hides answers while open and reveals them with stats afterwards", async () => {
+  const { call, host, play } = setup();
+  await host("open");
+  await play("Un", undefined, { q3: [2, 1] });
+  const open = (await call("GET", "game?s=test")).body;
+  assert.equal(open.state.status, "open");
+  assert.ok(!("answer" in open.questions[3]) && !("explanation" in open.questions[3]));
+  assert.ok(!("outputs" in open.questions[4]) && !("concept" in open.questions[4]));
+  assert.ok(!("stats" in open));
+  await host("reveal");
+  const revealed = (await call("GET", "game?s=test")).body;
+  assert.equal(revealed.questions[3].answer, 2);
+  assert.equal(revealed.questions[3].conceptLabel, "Hallucination");
+  assert.deepEqual(revealed.stats.q3, { counts: { 2: 1 }, answered: 1, correctRate: 1 });
+});
+
+test("answers are locked after the reveal", async () => {
+  const { call, host } = setup();
+  await host("open");
+  const { body } = await call("POST", "join?s=test", { pseudo: "Un" });
+  await host("reveal");
+  const r = await call("POST", "answer?s=test", { pid: body.pid, qid: "q1", choice: "ai", confidence: 1 });
+  assert.deepEqual(r, { status: 409, body: { error: "not_open" } });
+});
+
+test("me returns score, profile, badges and missed concepts after the reveal", async () => {
+  const { call, host, play } = setup();
+  await host("open");
+  const pid = await play("Alice", UID, A);
+  assert.deepEqual(await call("GET", `me?s=test&pid=${pid}`), { status: 409, body: { error: "not_revealed" } });
+  await host("reveal");
+  const { status, body } = await call("GET", `me?s=test&pid=${pid}`);
+  assert.equal(status, 200);
+  assert.equal(body.pseudo, "Alice");
+  assert.equal(body.score, 57);
+  assert.equal(body.correct, 2);
+  assert.equal(body.answered, 3);
+  assert.equal(body.profile.id, "oracle");
+  assert.deepEqual(body.badges.map((b) => b.id), ["detector"]);
+  assert.deepEqual(body.missedConcepts, ["Tokenisation"]);
+  assert.deepEqual(body.progression, [{ session: "test", score: 57 }]);
+  assert.deepEqual(body.answers.q3, { choice: 2, confidence: 1 });
+  assert.equal((await call("GET", "me?s=test&pid=ghost")).status, 404);
+});
+
+test("isValidChoice per game", () => {
+  const [q0, , q2, q3, q4] = fixtureGame.questions;
+  assert.equal(isValidChoice(q0, "human"), true);
+  assert.equal(isValidChoice(q0, "robot"), false);
+  assert.equal(isValidChoice(q2, "b"), true);
+  assert.equal(isValidChoice(q3, null), true);
+  assert.equal(isValidChoice(q3, 2), true);
+  assert.equal(isValidChoice(q3, 3), false);
+  assert.equal(isValidChoice(q3, "2"), false);
+  assert.equal(isValidChoice(q4, "a"), true);
+  assert.equal(isValidChoice({ game: "nope" }, "a"), false);
+});
