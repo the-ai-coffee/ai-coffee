@@ -42,6 +42,8 @@ function sameSecret(given, expected) {
   return timingSafeEqual(digest(given), digest(expected));
 }
 
+const round = (x, decimals) => (x === null ? null : Math.round(x * 10 ** decimals) / 10 ** decimals);
+
 export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, now = () => new Date(), newId = () => crypto.randomUUID() }) {
   const keys = {
     state: (s) => `games/${s}/state`,
@@ -84,6 +86,19 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
     const header = req.headers.get("authorization") ?? "";
     const given = header.startsWith("Bearer ") ? header.slice(7) : "";
     if (!given || !sameSecret(given, hostKey)) throw new HttpError(401, "unauthorized");
+  }
+
+  // Called on « finish »: one entry per session per anonymous local id, so a
+  // returning player can see their own progression next time.
+  async function recordMembers(s, game) {
+    for (const player of await listPlayers(s)) {
+      if (!player.uid) continue;
+      const result = scorePlayer(game.questions, player.answers);
+      if (result.score === null) continue;
+      const entries = ((await store.get(keys.member(player.uid), { type: "json" })) ?? []).filter((e) => e.session !== s);
+      entries.push({ session: s, score: result.score, concepts: result.concepts });
+      await store.setJSON(keys.member(player.uid), entries);
+    }
   }
 
   const routes = {
@@ -154,7 +169,9 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
 
     "POST host": async ({ s, game, req }) => {
       requireHost(req);
-      const { action } = await readBody(req);
+      const { action, index } = await readBody(req);
+      const state = await readState(s);
+      const last = game.questions.length; // index « last » = the « niveau du jour » screen
       let next;
       switch (action) {
         case "open":
@@ -163,11 +180,61 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
         case "reveal":
           next = { status: "reveal", revealIndex: 0 };
           break;
+        case "goto":
+          if (!REVEALED.has(state.status)) throw new HttpError(409, "not_revealed");
+          if (!Number.isInteger(index) || index < 0 || index > last) throw new HttpError(400, "invalid_index");
+          next = { ...state, revealIndex: index };
+          break;
+        case "finish":
+          if (!REVEALED.has(state.status)) throw new HttpError(409, "not_revealed");
+          await recordMembers(s, game);
+          next = { status: "done", revealIndex: last };
+          break;
+        case "reset": {
+          const { blobs } = await store.list({ prefix: keys.game(s) });
+          await Promise.all(blobs.map((b) => store.delete(b.key)));
+          return { status: "closed", revealIndex: 0 };
+        }
         default:
           throw new HttpError(400, "invalid_action");
       }
       await store.setJSON(keys.state(s), next);
       return next;
+    },
+
+    "GET host-state": async ({ s, game, req }) => {
+      requireHost(req);
+      const [state, players] = await Promise.all([readState(s), listPlayers(s)]);
+      const agg = aggregate(game.questions, players);
+      const profiles = {};
+      for (const p of players) {
+        const profile = profileFor(scorePlayer(game.questions, p.answers));
+        if (profile) profiles[profile.id] = (profiles[profile.id] ?? 0) + 1;
+      }
+      return {
+        game: content.publicGame(game, { revealed: true }),
+        state,
+        players: players
+          .sort((a, b) => a.joinedAt.localeCompare(b.joinedAt))
+          .map((p) => ({ pseudo: p.pseudo, answered: Object.keys(p.answers).length })),
+        stats: agg.perQuestion,
+        globalScore: agg.globalScore,
+        concepts: content.compareWithHistory(agg.concepts, s),
+        profiles,
+      };
+    },
+
+    "GET export": async ({ s, game, req }) => {
+      requireHost(req);
+      const state = await readState(s);
+      if (state.status !== "done") throw new HttpError(409, "not_done");
+      const players = await listPlayers(s);
+      const agg = aggregate(game.questions, players);
+      const concepts = {};
+      for (const [id, c] of Object.entries(agg.concepts)) {
+        concepts[id] = { asked: c.asked, correctRate: round(c.correctRate, 2), avgConfidence: round(c.avgConfidence, 1) };
+      }
+      return { session: s, date: now().toISOString().slice(0, 10), players: players.length, globalScore: agg.globalScore, concepts };
     },
   };
 
