@@ -5,6 +5,8 @@ import { aggregate, scorePlayer } from "../../../quiz/lib/scoring.js";
 
 export const MAX_PLAYERS = 40;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// A pid ends up in blob keys: accept UUIDs (and test ids), never "/" or "..".
+const PID_RE = /^[A-Za-z0-9-]{1,64}$/;
 const REVEALED = new Set(["reveal", "done"]);
 
 class HttpError extends Error {
@@ -50,6 +52,10 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
     game: (s) => `games/${s}/`,
     players: (s) => `games/${s}/players/`,
     player: (s, pid) => `games/${s}/players/${pid}`,
+    // One blob per answer, so concurrent answers from one player never overwrite each other.
+    answers: (s) => `games/${s}/answers/`,
+    playerAnswers: (s, pid) => `games/${s}/answers/${pid}/`,
+    answer: (s, pid, qid) => `games/${s}/answers/${pid}/${qid}`,
     member: (uid) => `members/${uid}`,
   };
 
@@ -57,10 +63,24 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
     return (await store.get(keys.state(s), { type: "json" })) ?? { status: "closed", revealIndex: 0 };
   }
 
+  // Reads every answer blob under `prefix` and groups them as { pid: { qid: answer } }.
+  async function readAnswers(s, prefix) {
+    const { blobs } = await store.list({ prefix });
+    const values = await Promise.all(blobs.map((b) => store.get(b.key, { type: "json" })));
+    const byPlayer = {};
+    blobs.forEach((b, i) => {
+      if (!values[i]) return;
+      const [pid, qid] = b.key.slice(keys.answers(s).length).split("/");
+      (byPlayer[pid] ??= {})[qid] = values[i];
+    });
+    return byPlayer;
+  }
+
+  // Players with their answers merged back in: { pid, pseudo, uid, joinedAt, answers }.
   async function listPlayers(s) {
-    const { blobs } = await store.list({ prefix: keys.players(s) });
+    const [{ blobs }, answers] = await Promise.all([store.list({ prefix: keys.players(s) }), readAnswers(s, keys.answers(s))]);
     const players = await Promise.all(blobs.map((b) => store.get(b.key, { type: "json" })));
-    return players.filter(Boolean);
+    return players.filter(Boolean).map((p) => ({ ...p, answers: answers[p.pid] ?? {} }));
   }
 
   async function readBody(req) {
@@ -75,7 +95,7 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
   }
 
   async function requirePlayer(s, pid) {
-    if (typeof pid !== "string" || !pid) throw new HttpError(400, "invalid_player");
+    if (typeof pid !== "string" || !PID_RE.test(pid)) throw new HttpError(400, "invalid_player");
     const player = await store.get(keys.player(s, pid), { type: "json" });
     if (!player) throw new HttpError(404, "unknown_player");
     return player;
@@ -125,7 +145,6 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
         pseudo: clean,
         uid: typeof uid === "string" && UUID_RE.test(uid) ? uid : null,
         joinedAt: now().toISOString(),
-        answers: {},
       });
       return { pid, pseudo: clean, status: state.status };
     },
@@ -134,13 +153,12 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
       const { pid, qid, choice, confidence } = await readBody(req);
       const state = await readState(s);
       if (state.status !== "open") throw new HttpError(409, "not_open");
-      const player = await requirePlayer(s, pid);
+      await requirePlayer(s, pid);
       const question = game.questions.find((q) => q.id === qid);
       if (!question) throw new HttpError(400, "unknown_question");
       if (![1, 2, 3].includes(confidence)) throw new HttpError(400, "invalid_confidence");
       if (!isValidChoice(question, choice)) throw new HttpError(400, "invalid_choice");
-      player.answers[qid] = { choice, confidence };
-      await store.setJSON(keys.player(s, pid), player);
+      await store.setJSON(keys.answer(s, pid, qid), { choice, confidence });
       return { ok: true };
     },
 
@@ -148,6 +166,7 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
       const state = await readState(s);
       if (!REVEALED.has(state.status)) throw new HttpError(409, "not_revealed");
       const player = await requirePlayer(s, url.searchParams.get("pid"));
+      player.answers = (await readAnswers(s, keys.playerAnswers(s, player.pid)))[player.pid] ?? {};
       const result = scorePlayer(game.questions, player.answers);
       const previous = player.uid ? ((await store.get(keys.member(player.uid), { type: "json" })) ?? []).filter((e) => e.session !== s) : [];
       const progression = previous.map(({ session, score }) => ({ session, score }));

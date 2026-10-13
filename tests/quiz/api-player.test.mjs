@@ -119,3 +119,34 @@ test("isValidChoice per game", () => {
   assert.equal(isValidChoice(q4, "a"), true);
   assert.equal(isValidChoice({ game: "nope" }, "a"), false);
 });
+
+test("concurrent answers from one player are all kept", async () => {
+  const { call, host } = setup();
+  await host("open");
+  const { body } = await call("POST", "join?s=test", { pseudo: "Rapide" });
+  const answers = { q0: ["ai", 1], q1: ["human", 2], q2: ["b", 3], q3: [2, 1], q4: ["b", 2] };
+  const results = await Promise.all(
+    Object.entries(answers).map(([qid, [choice, confidence]]) => call("POST", "answer?s=test", { pid: body.pid, qid, choice, confidence })),
+  );
+  assert.deepEqual(results.map((r) => r.status), [200, 200, 200, 200, 200]);
+  const hostState = await call("GET", "host-state?s=test", undefined, "secret");
+  assert.deepEqual(hostState.body.players, [{ pseudo: "Rapide", answered: 5 }]);
+  await host("reveal");
+  const me = await call("GET", `me?s=test&pid=${body.pid}`);
+  assert.deepEqual(Object.keys(me.body.answers).sort(), ["q0", "q1", "q2", "q3", "q4"]);
+  assert.deepEqual(me.body.answers.q2, { choice: "b", confidence: 3 });
+});
+
+test("a pid that is not a safe key is refused with invalid_player", async () => {
+  const { call, host } = setup();
+  await host("open");
+  await call("POST", "join?s=test", { pseudo: "Un" });
+  for (const pid of ["p1/../p2", "../state", "a".repeat(65)]) {
+    assert.deepEqual(await call("POST", "answer?s=test", { pid, qid: "q1", choice: "ai", confidence: 1 }), {
+      status: 400,
+      body: { error: "invalid_player" },
+    });
+  }
+  await host("reveal");
+  assert.deepEqual(await call("GET", "me?s=test&pid=p1%2Fx"), { status: 400, body: { error: "invalid_player" } });
+});
