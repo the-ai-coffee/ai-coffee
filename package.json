@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test \"tests/**/*.test.mjs\"",
-    "dev": "pnpm dlx netlify-cli@27 dev",
+    "dev": "pnpm --package=netlify-cli@27 dlx netlify dev",
     "quiz:validate": "node scripts/quiz-validate.mjs",
     "quiz:export": "node scripts/quiz-export.mjs",
     "quiz:simulate": "node scripts/quiz-simulate.mjs"
