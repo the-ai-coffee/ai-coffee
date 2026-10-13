@@ -8,6 +8,7 @@ PARENT_PAGE_ID="3677e9086821808e9e20c59e4174ee88"
 
 # Load env
 set -a
+# shellcheck source=/dev/null
 source ~/.hermes/.env
 set +a
 export NOTION_KEYRING=0

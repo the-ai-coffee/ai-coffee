@@ -29,7 +29,7 @@ C'est aussi la meilleure démo possible : un meetup IA qui *est lui-même* une o
 - Dépouiller le feedback Tally/QR, calculer la rétention N → N+1
 - Proposer les thèmes de la session suivante à partir du vote communautaire
 - Rédiger des entrées brouillon du Use Case Catalog dans Notion (état *draft*)
-- Session Posts RS: chaque session, poste un recap technique (ce que tu as montré, les tradeoffs discutés) 
+- Session Posts RS: chaque session, poste un recap technique (ce que tu as montré, les tradeoffs discutés)
 - Expresso matin RS: poste un résumé de l'actu IA (ce que tu as trouvé, pourquoi c'est important)
 
 **Humain dans la boucle (irréversible, public, ou engage argent/réputation) — passe par la file de validation :**

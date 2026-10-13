@@ -26,6 +26,8 @@ Règle d'or : **le template est un système, pas une page à redécorer.** L'imp
 
 ## 🎨 Le système (invariants à NE PAS casser)
 
+> 💡 **Note** : la palette et les polices sont définies dans `DESIGN.md` (source de vérité) et chargées via `design/tokens.css` (`<link rel="stylesheet" href="../../design/tokens.css">`, **avant** `deck-stage.js`). Un deck ne redéclare jamais ces tokens dans son `:root` — il n'y garde que l'échelle typo `--t-*` et `--pad-x`.
+
 | Dimension | Règle | Pourquoi |
 |---|---|---|
 | Couleur | Neutres crème/encre tiédis (OKLCH) **+ un seul accent rust** (`--accent`). Aucune autre couleur. *Seule exception : le QR Buy Me a Coffee (cover + clôture), artefact fonctionnel non décoratif.* | Stratégie *Restrained*. Cohérence inter-épisodes. |
@@ -86,6 +88,7 @@ Remplir **uniquement** le contenu textuel. Ne pas changer les balises ni les cla
 ## ✅ Checklist avant publication
 
 - [ ] Un seul accent rust, zéro autre couleur introduite.
+- [ ] `design/tokens.css` chargé, aucun token de palette/police redéclaré dans le `:root` du deck.
 - [ ] Titres en serif, un `.stroke` max par titre.
 - [ ] La slide Impact (`.ink`) est unique et porte **un** chiffre.
 - [ ] Folios cohérents (`NN / total`), `.baseline` à jour sur chaque slide.

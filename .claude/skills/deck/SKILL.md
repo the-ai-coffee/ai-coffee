@@ -52,13 +52,15 @@ files and existing `decks/NN-*` folders to help the user choose).
 4. **Build the deck.**
    - **Generate**: copy `decks/_template/template.html` to
      `decks/NN-theme/deck.html`. The `<script src="../deck-stage.js">` path is
-     already correct at this depth. Keep the `<section>` for each chosen
+     already correct at this depth, and so is the
+     `../../design/tokens.css` link (palette + fonts — never copy them into the
+     deck's `:root`; see `DESIGN.md`). Keep the `<section>` for each chosen
      archetype, fill its content classes, drop unused archetype sections,
      duplicate repeated ones.
    - **Update**: edit the existing `decks/NN-theme/deck.html` in place. Rewrite
      only the `<section>` contents to match the new `sessions/NN.md`. **Do not**
-     touch the `<style>` block, the palette/type tokens, or the
-     `<script src>` line. Add or remove sections to match the new block list.
+     touch the `<style>` block, the type scale, the
+     `design/tokens.css` link, or the `<script src>` line. Add or remove sections to match the new block list.
 5. **Per slide**, set `data-label`, the `.folio` (`NN / total`), and the
    `.baseline`, exactly as the guide specifies. Update the `<title>` to
    `IA Coffee · Épisode NN — <Theme>`.

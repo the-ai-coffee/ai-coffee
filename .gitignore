@@ -3,3 +3,24 @@
 
 # Playwright MCP scratch output
 .playwright-mcp/
+
+# Secrets (see .env.example)
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*~
+
+# direnv
+.direnv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
