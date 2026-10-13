@@ -53,3 +53,22 @@ test("upsertHistory appends, replaces the same session and sorts by date", () =>
   doc = upsertHistory(doc, { session: "05", date: "2026-10-20", players: 10 });
   assert.deepEqual(doc.sessions.map((e) => [e.session, e.players]), [["04", 7], ["05", 10]]);
 });
+
+const PUBLIC_ALLOWLIST = ["id", "game", "warmup", "media", "prompt", "choices", "transcript", "task", "prompts"];
+
+test("every unrevealed public question only has allowlisted keys", () => {
+  const pub = content.publicGame(fixtureGame, { revealed: false });
+  for (const q of pub.questions) {
+    for (const key of Object.keys(q)) assert.ok(PUBLIC_ALLOWLIST.includes(key), `${q.id} exposes unlisted key ${key}`);
+  }
+});
+
+test("an unknown extra field on a source question never leaks before reveal", () => {
+  const game = structuredClone(fixtureGame);
+  game.questions[1].secretNote = "x";
+  const local = createContent({ sessions: { test: game }, concepts: fixtureConcepts, history });
+  const pub = local.publicGame(game, { revealed: false });
+  assert.ok(!("secretNote" in pub.questions[1]));
+  for (const key of Object.keys(pub.questions[1])) assert.ok(PUBLIC_ALLOWLIST.includes(key));
+  assert.equal(local.publicGame(game, { revealed: true }).questions[1].secretNote, "x");
+});
