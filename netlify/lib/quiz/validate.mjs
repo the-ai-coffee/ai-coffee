@@ -1,5 +1,7 @@
 // Validates the quiz content contract (quiz-data/). Shared by scripts/quiz-validate.mjs
 // and the tests. Messages are French: they are read by the organisers.
+import { isHttpsUrl, resolveMedia } from "../../../quiz/lib/media-url.js";
+import { MAX_TIME_LIMIT, MIN_TIME_LIMIT } from "../../../quiz/lib/timing.js";
 export const GAMES = ["human_or_ai", "bet_machine", "investigation", "prompt_duel"];
 export const FAMILIES = ["fondamentaux", "limites", "prompting", "usages"];
 export const SESSION_RE = /^[a-z0-9-]{1,20}$/;
@@ -27,25 +29,35 @@ export function validateConcepts(doc) {
   return errors;
 }
 
+function validateTimes(id, media, errors) {
+  if (media.start !== undefined && !(Number.isInteger(media.start) && media.start >= 0)) errors.push(`${id}: media.start invalide`);
+  const start = media.start ?? (media.url !== undefined ? resolveMedia(media).start : undefined) ?? 0;
+  if (media.end !== undefined && !(Number.isInteger(media.end) && media.end > start)) errors.push(`${id}: media.end doit être > media.start`);
+}
+
 function validateMedia(id, media, errors) {
   if (!media || typeof media !== "object") return errors.push(`${id}: media manquant`);
-  if (!MEDIA_KINDS.includes(media.kind)) return errors.push(`${id}: media.kind inconnu « ${media.kind} »`);
-  if ((media.kind === "text" || media.kind === "code") && !isText(media.text)) errors.push(`${id}: media.text manquant`);
-  if (media.kind === "image" && (!isText(media.src) || !isText(media.alt))) errors.push(`${id}: media.src et media.alt requis`);
-  if (media.kind === "video") {
-    if (media.src === undefined) {
-      if (!["youtube", "vimeo"].includes(media.provider) || !isText(media.id)) {
-        errors.push(`${id}: vidéo : provider (youtube|vimeo) + id, ou src, requis`);
+  if (media.url !== undefined) {
+    const resolved = resolveMedia(media);
+    if (resolved.error) errors.push(`${id}: ${resolved.error}`);
+    else if (resolved.kind === "image" && !isText(media.alt)) errors.push(`${id}: media.alt requis pour une image`);
+    validateTimes(id, media, errors);
+  } else {
+    if (!MEDIA_KINDS.includes(media.kind)) return errors.push(`${id}: media.kind inconnu « ${media.kind} »`);
+    if ((media.kind === "text" || media.kind === "code") && !isText(media.text)) errors.push(`${id}: media.text manquant`);
+    if (media.kind === "image" && (!isText(media.src) || !isText(media.alt))) errors.push(`${id}: media.src et media.alt requis`);
+    if (media.kind === "video") {
+      if (media.src === undefined) {
+        if (!["youtube", "vimeo"].includes(media.provider) || !isText(media.id)) {
+          errors.push(`${id}: vidéo : provider (youtube|vimeo) + id, ou src, requis`);
+        }
+        validateTimes(id, media, errors);
+      } else if (!isText(media.src)) {
+        errors.push(`${id}: media.src invalide`);
       }
-      if (media.start !== undefined && !(Number.isInteger(media.start) && media.start >= 0)) errors.push(`${id}: media.start invalide`);
-      if (media.end !== undefined && !(Number.isInteger(media.end) && media.end > (media.start ?? 0))) {
-        errors.push(`${id}: media.end doit être > media.start`);
-      }
-    } else if (!isText(media.src)) {
-      errors.push(`${id}: media.src invalide`);
     }
   }
-  if (media.fallback !== undefined && !isText(media.fallback)) errors.push(`${id}: media.fallback invalide`);
+  if (media.fallback !== undefined && !isHttpsUrl(media.fallback)) errors.push(`${id}: media.fallback doit être une URL https`);
 }
 
 function validateQuestion(q, conceptIds, errors) {
@@ -55,6 +67,12 @@ function validateQuestion(q, conceptIds, errors) {
   if (!isText(q.explanation)) errors.push(`${id}: explanation manquante`);
   if (q.warmup !== undefined && typeof q.warmup !== "boolean") errors.push(`${id}: warmup doit être un booléen`);
   if (q.revisits !== undefined && !SESSION_RE.test(q.revisits)) errors.push(`${id}: revisits invalide`);
+  if (q.timeLimit !== undefined && !(Number.isInteger(q.timeLimit) && q.timeLimit >= MIN_TIME_LIMIT && q.timeLimit <= MAX_TIME_LIMIT)) {
+    errors.push(`${id}: timeLimit doit être un entier entre ${MIN_TIME_LIMIT} et ${MAX_TIME_LIMIT}`);
+  }
+  if (q.question !== undefined && !(isText(q.question) && q.question.length <= 300)) {
+    errors.push(`${id}: question doit être un texte de 300 caractères maximum`);
+  }
   if (q.media !== undefined || q.game === "human_or_ai") validateMedia(id, q.media, errors);
 
   switch (q.game) {

@@ -1,20 +1,20 @@
 import { h } from "../dom.js";
-import { explanation, percent, verdict } from "./common.js";
+import { explanation, okMark, percent, questionHeader, verdict } from "./common.js";
 
+export const CONSIGNE = "Lequel de ces prompts donnera le meilleur résultat ?";
 const label = (i) => `Prompt ${String.fromCharCode(65 + i)}`;
 
 export function renderQuestion(q, onPick) {
   return h(
     "div",
     { class: "q" },
-    h("p", { class: "q-title" }, "Duel de prompts"),
-    h("p", { class: "lead" }, q.task),
-    h("p", {}, "Quel prompt donnera le meilleur résultat ?"),
+    questionHeader(CONSIGNE, q),
+    h("p", { class: "lead" }, `Tâche : ${q.task}`),
     h(
       "div",
       { class: "choices" },
       q.prompts.map((p, i) =>
-        h("button", { class: "choice prompt-card", type: "button", onclick: () => onPick(p.id) }, h("span", { class: "kicker" }, label(i)), h("pre", {}, p.text)),
+        h("button", { class: "choice prompt-card", type: "button", onclick: () => onPick(p.id) }, h("span", { class: "kicker" }, label(i)), h("span", { class: "prompt-text" }, p.text)),
       ),
     ),
   );
@@ -25,8 +25,8 @@ export function renderReveal(q, stats, mine) {
   return h(
     "div",
     { class: "q" },
-    h("p", { class: "q-title" }, "Duel de prompts"),
-    h("p", { class: "lead" }, q.task),
+    questionHeader(CONSIGNE, q),
+    h("p", { class: "lead" }, `Tâche : ${q.task}`),
     verdict(q, mine),
     h(
       "div",
@@ -36,9 +36,9 @@ export function renderReveal(q, stats, mine) {
         const correct = p.id === q.answer;
         return h(
           "div",
-          { class: `choice prompt-card${correct ? " is-correct" : ""}` },
-          h("span", { class: "kicker" }, `${correct ? "✅ " : ""}${label(i)} · ${pct} %${mine?.choice === p.id ? " · toi" : ""}`),
-          h("pre", {}, p.text),
+          { class: `prompt-card${correct ? " is-correct" : ""}` },
+          h("span", { class: "kicker" }, okMark(correct), `${label(i)} · ${pct} %${mine?.choice === p.id ? " · toi" : ""}`),
+          h("span", { class: "prompt-text" }, p.text),
           h("span", { class: "kicker" }, "Résultat obtenu"),
           h("p", { class: "output" }, q.outputs[p.id]),
         );

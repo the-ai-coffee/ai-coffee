@@ -27,7 +27,7 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ------
 
-## ☕ Quiz brise-glace
+## ☕ Quiz Espresso
 
 Préparer, animer et exporter le quiz d'ouverture : voir [`quiz.md`](quiz.md). Tests : `pnpm test` ; serveur local avec Netlify Functions et Blobs : `pnpm dev`.
 
