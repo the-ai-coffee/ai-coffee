@@ -32,7 +32,7 @@
       "explanation": "Sans outil de recherche, le modèle n'a pas accès au temps réel : ses connaissances s'arrêtent à sa date de coupure. S'il « répond » quand même, il invente."
     },
     {
-      "id": "q4", "game": "investigation",
+      "id": "q4", "game": "investigation", "timeLimit": 40,
       "transcript": [
         { "role": "user", "text": "Cite-moi une étude sérieuse sur la productivité en télétravail." },
         { "role": "ai", "text": "Bien sûr, voici une référence solide :" },

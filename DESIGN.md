@@ -236,3 +236,7 @@ The nine slide archetypes (cover, table of contents, definition, impact, flow, c
 - Put more than one `.stroke` in a title.
 - Add drop shadows, gradients or stock illustrations for decoration.
 - Change the 1920×1080 slide size.
+
+## Exception : quiz joueur
+
+Le téléphone du joueur pendant le quiz brise-glace (`quiz/index.html`, `quiz/game.css`) a un thème ludique « Plateau TV » : dégradé violet → orange, boutons arrondis en relief, typographie Geist 800, confettis. C'est la **seule** exception à cette charte : l'écran animateur partagé dans Meet, le site et les decks restent sobres. Le thème utilise ses propres variables `--game-*` et ne redéclare aucun token ; il respecte `prefers-reduced-motion` et ne porte jamais un résultat par la seule couleur.

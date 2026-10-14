@@ -36,6 +36,10 @@
    - le média ne doit pas trahir la réponse : pas de nom de fichier contenant « ai » ou un nom d'outil, pas de titre de vidéo révélateur. L'attribution va dans `explanation`.
 
    Retirez ensuite le drapeau `verify`.
+> 💡 **Médias par URL** : collez simplement l'URL dans `"media": { "url": "https://…" }` — YouTube (`watch?v=`, `youtu.be/`, Shorts, `t=42`), Vimeo, image (`.jpg`, `.png`, `.webp`, `.gif`, `.avif`, avec `alt`) ou vidéo (`.mp4`, `.webm`, `.mov`). `start`/`end` (en secondes) découpent un extrait. TikTok, Instagram, X et Facebook ne sont pas pris en charge.
+>
+> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo, le timer démarre à la fin de l'extrait.
+
 4. Validez en mode strict :
 
    ```bash
@@ -55,13 +59,15 @@
 |---|---|---|
 | Avant la session | Ouvrir l'écran animateur, cliquer sur **Réinitialiser** | — |
 | 0:00 | Partager l'onglet animateur dans Meet (le QR s'affiche), coller l'URL joueurs dans le chat, cliquer sur **Ouvrir la partie** | Scanner le QR, valider le pseudo proposé, puis **Jouer** |
-| 1:00 – 6:00 | Suivre la colonne de droite (connectés, terminés, progression `n/8`) | Répondre (choix, puis confiance) |
+| 1:00 – 6:00 | Suivre le **chrono global** (±1 min si besoin) et la colonne des joueurs (avatar, `n/8`, ✓ quand fini) | Répondre avant la fin du timer (choix, puis confiance) ; flash « Réponse enregistrée » |
 | ~6:00 | **Révéler** quand tout le monde a fini, ou plus tôt s'il y a un retardataire | Les réponses sont verrouillées |
-| 6:00 – 10:00 | Débriefer avec ◀ ▶ : répartition, bonne réponse, concept et explication. Les questions sans intérêt peuvent être sautées | Chacun voit ✅ / ❌ sur son téléphone |
+| 6:00 – 10:00 | Débriefer au clavier : `Espace` / `→` question suivante, `←` précédente (la bonne réponse apparaît après ~1 s de suspense) | Flash **BRAVO ! / RATÉ / PAS RÉPONDU** puis le détail |
 | 10:00 | ▶ jusqu'au **Niveau du jour**, puis **Terminer** | Profil IA et progression personnelle |
 
 - La première fois, ouvrez l'écran animateur avec `#key=…` dans l'URL. La clé est ensuite mémorisée dans ce navigateur et retirée de la barre d'adresse.
 - Un retardataire qui arrive après la révélation suit en spectateur. Une réponse envoyée trop tard est signalée « Trop tard » sur son téléphone.
+- Raccourcis de l'écran animateur : `→` suivant · `←` précédent · `Espace` révéler puis suivant · `F` plein écran. Les boutons réagissent immédiatement.
+- Quand le chrono global atteint 0, il passe au rouge et le bouton **Révéler** clignote : c'est vous qui décidez du moment.
 - Un joueur qui recharge sa page reprend où il en était. Les réponses non envoyées (réseau instable) sont réessayées automatiquement, et un compteur les affiche.
 
 ------

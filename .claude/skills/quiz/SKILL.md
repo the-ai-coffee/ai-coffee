@@ -29,6 +29,11 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
    absurde) + 6–7 questions comptées : ~2 `human_or_ai`, ~2 `bet_machine`, 2–3
    `investigation` / `prompt_duel`. Chaque question a un `concept` et une
    `explanation` pédagogique de 1–2 phrases qui **nomme** le phénomène.
+   Chaque jeu affiche déjà sa consigne fixe (« Ce contenu a-t-il été créé par un humain
+   ou par une IA ? », etc.) : n'ajoute un champ `question` (≤ 300 caractères) que pour
+   préciser ce qu'il faut regarder. Les durées par défaut (15 s *Humain ou IA ?*, 20 s
+   *Pariez*, 30 s *Enquête* et *Duel*) conviennent en général ; pose `timeLimit`
+   (5–120) seulement si la lecture est plus longue ou plus courte que la normale.
 4. **Seulement du contenu vérifiable** :
    - `bet_machine` et `prompt_duel` : les réponses et `outputs` doivent être de vraies
      sorties obtenues auprès d'un modèle nommé dans l'explication. Si tu ne peux pas les
@@ -38,6 +43,11 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
    - Vidéos : propose des candidats (lien, `start`, `end`) et marque-les
      `"verify": true` ; un organisateur vérifie la disponibilité et l'origine,
      puis retire le drapeau. Ajouter `media.fallback` (image) si possible.
+   - Médias par URL : utilise `"media": { "url": "https://…" }` — lien YouTube complet
+     (`watch?v=`, `youtu.be/`, Shorts, `t=` pour le début) ou Vimeo, image directe
+     (`.jpg .png .webp .gif .avif`, avec `alt`) ou vidéo directe (`.mp4 .webm .mov`).
+     Pas de TikTok/Instagram/X/Facebook : trouve la vidéo sur YouTube ou un mp4.
+     Ajoute `start`/`end` pour un extrait (le timer démarre à la fin de l'extrait).
    - `investigation` : la ligne fautive doit être une ligne `ai` ; une question
      « rien ne cloche » (`answer: null`) par partie au plus.
    - Le média ne doit pas trahir la réponse : noms de fichiers neutres (pas de
