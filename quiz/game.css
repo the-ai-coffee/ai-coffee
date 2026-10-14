@@ -1,4 +1,4 @@
-/* Quiz brise-glace — « Plateau TV » theme for the player's phone only (see DESIGN.md,
+/* Quiz Espresso — « Plateau TV » theme for the player's phone only (see DESIGN.md,
    « Exception: quiz player phone »). Loaded after quiz.css; uses its own --game-* variables.
    WCAG contrast, worst point of the gradient: white 7.4:1, --game-soft 5.4:1,
    --game-yes 5.1:1; white on --game-win 5.7:1, on --game-lose 4.6:1. */

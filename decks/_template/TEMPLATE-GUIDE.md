@@ -45,7 +45,7 @@ Règle d'or : **le template est un système, pas une page à redécorer.** L'imp
 |---|---|---|---|
 | Ouverture de l'épisode (titre, thème, tags) | **Cover** | `.cover` | 01 |
 | Le déroulé / les phases de la session | **Sommaire** | `.toc` | 02 |
-| Brise-glace (quiz d'ouverture) : l'URL `/quiz/?s=NN` à scanner | **Démo** (la « commande » = l'URL ; le QR est affiché par l'écran animateur `/quiz/host/`) | `.demo` | 07 |
+| Espresso (quiz d'ouverture) : l'URL `/quiz/?s=NN` à scanner | **Démo** (la « commande » = l'URL ; le QR est affiché par l'écran animateur `/quiz/host/`) | `.demo` | 07 |
 | Définition d'**un** concept (1 terme = 1 slide) | **Définition** | `.define` | 03 |
 | **Un chiffre fort** : gain, coût, ROI, impact mesuré | **Impact** (sombre) | `.stat` + `class="ink"` | 04 |
 | Un process / pipeline en 3–4 étapes | **Schéma** | `.flow` | 05 |

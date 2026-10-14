@@ -1,11 +1,11 @@
 ---
 name: quiz
-description: Use when the user wants to generate or update the quiz brise-glace for an AI Coffee session. Turns sessions/NN.md, the concept map and the cross-session history into quiz-data/sessions/NN.json, following the JSON contract, then validates it.
+description: Use when the user wants to generate or update the Quiz Espresso for an AI Coffee session. Turns sessions/NN.md, the concept map and the cross-session history into quiz-data/sessions/NN.json, following the JSON contract, then validates it.
 user-invocable: true
 argument-hint: "<NN>"
 ---
 
-# quiz — générer la partie brise-glace d'une session
+# quiz — générer la partie Espresso d'une session
 
 Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
 `quiz-data/concepts.json` et de `quiz-data/history.json`. Le contrat fait foi :

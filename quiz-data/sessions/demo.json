@@ -1,6 +1,6 @@
 {
   "session": "demo",
-  "title": "Brise-glace — partie de démonstration",
+  "title": "Espresso — partie de démonstration",
   "questions": [
     {
       "id": "q0", "game": "human_or_ai", "warmup": true,

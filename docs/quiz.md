@@ -1,4 +1,4 @@
-# ☕ Quiz brise-glace — mode d'emploi
+# ☕ Quiz Espresso — mode d'emploi
 
 > Le jeu de 8 à 12 min qui ouvre chaque session. Les participants scannent un QR code et jouent sur leur téléphone. L'animateur déclenche ensuite la révélation collective et affiche le **niveau du jour**.
 > Conception : [`superpowers/specs/2026-10-13-quiz-brise-glace-design.md`](superpowers/specs/2026-10-13-quiz-brise-glace-design.md).
@@ -48,7 +48,7 @@
    ```
 
 5. Commitez `quiz-data/` et déployez. Le contenu est embarqué dans la fonction au moment du build : **pas de déploiement, pas de partie**.
-6. Dans le deck, ajoutez une diapo « Brise-glace » sur l'archétype *Démo*, avec l'URL joueurs (voir `decks/_template/TEMPLATE-GUIDE.md`).
+6. Dans le deck, ajoutez une diapo « Espresso » sur l'archétype *Démo*, avec l'URL joueurs (voir `decks/_template/TEMPLATE-GUIDE.md`).
 
 > 💡 **Astuce** : `quiz-data/sessions/demo.json` est une partie de démonstration qui couvre les 4 jeux. Elle sert à s'entraîner, jamais en vraie session.
 

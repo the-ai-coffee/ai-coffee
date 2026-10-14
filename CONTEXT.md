@@ -34,6 +34,6 @@ The current stage of the project (as of mid-2026): pre-Founding-Members, pre-web
 **Co-organizer**:
 Michael and Xavier share planning, content prep, and hosting equally. This is not "founder + future hire" — both are present from session #2 onward. Use this term, not "porteur seul" (solo founder), when describing current team risk/capacity.
 
-**Quiz brise-glace**:
+**Quiz Espresso**:
 The short (8–12 min) game that opens each Session: attendees scan a QR code, play AI mini-games on their phone (Humain ou IA ?, Pariez sur la machine, L'Enquête, Duel de prompts), then the host runs a collective reveal and shows the group's *niveau du jour*. Each question is tied to an AI fundamentals concept; aggregated results feed a cross-session history used to plan recalls. Design: `docs/superpowers/specs/2026-10-13-quiz-brise-glace-design.md`.
 _Avoid_: Kahoot, sondage (it is self-paced with a host-triggered reveal, and teaches concepts rather than polling opinions)

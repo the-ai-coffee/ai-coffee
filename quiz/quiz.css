@@ -1,4 +1,4 @@
-/* Quiz brise-glace — player (mobile first) and host screens.
+/* Quiz Espresso — player (mobile first) and host screens.
    Colours and fonts come from design/tokens.css; never redeclare them here. */
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-weight: 300; font-size: 17px; line-height: 1.5; -webkit-text-size-adjust: 100%; }

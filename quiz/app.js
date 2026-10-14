@@ -214,7 +214,7 @@ function renderJoin() {
     h(
       "section",
       { class: "screen" },
-      h("p", { class: "kicker" }, "AI Coffee · Brise-glace"),
+      h("p", { class: "kicker" }, "AI Coffee · Espresso"),
       h("h1", {}, game.title),
       face,
       h("label", { class: "field" }, "Ton pseudo", input),

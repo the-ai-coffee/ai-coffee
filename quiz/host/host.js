@@ -204,7 +204,7 @@ function renderHead(s) {
   }
   mount(
     els.head,
-    h("div", {}, h("p", { class: "kicker" }, `AI Coffee · Brise-glace · ${STATUS_LABEL[s.status]}`), h("h1", {}, data.game.title)),
+    h("div", {}, h("p", { class: "kicker" }, `AI Coffee · Espresso · ${STATUS_LABEL[s.status]}`), h("h1", {}, data.game.title)),
     h("div", { class: "controls" }, controls, btn("Réinitialiser", reset, "danger"), h("span", { class: "keys" }, "← → Espace · F plein écran")),
     errorBanner,
   );
