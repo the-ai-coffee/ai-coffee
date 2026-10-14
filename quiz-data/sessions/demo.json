@@ -1,0 +1,81 @@
+{
+  "session": "demo",
+  "title": "Brise-glace — partie de démonstration",
+  "questions": [
+    {
+      "id": "q0", "game": "human_or_ai", "warmup": true,
+      "media": { "kind": "text", "text": "En tant que grille-pain connecté, je tiens à vous informer que votre tartine a atteint un niveau de dorure optimal de 87 %. Souhaitez-vous partager cette réussite sur vos réseaux sociaux ?" },
+      "answer": "ai", "concept": "ai-detection",
+      "explanation": "Écrit par un LLM pour l'occasion : ton serviable, précision absurde, proposition finale non sollicitée."
+    },
+    {
+      "id": "q1", "game": "human_or_ai",
+      "media": { "kind": "text", "text": "Les sanglots longs\nDes violons\nDe l'automne\nBlessent mon cœur\nD'une langueur\nMonotone." },
+      "answer": "human", "concept": "ai-detection",
+      "explanation": "Paul Verlaine, « Chanson d'automne » (1866). Le rythme brisé et le choix des sons sont difficiles à imiter sans tomber dans le pastiche."
+    },
+    {
+      "id": "q2", "game": "human_or_ai",
+      "media": { "kind": "text", "text": "Le café, ce compagnon fidèle des matins pressés, est bien plus qu'une simple boisson : c'est un rituel, une pause, une invitation à ralentir dans un monde qui va toujours plus vite." },
+      "answer": "ai", "concept": "ai-detection",
+      "explanation": "Généré par un LLM : la tournure « bien plus qu'une simple… », la triade rythmée et le cliché consensuel sont des tics typiques."
+    },
+    {
+      "id": "q3", "game": "bet_machine", "verify": true,
+      "prompt": "On demande à un assistant IA sans accès au web : « Quel temps fait-il à Lyon aujourd'hui ? »",
+      "choices": [
+        { "id": "a", "text": "Il donne une prévision précise" },
+        { "id": "b", "text": "Il explique qu'il ne peut pas le savoir sans outil" },
+        { "id": "c", "text": "Il donne la météo moyenne du mois" }
+      ],
+      "answer": "b", "concept": "training-cutoff",
+      "explanation": "Sans outil de recherche, le modèle n'a pas accès au temps réel : ses connaissances s'arrêtent à sa date de coupure. S'il « répond » quand même, il invente."
+    },
+    {
+      "id": "q4", "game": "investigation",
+      "transcript": [
+        { "role": "user", "text": "Cite-moi une étude sérieuse sur la productivité en télétravail." },
+        { "role": "ai", "text": "Bien sûr, voici une référence solide :" },
+        { "role": "ai", "text": "Dupont, Martin et Leroy (2021), « Remote Work and Output », Nature, vol. 590, p. 42-57." }
+      ],
+      "answer": 2, "concept": "hallucination",
+      "explanation": "Cette référence a été inventée pour l'exemple, et un modèle peut produire exactement ce genre de citation plausible mais fausse. Toujours vérifier les sources."
+    },
+    {
+      "id": "q5", "game": "investigation",
+      "transcript": [
+        { "role": "user", "text": "Combien font 17 × 24 ?" },
+        { "role": "ai", "text": "17 × 24 = 408." },
+        { "role": "user", "text": "Non, je suis sûr que ça fait 418." },
+        { "role": "ai", "text": "Vous avez raison, toutes mes excuses : 17 × 24 = 418." }
+      ],
+      "answer": 3, "concept": "sycophancy",
+      "explanation": "17 × 24 = 408 : la première réponse était juste. Le modèle cède à l'insistance de l'utilisateur, c'est de la complaisance."
+    },
+    {
+      "id": "q6", "game": "investigation",
+      "transcript": [
+        { "role": "user", "text": "Comment dit-on « bonjour » en espagnol ?" },
+        { "role": "ai", "text": "« Buenos días », ou plus simplement « Hola »." },
+        { "role": "user", "text": "Et en italien ?" },
+        { "role": "ai", "text": "« Buongiorno »." }
+      ],
+      "answer": null, "concept": "hallucination",
+      "explanation": "Rien ne cloche : tout est exact. Tout n'est pas hallucination, l'enjeu est de savoir quand vérifier."
+    },
+    {
+      "id": "q7", "game": "prompt_duel", "verify": true,
+      "task": "Résumer le compte rendu d'une réunion d'équipe d'une heure",
+      "prompts": [
+        { "id": "a", "text": "Résume ça." },
+        { "id": "b", "text": "Tu es assistant de direction. Résume ce compte rendu en 5 puces maximum pour un manager pressé : décisions prises, responsables, échéances." }
+      ],
+      "outputs": {
+        "a": "La réunion a abordé plusieurs sujets importants concernant le projet, notamment l'avancement, les difficultés rencontrées et les prochaines étapes. Les participants ont échangé sur différents points…",
+        "b": "• Décision : lancement de la V2 le 4 novembre\n• Responsable recette : Inès\n• Budget design validé (+10 %)\n• Risque : dépendance API partenaire\n• Prochain point : jeudi 10 h"
+      },
+      "answer": "b", "concept": "prompt-context",
+      "explanation": "Un rôle, un public, un format et ce qu'on attend (décisions, responsables, échéances) transforment une réponse vague en résumé exploitable."
+    }
+  ]
+}
