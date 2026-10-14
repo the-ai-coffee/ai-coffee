@@ -92,3 +92,5 @@ body.game .badges, body.game .revise { color: var(--game-soft); }
   body.game *, body.game *::before, body.game *::after { animation: none !important; transition: none !important; }
   body.game .confetti { display: none; }
 }
+
+body.game .btn-ghost { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.5); box-shadow: 0 3px 0 rgba(0,0,0,.25); }

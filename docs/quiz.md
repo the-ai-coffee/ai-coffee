@@ -60,7 +60,7 @@
 |---|---|---|
 | Avant la session | Ouvrir l'écran animateur, cliquer sur **Réinitialiser** | — |
 | 0:00 | Partager l'onglet animateur dans Meet (le QR s'affiche), coller l'URL joueurs dans le chat, cliquer sur **Ouvrir la partie** | Scanner le QR, valider le pseudo proposé (toucher l'avatar pour en changer, 🎲 tire un autre pseudo et un autre avatar), puis **Jouer** |
-| 1:00 – 6:00 | Suivre le **chrono global** (±1 min si besoin) et la colonne des joueurs (avatar, `n/8`, ✓ quand le joueur a répondu ou laissé passer toutes les questions) | Répondre avant la fin du timer (choix, puis confiance) ; flash « Réponse enregistrée » |
+| 1:00 – 6:00 | Suivre le **chrono global** (10 min par défaut, ±1 min si besoin) et la colonne des joueurs (avatar, `n/8`, ✓ quand le joueur a répondu ou laissé passer toutes les questions) | Répondre avant la fin du timer (choix, puis confiance) ; flash « Réponse enregistrée » |
 | ~6:00 | **Révéler** quand tout le monde a fini, ou plus tôt s'il y a un retardataire | Les réponses sont verrouillées |
 | 6:00 – 10:00 | Débriefer au clavier : `Espace` / `→` question suivante, `←` précédente (la bonne réponse apparaît après ~1 s de suspense) | Flash **BRAVO ! / RATÉ / PAS RÉPONDU** puis le détail |
 | 10:00 | ▶ jusqu'au **Niveau du jour**, puis **Terminer** | Profil IA et progression personnelle |

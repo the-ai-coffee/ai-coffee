@@ -218,7 +218,7 @@ function renderJoin() {
       h("h1", {}, game.title),
       face,
       h("label", { class: "field" }, "Ton pseudo", input),
-      h("button", { class: "link", type: "button", onclick: reroll }, "🎲 Un autre pseudo et un autre avatar"),
+      h("button", { class: "btn-ghost", type: "button", onclick: reroll }, "🎲 Un autre pseudo et un autre avatar"),
       go,
       error,
     ),

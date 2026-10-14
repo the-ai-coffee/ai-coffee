@@ -5,11 +5,9 @@ export const MAX_TIME_LIMIT = 120;
 
 export const timeLimitFor = (q) => (Number.isInteger(q.timeLimit) ? q.timeLimit : (DEFAULT_TIME_LIMITS[q.game] ?? 20));
 
-// Every question's timer plus a 60 s margin, rounded up to the minute.
-export function gameDurationSec(questions) {
-  const total = questions.reduce((sum, q) => sum + timeLimitFor(q), 0) + 60;
-  return Math.ceil(total / 60) * 60;
-}
+// The host's countdown starts at 10 minutes; ±1 min buttons adjust it.
+export const DEFAULT_GAME_SEC = 600;
+export const gameDurationSec = () => DEFAULT_GAME_SEC;
 
 export function remainingSec(state, nowMs = Date.now()) {
   if (!state?.openedAt || !state?.durationSec) return null;

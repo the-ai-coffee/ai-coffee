@@ -129,3 +129,6 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 @media (prefers-reduced-motion: reduce) {
   .host *, .host *::before, .host *::after { animation: none !important; transition: none !important; }
 }
+
+.btn-ghost { font: inherit; font-weight: 600; background: var(--paper, #faf6ee); color: var(--ink); border: 1.5px solid var(--ink-2); border-radius: 999px; padding: 10px 16px; cursor: pointer; align-self: flex-start; }
+.btn-ghost:hover { border-color: var(--ink); }

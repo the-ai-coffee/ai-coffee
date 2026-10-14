@@ -93,10 +93,10 @@ test("open starts the countdown and extend adjusts it", async () => {
   const { host } = setup();
   assert.deepEqual(await host("extend", { deltaSec: 60 }), { status: 409, body: { error: "not_open" } });
   const opened = await host("open");
-  assert.deepEqual(opened.body, { status: "open", revealIndex: 0, openedAt: "2026-10-20T19:00:00.000Z", durationSec: 240 });
-  assert.equal((await host("extend", { deltaSec: 60 })).body.durationSec, 300);
+  assert.deepEqual(opened.body, { status: "open", revealIndex: 0, openedAt: "2026-10-20T19:00:00.000Z", durationSec: 600 });
+  assert.equal((await host("extend", { deltaSec: 60 })).body.durationSec, 660);
   assert.deepEqual(await host("extend", { deltaSec: 30 }), { status: 400, body: { error: "invalid_delta" } });
-  for (let i = 0; i < 6; i++) await host("extend", { deltaSec: -60 });
+  for (let i = 0; i < 10; i++) await host("extend", { deltaSec: -60 });
   assert.equal((await host("extend", { deltaSec: -60 })).body.durationSec, 60);
 });
 

@@ -23,10 +23,8 @@ test("timeLimitFor uses per-game defaults unless the question overrides it", () 
   assert.equal(timeLimitFor({ game: "human_or_ai", timeLimit: 45 }), 45);
 });
 
-test("gameDurationSec sums the timers plus a 60 s margin, rounded up to the minute", () => {
-  // fixture: 15 + 15 + 20 + 30 + 30 + 30 + 20 = 160 ; + 60 = 220 → 240
-  assert.equal(gameDurationSec(fixtureGame.questions), 240);
-  assert.equal(gameDurationSec([{ game: "human_or_ai", timeLimit: 60 }]), 120);
+test("gameDurationSec defaults to 10 minutes whatever the questions", () => {
+  assert.equal(gameDurationSec(fixtureGame.questions), 600);
 });
 
 test("remainingSec counts down from openedAt and stops at 0", () => {
