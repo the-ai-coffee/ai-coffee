@@ -89,3 +89,9 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 .concept-prev { grid-column: 1 / -1; font-family: var(--mono); font-size: 14px; color: var(--ink-3); }
 .profiles { display: flex; gap: 16px; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; }
 @media (max-width: 900px) { .host { grid-template-columns: 1fr; padding: 16px; } }
+
+/* v2: explicit instructions, prompt text inside buttons */
+.consigne { font-family: var(--serif); font-size: 28px; line-height: 1.1; margin: 0; }
+.q-extra { margin: 0; color: var(--ink-2); }
+.prompt-text { font-family: var(--mono); font-size: 13px; white-space: pre-wrap; display: block; }
+.prompt-card { display: flex; flex-direction: column; gap: 6px; text-align: left; border: 1px solid var(--rule-2); border-radius: 14px; padding: 14px; background: var(--paper-3); }
