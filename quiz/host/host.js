@@ -29,10 +29,10 @@ function readHostKey() {
       /* not remembered: the fragment must be passed again next time */
     }
     history.replaceState(null, "", location.pathname + location.search);
-    return key;
+    return key.trim();
   }
   try {
-    return localStorage.getItem(KEY_STORAGE);
+    return localStorage.getItem(KEY_STORAGE)?.trim() || null;
   } catch {
     return null;
   }
@@ -138,7 +138,14 @@ async function refresh(fromAction = false) {
     next = await api.hostState(session, key);
   } catch (err) {
     if (seq !== refreshSeq) return;
-    if (err.status === 401) return showError("Clé animateur invalide.");
+    if (err.status === 401) {
+      try {
+        localStorage.removeItem(KEY_STORAGE); // a wrong remembered key must not stick
+      } catch {
+        /* ignore */
+      }
+      return showError(`Clé animateur invalide. Rouvrez /quiz/host/?s=${session}#key=<QUIZ_HOST_KEY> avec la clé exacte.`);
+    }
     if (err.status === 503) return showError("QUIZ_HOST_KEY n'est pas configurée sur Netlify.");
     if (err.status === 404) return showError(`Partie « ${session} » introuvable.`);
     throw err; // network: the loop logs and retries
