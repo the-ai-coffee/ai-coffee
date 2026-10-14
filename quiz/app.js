@@ -213,14 +213,9 @@ function renderJoin() {
     root,
     h(
       "section",
-      { class: "screen" },
-      h("p", { class: "kicker" }, "AI Coffee · Espresso"),
-      h("h1", {}, game.title),
-      face,
-      h("label", { class: "field" }, "Ton pseudo", input),
-      h("button", { class: "btn-ghost", type: "button", onclick: reroll }, "🎲 Un autre pseudo et un autre avatar"),
-      go,
-      error,
+      { class: "screen join" },
+      h("header", { class: "join-head" }, h("p", { class: "kicker" }, "AI Coffee · Espresso"), h("h1", {}, game.title)),
+      h("div", { class: "join-card" }, face, h("label", { class: "field" }, "Ton pseudo", input), h("button", { class: "btn-ghost", type: "button", onclick: reroll }, "🎲 Autre pseudo & avatar"), h("div", { class: "join-actions" }, go, error)),
     ),
   );
 }

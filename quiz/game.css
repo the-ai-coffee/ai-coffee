@@ -94,3 +94,7 @@ body.game .badges, body.game .revise { color: var(--game-soft); }
 }
 
 body.game .btn-ghost { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.5); box-shadow: 0 3px 0 rgba(0,0,0,.25); }
+
+body.game .join-card { background: var(--game-card); border: 1px solid rgba(255, 255, 255, 0.22); backdrop-filter: blur(4px); }
+body.game .join-card .field { color: var(--game-ink); }
+body.game .join-head h1 { text-align: center; }

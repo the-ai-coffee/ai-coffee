@@ -132,3 +132,16 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 
 .btn-ghost { font: inherit; font-weight: 600; background: var(--paper, #faf6ee); color: var(--ink); border: 1.5px solid var(--ink-2); border-radius: 999px; padding: 10px 16px; cursor: pointer; align-self: flex-start; }
 .btn-ghost:hover { border-color: var(--ink); }
+
+/* Join screen: one centred column, every control the same width, 8 / 16 / 32 px rhythm */
+.screen.join { width: 100%; max-width: 380px; margin: 0 auto; min-height: calc(100dvh - 72px); justify-content: center; gap: 32px; }
+.join-head { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.join-card { display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding: 24px 20px; border-radius: 24px; background: var(--paper-3); border: 1px solid var(--rule); }
+.join-card .avatar-big { align-self: center; }
+.join-card .field { gap: 8px; font-weight: 500; }
+.join-card .input { text-align: center; min-height: 56px; }
+.join-card .btn-ghost { align-self: stretch; text-align: center; min-height: 48px; }
+.join-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.join-actions .cta { width: 100%; min-height: 60px; }
+.join-actions .error:empty { display: none; }
+.join-actions .error { text-align: center; }
