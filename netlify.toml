@@ -1,6 +1,9 @@
 [build]
   publish = "."
 
+[build.environment]
+  NODE_VERSION = "22"
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -12,3 +15,56 @@
   for = "/media/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# The site publishes the repo root: never serve quiz answers or tooling.
+[[redirects]]
+  from = "/quiz-data/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/tests/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.superpowers/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.env"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.env.*"
+  to = "/404"
+  status = 404
+  force = true

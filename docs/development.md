@@ -27,6 +27,12 @@ python3 -m http.server 8000 --bind 0.0.0.0
 
 ------
 
+## ☕ Quiz brise-glace
+
+Préparer, animer et exporter le quiz d'ouverture : voir [`quiz.md`](quiz.md). Tests : `pnpm test` ; serveur local avec Netlify Functions et Blobs : `pnpm dev`.
+
+------
+
 ## 🔐 Secrets
 
 Copy `.env.example` to `.env` (gitignored) and fill `NOTION_API_KEY`, or export it from your shell before running `scripts/*.sh`.
