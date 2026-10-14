@@ -28,3 +28,6 @@ Thumbs.db
 # Node / Netlify
 node_modules/
 .netlify/
+
+# Superpowers scratch (brainstorm companion, SDD ledgers)
+.superpowers/
