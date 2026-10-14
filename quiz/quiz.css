@@ -95,3 +95,36 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 .q-extra { margin: 0; color: var(--ink-2); }
 .prompt-text { font-family: var(--mono); font-size: 13px; white-space: pre-wrap; display: block; }
 .prompt-card { display: flex; flex-direction: column; gap: 6px; text-align: left; border: 1px solid var(--rule-2); border-radius: 14px; padding: 14px; background: var(--paper-3); }
+
+/* v2 host « Régie » */
+.host .keys { font-family: var(--mono); font-size: 11px; color: var(--ink-3); align-self: center; }
+.host #main .consigne { font-size: 48px; }
+.clock { font-family: var(--serif); font-size: 140px; line-height: 0.9; color: var(--accent); margin: 0; font-variant-numeric: tabular-nums; }
+.clock.is-over { color: var(--espresso); animation: host-blink 1s steps(2) infinite; }
+.btn.is-pulsing { animation: host-pulse 0.8s ease-in-out infinite alternate; }
+.player { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 10px; font-size: 16px; }
+.player .bar-track { grid-column: 1 / -1; }
+.player-avatar { font-size: 26px; line-height: 1; }
+.player-count { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+.player.is-done .player-count { color: var(--accent); font-weight: 600; }
+.player.is-done .bar-fill { background: var(--accent); }
+.player.is-new { animation: host-in 0.4s ease-out; }
+.player .bar-fill, .host-reveal .bar-fill, .host-summary .bar-fill { transition: width 0.9s ease-out; }
+.found { font-family: var(--serif); font-size: 36px; color: var(--accent); margin: 8px 0 0; }
+/* Suspense: correct answer and explanation appear ~1 s after the question */
+.host-reveal:not(.revealed) .bar-fill, .host-summary:not(.revealed) .bar-fill { width: 0 !important; }
+.host-reveal:not(.revealed) .ok-mark,
+.host-reveal:not(.revealed) .found,
+.host-reveal:not(.revealed) .explain { visibility: hidden; }
+.host-reveal:not(.revealed) .bar.is-correct .bar-fill { background: var(--ink-3); }
+.host-reveal:not(.revealed) .bubble.is-faulty { border: 1px solid var(--rule); }
+.host-reveal:not(.revealed) .prompt-card.is-correct { border: 1px solid var(--rule-2); }
+.host-reveal:not(.revealed) .none-line.is-correct { color: var(--ink-2); }
+.profiles li { display: flex; flex-direction: column; gap: 4px; }
+.profile-faces { font-size: 24px; letter-spacing: 2px; }
+@keyframes host-pulse { to { transform: scale(1.08); box-shadow: 0 0 0 6px var(--accent-soft); } }
+@keyframes host-blink { 50% { opacity: 0.4; } }
+@keyframes host-in { from { opacity: 0; transform: translateX(12px); } }
+@media (prefers-reduced-motion: reduce) {
+  .host *, .host *::before, .host *::after { animation: none !important; transition: none !important; }
+}
