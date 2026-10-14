@@ -47,7 +47,9 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
      (`watch?v=`, `youtu.be/`, Shorts, `t=` pour le début) ou Vimeo, image directe
      (`.jpg .png .webp .gif .avif`, avec `alt`) ou vidéo directe (`.mp4 .webm .mov`).
      Pas de TikTok/Instagram/X/Facebook : trouve la vidéo sur YouTube ou un mp4.
-     Ajoute `start`/`end` pour un extrait (le timer démarre à la fin de l'extrait).
+     Ajoute `start`/`end` pour un extrait : avec `end` (YouTube/Vimeo) le timer démarre
+     à la fin de l'extrait, sinon tout de suite ; pour un fichier vidéo direct, il démarre
+     à la fin de la vidéo (plafonné à sa durée).
    - `investigation` : la ligne fautive doit être une ligne `ai` ; une question
      « rien ne cloche » (`answer: null`) par partie au plus.
    - Le média ne doit pas trahir la réponse : noms de fichiers neutres (pas de

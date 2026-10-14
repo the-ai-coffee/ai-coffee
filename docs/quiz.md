@@ -36,9 +36,10 @@
    - le média ne doit pas trahir la réponse : pas de nom de fichier contenant « ai » ou un nom d'outil, pas de titre de vidéo révélateur. L'attribution va dans `explanation`.
 
    Retirez ensuite le drapeau `verify`.
+
 > 💡 **Médias par URL** : collez simplement l'URL dans `"media": { "url": "https://…" }` — YouTube (`watch?v=`, `youtu.be/`, Shorts, `t=42`), Vimeo, image (`.jpg`, `.png`, `.webp`, `.gif`, `.avif`, avec `alt`) ou vidéo (`.mp4`, `.webm`, `.mov`). `start`/`end` (en secondes) découpent un extrait. TikTok, Instagram, X et Facebook ne sont pas pris en charge.
 >
-> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo, le timer démarre à la fin de l'extrait.
+> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo YouTube ou Vimeo avec `end`, le timer démarre à la fin de l'extrait (sans `end`, tout de suite) ; pour un fichier vidéo direct, à la fin de la vidéo (plafonné à sa durée).
 
 4. Validez en mode strict :
 
@@ -67,7 +68,7 @@
 - La première fois, ouvrez l'écran animateur avec `#key=…` dans l'URL. La clé est ensuite mémorisée dans ce navigateur et retirée de la barre d'adresse.
 - Un retardataire qui arrive après la révélation suit en spectateur. Une réponse envoyée trop tard est signalée « Trop tard » sur son téléphone.
 - Raccourcis de l'écran animateur : `→` suivant · `←` précédent · `Espace` révéler puis suivant · `F` plein écran. Les boutons réagissent immédiatement.
-- Quand le chrono global atteint 0, il passe au rouge et le bouton **Révéler** clignote : c'est vous qui décidez du moment.
+- Quand le chrono global atteint 0, il clignote et le bouton **Révéler** pulse : c'est vous qui décidez du moment.
 - Un joueur qui recharge sa page reprend où il en était. Les réponses non envoyées (réseau instable) sont réessayées automatiquement, et un compteur les affiche.
 
 ------
