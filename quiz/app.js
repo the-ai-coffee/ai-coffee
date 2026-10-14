@@ -183,14 +183,17 @@ function record(qid, choice, confidence) {
 function send(qid) {
   if (inFlight.has(qid)) return;
   inFlight.add(qid);
-  sendQueue = sendQueue.then(async () => {
-    try {
-      await deliver(qid);
-    } finally {
-      inFlight.delete(qid);
-    }
-    showUnsent();
-  });
+  sendQueue = sendQueue
+    .then(async () => {
+      try {
+        await deliver(qid);
+      } finally {
+        inFlight.delete(qid); // even on a throw, so the next poll retries it
+      }
+      showUnsent();
+    })
+    // a rejected chain would skip every later send: log and keep the queue alive
+    .catch((err) => console.warn("[quiz] file d'envoi", err));
 }
 
 async function deliver(qid) {
