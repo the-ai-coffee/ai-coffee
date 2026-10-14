@@ -63,7 +63,7 @@ test("upsertHistory appends, replaces the same session and sorts by date", () =>
   assert.deepEqual(doc.sessions.map((e) => [e.session, e.players]), [["04", 7], ["05", 10]]);
 });
 
-const PUBLIC_ALLOWLIST = ["id", "game", "warmup", "media", "prompt", "choices", "transcript", "task", "prompts"];
+const PUBLIC_ALLOWLIST = ["id", "game", "warmup", "media", "prompt", "choices", "transcript", "task", "prompts", "question", "timeLimit"];
 
 test("every unrevealed public question only has allowlisted keys", () => {
   const pub = content.publicGame(fixtureGame, { revealed: false });
@@ -80,4 +80,16 @@ test("an unknown extra field on a source question never leaks before reveal", ()
   assert.ok(!("secretNote" in pub.questions[1]));
   for (const key of Object.keys(pub.questions[1])) assert.ok(PUBLIC_ALLOWLIST.includes(key));
   assert.equal(local.publicGame(game, { revealed: true }).questions[1].secretNote, "x");
+});
+
+test("question, timeLimit and media.url are public before the reveal", () => {
+  const game = structuredClone(fixtureGame);
+  game.questions[1].question = "Regardez bien.";
+  game.questions[1].timeLimit = 25;
+  game.questions[1].media = { url: "https://youtu.be/dQw4w9WgXcQ", source: "Sora" };
+  const local = createContent({ sessions: { test: game }, concepts: fixtureConcepts, history });
+  const q = local.publicGame(game, { revealed: false }).questions[1];
+  assert.equal(q.question, "Regardez bien.");
+  assert.equal(q.timeLimit, 25);
+  assert.deepEqual(q.media, { url: "https://youtu.be/dQw4w9WgXcQ" });
 });
