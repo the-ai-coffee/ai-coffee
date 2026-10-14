@@ -48,6 +48,8 @@ let mainKey = null; // the main panel too (keeps videos playing, animations runn
 let clockEl = null;
 let revealBtn = null;
 let playStats = null;
+let pendingGoto = null; // latest navigation target requested while an action was in flight
+let mainStats = null; // stats snapshot of the question shown in the main panel
 const cur = () => view ?? data.state;
 
 function showError(text) {
@@ -70,8 +72,15 @@ async function act(name, extra, optimistic) {
     alert(`Action impossible : ${err.code ?? err.message}`);
   } finally {
     busy = false;
-    view = null;
-    renderAll(); // server truth: confirms the optimistic view, or rolls it back
+    const target = pendingGoto;
+    pendingGoto = null;
+    if (target !== null && REVEALED.has(data.state.status) && target !== data.state.revealIndex) {
+      // fast navigation made while busy: send only the latest target, keeping the optimistic view
+      act("goto", { index: target }, { ...data.state, revealIndex: target });
+    } else {
+      view = null;
+      renderAll(); // server truth: confirms the optimistic view, or rolls it back
+    }
   }
 }
 const openGame = () => act("open", {}, { status: "open", revealIndex: 0 });
@@ -83,7 +92,12 @@ function go(delta) {
   const s = cur();
   if (!REVEALED.has(s.status)) return;
   const index = Math.min(data.game.questions.length, Math.max(0, s.revealIndex + delta));
-  if (index !== s.revealIndex) act("goto", { index }, { ...s, revealIndex: index });
+  if (index === s.revealIndex) return;
+  if (busy) {
+    pendingGoto = index;
+    view = { ...s, revealIndex: index };
+    renderAll();
+  } else act("goto", { index }, { ...s, revealIndex: index });
 }
 
 document.addEventListener("keydown", (e) => {
@@ -111,7 +125,7 @@ async function refresh(fromAction = false) {
     if (err.status === 404) return showError(`Partie « ${session} » introuvable.`);
     throw err; // network: the loop logs and retries
   }
-  if (seq !== refreshSeq || (busy && !fromAction)) return; // stale, or an action owns the screen
+  if ((!fromAction && seq !== refreshSeq) || (busy && !fromAction)) return; // stale poll, or an action owns the screen
   data = next;
   if (!busy) renderAll();
 }
@@ -140,13 +154,15 @@ function renderAll() {
     renderMain(s);
   } else {
     updatePlayStats();
+    const q = REVEALED.has(s.status) && data.game.questions[s.revealIndex];
+    if (q && JSON.stringify(data.stats[q.id]) !== mainStats) renderMain(s, true); // stats arrived after an optimistic reveal
   }
 }
 
 function renderHead(s) {
   const n = data.game.questions.length;
   const i = s.revealIndex;
-  const btn = (label, onclick, cls = "", title = "") => h("button", { class: `btn ${cls}`, type: "button", onclick, title }, label);
+  const btn = (label, onclick, cls = "", title = "") => h("button", { class: `btn ${cls}`, type: "button", onclick: onclick && ((e) => (e.currentTarget.blur(), onclick(e))), title }, label);
   revealBtn = null;
   let controls;
   if (s.status === "closed") controls = [btn("Ouvrir la partie", openGame, "primary")];
@@ -207,13 +223,16 @@ function renderSide() {
   }
 }
 
-function renderMain(s) {
+function renderMain(s, keepRevealed = false) {
   clockEl = playStats = null;
+  mainStats = null;
   const { game } = data;
   if (s.status === "closed" || s.status === "open") return mount(els.main, renderPlayPanel(s.status));
   if (s.revealIndex >= game.questions.length) return mount(els.main, renderSummary());
   const q = game.questions[s.revealIndex];
   const stats = data.stats[q.id];
+  mainStats = JSON.stringify(stats);
+  const wasRevealed = keepRevealed && els.main.firstElementChild?.classList.contains("revealed");
   const panel = h(
     "section",
     { class: "host-reveal" },
@@ -221,7 +240,8 @@ function renderMain(s) {
     h("p", { class: "found" }, stats?.answered ? `${pct(stats.correctRate)} % ont trouvé` : "Personne n'a répondu"),
   );
   mount(els.main, panel);
-  setTimeout(() => panel.classList.add("revealed"), reducedMotion() ? 0 : 1000); // ~1 s of suspense
+  if (wasRevealed) panel.classList.add("revealed");
+  else setTimeout(() => panel.classList.add("revealed"), reducedMotion() ? 0 : 1000); // ~1 s of suspense
 }
 
 function renderPlayPanel(status) {
