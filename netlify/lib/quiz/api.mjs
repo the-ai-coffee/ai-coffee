@@ -166,6 +166,17 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
       return { ok: true };
     },
 
+    // Skipped questions send nothing, so the player says when they reach the
+    // waiting screen. Only this player writes their identity blob.
+    "POST done": async ({ s, req }) => {
+      const { pid } = await readBody(req);
+      const state = await readState(s);
+      if (state.status !== "open") throw new HttpError(409, "not_open");
+      const player = await requirePlayer(s, pid);
+      await store.setJSON(keys.player(s, pid), { ...player, finishedAt: now().toISOString() });
+      return { ok: true };
+    },
+
     "GET me": async ({ s, game, url }) => {
       const state = await readState(s);
       if (!REVEALED.has(state.status)) throw new HttpError(409, "not_revealed");
@@ -241,7 +252,9 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
         .map((p) => {
           const profile = profileFor(scorePlayer(game.questions, p.answers))?.id ?? null;
           if (profile) profiles[profile] = (profiles[profile] ?? 0) + 1;
-          return { id: p.pid, pseudo: p.pseudo, avatar: p.avatar ?? null, answered: Object.keys(p.answers).length, profile };
+          const answered = Object.keys(p.answers).length;
+          const finished = Boolean(p.finishedAt) || answered >= game.questions.length;
+          return { id: p.pid, pseudo: p.pseudo, avatar: p.avatar ?? null, answered, finished, profile };
         });
       return {
         game: content.publicGame(game, { revealed: true }),

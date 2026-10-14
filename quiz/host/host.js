@@ -57,6 +57,22 @@ function showError(text) {
   mount(els.main, h("section", { class: "screen" }, h("h1", {}, "Écran animateur"), h("p", { class: "error" }, text)));
 }
 
+// A failed action shows a banner in the head (kept across head rebuilds),
+// hidden after 5 s or by the next successful action.
+const errorBanner = h("p", { class: "error host-error", role: "alert", hidden: true });
+let errorTimer = null;
+function actionError(text) {
+  errorBanner.textContent = text;
+  errorBanner.hidden = false;
+  clearTimeout(errorTimer);
+  errorTimer = setTimeout(hideActionError, 5000);
+}
+function hideActionError() {
+  clearTimeout(errorTimer);
+  errorBanner.hidden = true;
+  errorBanner.textContent = "";
+}
+
 // ---------- actions (optimistic) ----------
 async function act(name, extra, optimistic) {
   if (busy || !data) return;
@@ -67,9 +83,10 @@ async function act(name, extra, optimistic) {
   }
   try {
     await api.host(session, key, name, extra);
+    hideActionError();
     await refresh(true);
   } catch (err) {
-    alert(`Action impossible : ${err.code ?? err.message}`);
+    actionError(`Action impossible : ${err.code ?? err.message}`);
   } finally {
     busy = false;
     const target = pendingGoto;
@@ -101,6 +118,7 @@ function go(delta) {
 }
 
 document.addEventListener("keydown", (e) => {
+  if (e.repeat) return; // a held Space must not reveal, then skip question 1
   if (!data || e.metaKey || e.ctrlKey || e.altKey || e.target.closest?.("input, textarea, select")) return;
   const s = cur();
   if (e.key === "ArrowRight") go(1);
@@ -181,6 +199,7 @@ function renderHead(s) {
     els.head,
     h("div", {}, h("p", { class: "kicker" }, `AI Coffee · Brise-glace · ${STATUS_LABEL[s.status]}`), h("h1", {}, data.game.title)),
     h("div", { class: "controls" }, controls, btn("Réinitialiser", reset, "danger"), h("span", { class: "keys" }, "← → Espace · F plein écran")),
+    errorBanner,
   );
 }
 
@@ -196,7 +215,7 @@ function renderSide() {
     mount(els.side, sideHeader, sideList);
   }
   const total = data.game.questions.length;
-  const finished = data.players.filter((p) => p.answered >= total).length;
+  const finished = data.players.filter((p) => p.finished).length;
   sideHeader.textContent = `${data.players.length} connecté(s) · ${finished} ont fini`;
   const seen = new Set();
   for (const p of data.players) {
@@ -210,7 +229,7 @@ function renderSide() {
       rows.set(p.id, row);
       sideList.append(li);
     }
-    const done = p.answered >= total;
+    const done = p.finished;
     row.count.textContent = done ? "✓" : `${p.answered}/${total}`;
     row.fill.style.width = `${Math.round((p.answered * 100) / total)}%`;
     row.li.classList.toggle("is-done", done);
@@ -278,7 +297,7 @@ function updatePlayStats() {
   if (!playStats?.isConnected) return;
   const total = data.game.questions.length;
   const players = data.players;
-  const finished = players.filter((p) => p.answered >= total).length;
+  const finished = players.filter((p) => p.finished).length;
   const answers = players.reduce((sum, p) => sum + p.answered, 0);
   const rate = players.length ? Math.round((answers * 100) / (players.length * total)) : 0;
   playStats.textContent = `${players.length} connecté(s) · ${finished} ont fini · ${rate} % des réponses`;

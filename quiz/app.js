@@ -141,7 +141,7 @@ async function loop() {
   setTimeout(loop, REVEALED.has(state?.status) ? 1500 : 3000);
 }
 
-let flashedIndex = null; // the revealed question whose BRAVO/RATÉ flash already played
+const flashed = new Set(); // revealed questions whose BRAVO/RATÉ flash already played
 
 async function refresh() {
   const next = await api.state(session);
@@ -150,7 +150,7 @@ async function refresh() {
   if (statusChanged) {
     game = await api.game(session); // answers and stats arrive with the reveal
     results = null;
-    if (!REVEALED.has(next.status)) flashedIndex = null;
+    if (!REVEALED.has(next.status)) flashed.clear();
     if (next.status === "closed") {
       me = blank(); // the host reset the game
       save();
@@ -160,6 +160,7 @@ async function refresh() {
   // While open, unsent answers are retried; once revealed, one last try gets
   // the 409 « not_open » that marks them as too late.
   if (state.status !== "closed") flushUnsent();
+  if (state.status === "open" && me.pid && !me.done && allSeen()) sayDone(); // a failed « done » is retried here
   if (!statusChanged && next.revealIndex === previous.revealIndex) return;
   if (!me.pid && !REVEALED.has(state.status)) {
     // back from a reveal, or the host reset the game: show the join screen again;
@@ -353,8 +354,32 @@ function flushUnsent() {
   for (const [qid, answer] of Object.entries(me.answers)) if (!answer.sent && !answer.late) send(qid);
 }
 
+// Every question answered or skipped (skips send nothing to the server).
+const allSeen = () => game.questions.every((q) => me.answers[q.id]);
+
+// Tells the host this player is finished, once; `me.done` is saved only after
+// success, so a failure is retried by the next poll.
+let doneInFlight = false;
+async function sayDone() {
+  if (doneInFlight || me.done || !me.pid) return;
+  doneInFlight = true;
+  const pid = me.pid;
+  try {
+    await api.done(session, pid);
+    if (me.pid === pid) {
+      me.done = true;
+      save();
+    }
+  } catch (err) {
+    console.warn("[quiz] fin de partie non signalée, nouvel essai au prochain cycle", err);
+  } finally {
+    doneInFlight = false;
+  }
+}
+
 function renderWaiting() {
   stopTimer();
+  sayDone();
   const answered = game.questions.filter((q) => me.answers[q.id] && !me.answers[q.id].skipped).length;
   const unsent = unsentCount();
   mount(
@@ -390,9 +415,11 @@ async function loadResults() {
 }
 
 function outcome(q, r) {
-  if (me.answers[q.id]?.late) return "late";
+  const local = me.answers[q.id];
+  if (local?.late) return "late";
   const mine = r?.answers?.[q.id];
-  if (!mine) return "none";
+  // answered here but unknown to the server: it arrived after the reveal had started
+  if (!mine) return r && local && !local.skipped ? "late" : "none";
   return mine.choice === q.answer ? "win" : "lose";
 }
 
@@ -414,8 +441,8 @@ async function renderReveal() {
         lateNote(me.answers[q.id]?.late),
       ),
     );
-  if (!me.pid || flashedIndex === i) return card();
-  flashedIndex = i;
+  if (!me.pid || flashed.has(i)) return card();
+  flashed.add(i);
   flashThen(outcome(q, r), () => {
     if (REVEALED.has(state.status) && state.revealIndex === i) card();
   });

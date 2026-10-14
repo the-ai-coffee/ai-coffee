@@ -20,8 +20,8 @@ test("host-state reports players, aggregates, history comparison and profiles", 
   const { status, body } = await call("GET", "host-state?s=test", undefined, "secret");
   assert.equal(status, 200);
   assert.deepEqual(body.players, [
-    { id: "p1", pseudo: "Alice", avatar: "🦊", answered: 4, profile: "oracle" },
-    { id: "p2", pseudo: "Bob", avatar: "🦊", answered: 3, profile: "temeraire" },
+    { id: "p1", pseudo: "Alice", avatar: "🦊", answered: 4, finished: false, profile: "oracle" },
+    { id: "p2", pseudo: "Bob", avatar: "🦊", answered: 3, finished: false, profile: "temeraire" },
   ]);
   assert.equal(body.globalScore, 58);
   assert.equal(body.state.status, "reveal");
@@ -98,4 +98,33 @@ test("open starts the countdown and extend adjusts it", async () => {
   assert.deepEqual(await host("extend", { deltaSec: 30 }), { status: 400, body: { error: "invalid_delta" } });
   for (let i = 0; i < 6; i++) await host("extend", { deltaSec: -60 });
   assert.equal((await host("extend", { deltaSec: -60 })).body.durationSec, 60);
+});
+
+test("done marks a player who skipped questions as finished", async () => {
+  const { call, host, play } = setup();
+  const early = await call("POST", "join?s=test", { pseudo: "Tôt" });
+  assert.deepEqual(await call("POST", "done?s=test", { pid: early.body.pid }), { status: 409, body: { error: "not_open" } });
+  await host("open");
+  const six = { q0: ["ai", 1], q1: ["human", 2], q2: ["b", 3], q3: [2, 1], q4: ["b", 2], q5: [null, 3] };
+  const pid = await play("Sauteur", undefined, six);
+  const before = await call("GET", "host-state?s=test", undefined, "secret");
+  assert.deepEqual(before.body.players.map(({ pseudo, answered, finished }) => ({ pseudo, answered, finished })), [
+    { pseudo: "Tôt", answered: 0, finished: false },
+    { pseudo: "Sauteur", answered: 6, finished: false },
+  ]);
+  assert.deepEqual(await call("POST", "done?s=test", { pid }), { status: 200, body: { ok: true } });
+  const after = await call("GET", "host-state?s=test", undefined, "secret");
+  assert.deepEqual(after.body.players[1], { id: pid, pseudo: "Sauteur", avatar: "🦊", answered: 6, finished: true, profile: after.body.players[1].profile });
+  assert.deepEqual(await call("POST", "done?s=test", { pid: "nobody" }), { status: 404, body: { error: "unknown_player" } });
+  assert.deepEqual(await call("POST", "done?s=test", { pid: "../state" }), { status: 400, body: { error: "invalid_player" } });
+  await host("reveal");
+  assert.deepEqual(await call("POST", "done?s=test", { pid }), { status: 409, body: { error: "not_open" } });
+});
+
+test("a player who answered every question counts as finished without done", async () => {
+  const { call, host, play } = setup();
+  await host("open");
+  await play("Complet", undefined, { q0: ["ai", 1], q1: ["human", 2], q2: ["b", 3], q3: [2, 1], q4: ["b", 2], q5: [null, 3], q6: ["a", 2] });
+  const { body } = await call("GET", "host-state?s=test", undefined, "secret");
+  assert.equal(body.players[0].finished, true);
 });

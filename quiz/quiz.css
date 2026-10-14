@@ -97,6 +97,7 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 .prompt-card { display: flex; flex-direction: column; gap: 6px; text-align: left; border: 1px solid var(--rule-2); border-radius: 14px; padding: 14px; background: var(--paper-3); }
 
 /* v2 host « Régie » */
+.host-error { flex-basis: 100%; font-family: var(--mono); font-size: 14px; }
 .host .keys { font-family: var(--mono); font-size: 11px; color: var(--ink-3); align-self: center; }
 .host #main .consigne { font-size: 48px; }
 .clock { font-family: var(--serif); font-size: 140px; line-height: 0.9; color: var(--accent); margin: 0; font-variant-numeric: tabular-nums; }
