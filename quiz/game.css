@@ -20,6 +20,7 @@ body.game .app { padding-top: 16px; }
 body.game h1 { font-family: var(--sans); font-weight: 800; letter-spacing: -0.01em; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25); }
 body.game .lead, body.game .kicker, body.game .q-extra, body.game .link { color: var(--game-soft); }
 body.game .error, body.game .unsent { color: var(--game-yes); }
+body.game .unsent:empty { display: none; }
 body.game .input { background: rgba(255, 255, 255, 0.95); border: 0; color: var(--game-yes-ink); font-weight: 700; }
 body.game .cta { background: var(--game-yes); border: 0; color: var(--game-yes-ink); font-weight: 800; font-size: 20px; min-height: 60px; box-shadow: var(--game-shadow); }
 

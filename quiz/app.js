@@ -56,7 +56,6 @@ let state = null;
 let results = null;
 const UNAVAILABLE = Symbol("results-unavailable");
 const save = () => write(STORE_KEY, me);
-const allAnswered = () => game.questions.every((q) => me.answers[q.id]);
 
 // Answers are sent one at a time through a single chain; `inFlight` holds the
 // qids queued or being sent, so a poll never sends the same answer twice.
@@ -172,6 +171,7 @@ async function refresh() {
 }
 
 function render() {
+  if (!me.pid && !REVEALED.has(state.status)) return renderJoin();
   if (state.status === "closed") return message("La partie va commencer…", `Tu joues en tant que ${me.pseudo}. Garde cette page ouverte.`);
   if (state.status === "open") return renderPlay();
   return renderReveal();
@@ -179,6 +179,7 @@ function render() {
 
 function renderJoin() {
   stopTimer();
+  clearTimeout(flashTimer); // a pending flash must not redraw over the join screen
   let avatar = randomAvatar();
   const face = h("button", { class: "avatar-big", type: "button", "aria-label": "Changer d'avatar" }, avatar);
   face.addEventListener("click", () => {
