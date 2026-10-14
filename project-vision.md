@@ -67,7 +67,7 @@ Pour les participants qui veulent aller plus loin sur leur propre cas, le chemin
 
 ## 4. Format des Sessions
 
-**Durée :** ~1h30 | **Fréquence :** Mensuelle | **Format :** Live en ligne (cohorte plafonnée à 12), co-animé par Michael et Xavier
+**Durée :** ~1h30 | **Fréquence :** Mensuelle | **Format :** Live en ligne (cohorte plafonnée à 15, non affichée publiquement), co-animé par Michael et Xavier
 
 > ℹ️ **Mise à jour 2026 :** la phase "Le Ring" (co-construction live avec la salle) a été retirée du format standard. Les cas personnalisés sont désormais traités hors session, via **Prompt Bar** (voir section 6bis) — pas en groupe pendant l'épisode.
 
@@ -158,7 +158,7 @@ Pour les participants qui veulent aller plus loin sur leur propre cas, le chemin
 | KPI | Session #2 (juin) | Mi-parcours — S5 (sept.) | Fin d'année — S8 (déc.) |
 |---|---|---|---|
 | Sessions tenues / planifiées | 2/2 | 5/5 | 8/8 |
-| Participants / session | 8 (cible) | 10 | 10-12 (sans dépasser le plafond de 12) |
+| Participants / session | 8 (cible) | 10 | 10-15 (sans dépasser le plafond de 15) |
 | Boucle feedback Tally/QR active | Démarrée (best effort) | Suivie sur 3+ sessions | Donnée de rétention disponible |
 | Taux de rétention (N → N+1) | Pas encore mesurable | Premier signal | ≥ 40% (best effort, pas garanti) |
 | Prompt Bar | — | — | Annoncé en session, 0 client payant engagé |
@@ -168,7 +168,7 @@ Pour les participants qui veulent aller plus loin sur leur propre cas, le chemin
 
 ## 9. Roadmap Mai → Décembre 2026 (recalibrée)
 
-> 📍 **Remplace l'ancien plan Q1-Q4 2025/2026**, écrit avant le lancement réel et calibré pour une autre échelle. Cadence confirmée : mensuelle, co-animée par Michael et Xavier, cohorte plafonnée à 12. Phase 2 (site web, hybride, sessions physiques) et Phase 3 (B2B) restent hors scope cette année, sauf mention "stretch Q4".
+> 📍 **Remplace l'ancien plan Q1-Q4 2025/2026**, écrit avant le lancement réel et calibré pour une autre échelle. Cadence confirmée : mensuelle, co-animée par Michael et Xavier, cohorte plafonnée à 15 (plafond interne, non affiché publiquement). Phase 2 (site web, hybride, sessions physiques) et Phase 3 (B2B) restent hors scope cette année, sauf mention "stretch Q4".
 
 ### Mai 2026 — Session #1 (faite, 19 mai)
 
@@ -199,17 +199,17 @@ Pour les participants qui veulent aller plus loin sur leur propre cas, le chemin
 
 ### Octobre 2026 — Session #6
 
-- Objectif : 10-12 participants, stable
+- Objectif : 10-15 participants, stable
 - Premier signal de rétention exploitable (3+ sessions de données Tally/QR)
 
 ### Novembre 2026 — Session #7
 
-- Objectif : 10-12 participants
+- Objectif : 10-15 participants
 - Préparer l'annonce de Prompt Bar (contenu, positionnement) pour le mois suivant
 
 ### Décembre 2026 — Session #8 (bilan d'année)
 
-- Objectif : 10-12 participants, sans dépasser le plafond de 12
+- Objectif : 10-15 participants, sans dépasser le plafond de 15
 - Annoncer Prompt Bar en session (soft-launch, pas de client payant engagé)
 - Bilan public : 8/8 sessions tenues, rétention mesurée (best effort), décision sur 2027 (augmenter la fréquence ? lever le plafond ? premier client Prompt Bar ?)
 

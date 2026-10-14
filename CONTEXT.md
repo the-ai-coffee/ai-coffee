@@ -9,7 +9,7 @@ One monthly live episode (currently ~1h30, online via Google Meet), numbered seq
 _Avoid_: Episode (used loosely in deck copy, but "Session" is the canonical term in planning docs)
 
 **Cohort cap**:
-The intentional ceiling of 12 attendees per online session, chosen to preserve small, high-interaction intimacy. It is a deliberate choice "for now," not a platform limitation — it may be lifted once the format is proven and/or sessions move physical/hybrid.
+The intentional ceiling of 15 attendees per online session (raised from 12), chosen to preserve small, high-interaction intimacy. It is a deliberate choice "for now," not a platform limitation — it may be lifted once the format is proven and/or sessions move physical/hybrid. The cap is an internal planning ceiling only: it is **not displayed publicly** (landing page, decks, announcements do not advertise a number of seats).
 _Avoid_: Capacity limit (implies a technical constraint, which this isn't)
 
 **Le Ring**:
