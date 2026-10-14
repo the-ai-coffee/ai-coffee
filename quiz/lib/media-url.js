@@ -7,6 +7,16 @@ const SOCIAL = ["tiktok.com", "instagram.com", "x.com", "twitter.com", "facebook
 
 const hostIs = (host, domain) => host === domain || host.endsWith(`.${domain}`);
 
+// A link the organiser gives (e.g. media.fallback): https only, so never « javascript: ».
+export function isHttpsUrl(value) {
+  if (typeof value !== "string") return false;
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export function parseTime(value) {
   if (value === null || value === undefined || value === "") return undefined;
   if (/^\d+$/.test(value)) return Number(value);

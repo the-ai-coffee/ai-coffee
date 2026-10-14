@@ -22,6 +22,7 @@ export function renderReveal(q, stats, mine) {
     { class: "q" },
     questionHeader(CONSIGNE, q),
     h("blockquote", { class: "media media-text" }, q.prompt),
+    renderMedia(q.media),
     verdict(q, mine),
     revealBars(options(q), q, stats, mine),
     explanation(q),

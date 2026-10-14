@@ -107,3 +107,14 @@ test("media.url is resolved, images need alt, social networks are refused", () =
   ok.questions[1].media = { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", start: 3, end: 18 };
   assert.deepEqual(validateGame(ok, fixtureConcepts).errors, []);
 });
+
+test("media.fallback must be an https URL", () => {
+  for (const fallback of ["javascript:alert(1)", "http://ex.com/a.png", "pas une url", 42]) {
+    const g = clone();
+    g.questions[1].media = { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fallback };
+    has(validateGame(g, fixtureConcepts).errors, "q1: media.fallback doit être une URL https");
+  }
+  const ok = clone();
+  ok.questions[1].media = { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fallback: "https://ex.com/a.png" };
+  assert.deepEqual(validateGame(ok, fixtureConcepts).errors, []);
+});

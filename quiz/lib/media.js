@@ -1,5 +1,5 @@
 import { h } from "./dom.js";
-import { resolveMedia } from "./media-url.js";
+import { isHttpsUrl, resolveMedia } from "./media-url.js";
 
 export function renderMedia(media) {
   if (!media) return null;
@@ -21,7 +21,9 @@ export function renderMedia(media) {
 
 function renderVideo(m) {
   if (m.src) {
-    return h("video", { class: "media media-video", src: m.src, controls: true, playsinline: true, preload: "metadata" });
+    // a media fragment makes the browser start (and pause) at the extract's bounds
+    const range = m.start !== undefined || m.end !== undefined ? `#t=${m.start ?? 0}${m.end !== undefined ? `,${m.end}` : ""}` : "";
+    return h("video", { class: "media media-video", src: m.src.split("#")[0] + range, controls: true, playsinline: true, preload: "metadata" });
   }
   const start = m.start ?? 0;
   const src =
@@ -32,13 +34,14 @@ function renderVideo(m) {
     "div",
     { class: "media-video-wrap" },
     h("iframe", { class: "media media-video", src, title: "Vidéo", loading: "lazy", allow: "autoplay; encrypted-media; picture-in-picture", allowfullscreen: true }),
-    m.fallback ? h("a", { class: "media-fallback", href: m.fallback, target: "_blank", rel: "noopener" }, "La vidéo ne se charge pas ? Voir l'image") : null,
+    isHttpsUrl(m.fallback) ? h("a", { class: "media-fallback", href: m.fallback, target: "_blank", rel: "noopener" }, "La vidéo ne se charge pas ? Voir l'image") : null,
   );
 }
 
 // Resolves when a question's timer may start: once a video extract has had time to play.
-// Embeds: wait (end − start) seconds when known. Video files: wait for « ended », capped by
-// the file's duration; if its metadata never arrives within 3 s, don't hold the timer.
+// Embeds: wait (end − start) seconds when known. Video files: wait for the end of the video
+// (or of the extract when `end` is given), capped by its length; if its metadata never
+// arrives within 3 s, don't hold the timer.
 export function waitForMedia(media, container) {
   const m = media ? resolveMedia(media) : null;
   if (!m || m.error || m.kind !== "video") return Promise.resolve();
@@ -57,7 +60,9 @@ export function waitForMedia(media, container) {
       }
     };
     video.addEventListener("ended", finish, { once: true });
-    const capByDuration = () => setTimeout(finish, Math.min(video.duration || 0, 120) * 1000 + 500);
+    // with an end bound the browser pauses at the fragment's end instead of firing « ended »
+    if (m.end !== undefined) video.addEventListener("timeupdate", () => video.currentTime >= m.end - 0.3 && finish());
+    const capByDuration = () => setTimeout(finish, Math.min((m.end ?? video.duration ?? 0) - (m.start ?? 0) || 0, 120) * 1000 + 500);
     if (video.readyState >= 1) capByDuration();
     else video.addEventListener("loadedmetadata", capByDuration, { once: true });
     setTimeout(() => {

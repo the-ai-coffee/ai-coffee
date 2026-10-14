@@ -43,7 +43,9 @@ export function renderReveal(q, stats, mine) {
           h(
             "div",
             { class: `bubble ${line.role}${i === q.answer ? " is-faulty" : ""}${mine?.choice === i ? " is-mine" : ""}` },
+            okMark(i === q.answer),
             line.text,
+            mine?.choice === i ? " · toi" : null,
             line.role === "ai" ? h("span", { class: "bubble-count" }, `${count(String(i))} 👆`) : null,
           ),
         ),

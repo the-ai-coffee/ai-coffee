@@ -1,6 +1,6 @@
 // Validates the quiz content contract (quiz-data/). Shared by scripts/quiz-validate.mjs
 // and the tests. Messages are French: they are read by the organisers.
-import { resolveMedia } from "../../../quiz/lib/media-url.js";
+import { isHttpsUrl, resolveMedia } from "../../../quiz/lib/media-url.js";
 import { MAX_TIME_LIMIT, MIN_TIME_LIMIT } from "../../../quiz/lib/timing.js";
 export const GAMES = ["human_or_ai", "bet_machine", "investigation", "prompt_duel"];
 export const FAMILIES = ["fondamentaux", "limites", "prompting", "usages"];
@@ -57,7 +57,7 @@ function validateMedia(id, media, errors) {
       }
     }
   }
-  if (media.fallback !== undefined && !isText(media.fallback)) errors.push(`${id}: media.fallback invalide`);
+  if (media.fallback !== undefined && !isHttpsUrl(media.fallback)) errors.push(`${id}: media.fallback doit être une URL https`);
 }
 
 function validateQuestion(q, conceptIds, errors) {
