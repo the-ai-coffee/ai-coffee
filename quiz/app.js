@@ -1,8 +1,12 @@
-import { api, poll } from "./lib/api.js";
+import { api } from "./lib/api.js";
+import { nextAvatar, randomAvatar } from "./lib/avatars.js";
 import { h, mount } from "./lib/dom.js";
-import { confidencePicker } from "./lib/games/common.js";
+import { CONFIDENCE } from "./lib/games/common.js";
 import { GAMES } from "./lib/games/index.js";
+import { waitForMedia } from "./lib/media.js";
+import { countUp, reducedMotion } from "./lib/motion.js";
 import { MAX_PSEUDO_LENGTH, randomPseudo } from "./lib/pseudo.js";
+import { timeLimitFor } from "./lib/timing.js";
 
 const root = document.getElementById("app");
 const session = new URLSearchParams(location.search).get("s");
@@ -44,7 +48,7 @@ function uid() {
   return id;
 }
 
-const blank = () => ({ pid: null, pseudo: null, answers: {} });
+const blank = () => ({ pid: null, pseudo: null, avatar: null, answers: {} });
 const stored = read(STORE_KEY, null);
 let me = stored && typeof stored === "object" && stored.answers && typeof stored.answers === "object" ? stored : blank();
 let game = null;
@@ -58,14 +62,57 @@ const allAnswered = () => game.questions.every((q) => me.answers[q.id]);
 // qids queued or being sent, so a poll never sends the same answer twice.
 let sendQueue = Promise.resolve();
 const inFlight = new Set();
-let unsentNote = null; // the « non envoyée » span of the current question screen
+let unsentNote = null; // the « non envoyée » line of the current question screen
 const unsentCount = () => Object.entries(me.answers).filter(([qid, a]) => !a.sent && !a.late && !inFlight.has(qid)).length;
-const unsentLabel = (n) => (n === 0 ? "" : n === 1 ? " · 1 réponse non envoyée" : ` · ${n} réponses non envoyées`);
+const unsentLabel = (n) => (n === 0 ? "" : n === 1 ? "1 réponse non envoyée" : `${n} réponses non envoyées`);
 const LATE = "Trop tard : la révélation avait commencé.";
 const lateNote = (late) => (late ? h("p", { class: "error" }, LATE) : null);
 
 function message(title, text, extra = null) {
-  mount(root, h("section", { class: "screen center" }, h("h1", {}, title), text ? h("p", { class: "lead" }, text) : null, extra));
+  stopTimer();
+  mount(root, h("section", { class: "screen center" }, me.avatar ? h("p", { class: "avatar-big" }, me.avatar) : null, h("h1", {}, title), text ? h("p", { class: "lead" }, text) : null, extra));
+}
+
+// ---------- full-screen flashes ----------
+const FLASH = {
+  saved: { cls: "flash-saved", icon: "✓", text: "Réponse enregistrée", ms: 800 },
+  timeout: { cls: "flash-timeout", icon: "⏱", text: "Temps écoulé", ms: 900 },
+  win: { cls: "flash-win", icon: "🎉", text: "BRAVO !", ms: 1300, confetti: true },
+  lose: { cls: "flash-lose", icon: "😬", text: "RATÉ", ms: 1300 },
+  none: { cls: "flash-none", icon: "⏱", text: "PAS RÉPONDU", ms: 1300 },
+  late: { cls: "flash-none", icon: "🐢", text: "TROP TARD", ms: 1300 },
+};
+let flashTimer = null;
+function flashThen(kind, then) {
+  const f = FLASH[kind];
+  clearTimeout(flashTimer);
+  const confetti = f.confetti && !reducedMotion() ? h("div", { class: "confetti", "aria-hidden": "true" }, Array.from({ length: 18 }, (_, i) => h("span", { style: `--i:${i}` }, ["🎉", "✨", "🎊"][i % 3]))) : null;
+  mount(root, h("section", { class: `flash ${f.cls}`, role: "status" }, confetti, h("p", { class: "flash-icon", "aria-hidden": "true" }, f.icon), h("p", { class: "flash-text" }, f.text)));
+  flashTimer = setTimeout(then, reducedMotion() ? Math.min(f.ms, 500) : f.ms);
+}
+
+// ---------- question timer ----------
+let timer = null;
+function stopTimer() {
+  if (timer) clearInterval(timer);
+  timer = null;
+}
+function startTimer(q, timerEl, fill, secs, onExpire) {
+  stopTimer();
+  const total = timeLimitFor(q) * 1000;
+  const deadline = Date.now() + total;
+  const tick = () => {
+    const left = Math.max(0, deadline - Date.now());
+    fill.style.width = `${(left / total) * 100}%`;
+    secs.textContent = String(Math.ceil(left / 1000));
+    timerEl.classList.toggle("is-low", left <= 5000);
+    if (left === 0) {
+      stopTimer();
+      onExpire();
+    }
+  };
+  timer = setInterval(tick, 200);
+  tick();
 }
 
 async function main() {
@@ -82,8 +129,20 @@ async function main() {
   }
   if (!me.pid && !REVEALED.has(state.status)) renderJoin();
   else render();
-  poll(refresh, 3000);
+  setTimeout(loop, 3000);
 }
+
+// Faster polling during the reveal so phones follow the shared screen.
+async function loop() {
+  try {
+    await refresh();
+  } catch (err) {
+    console.warn("[quiz] poll", err);
+  }
+  setTimeout(loop, REVEALED.has(state?.status) ? 1500 : 3000);
+}
+
+let flashedIndex = null; // the revealed question whose BRAVO/RATÉ flash already played
 
 async function refresh() {
   const next = await api.state(session);
@@ -92,6 +151,7 @@ async function refresh() {
   if (statusChanged) {
     game = await api.game(session); // answers and stats arrive with the reveal
     results = null;
+    if (!REVEALED.has(next.status)) flashedIndex = null;
     if (next.status === "closed") {
       me = blank(); // the host reset the game
       save();
@@ -118,15 +178,27 @@ function render() {
 }
 
 function renderJoin() {
+  stopTimer();
+  let avatar = randomAvatar();
+  const face = h("button", { class: "avatar-big", type: "button", "aria-label": "Changer d'avatar" }, avatar);
+  face.addEventListener("click", () => {
+    avatar = nextAvatar(avatar);
+    face.textContent = avatar;
+  });
   const input = h("input", { class: "input", value: randomPseudo(), maxlength: MAX_PSEUDO_LENGTH, autocomplete: "off" });
+  const reroll = () => {
+    input.value = randomPseudo();
+    avatar = randomAvatar();
+    face.textContent = avatar;
+  };
   const error = h("p", { class: "error", role: "alert" });
   const go = h("button", { class: "cta", type: "button" }, "Jouer");
   go.addEventListener("click", async () => {
     go.disabled = true;
     error.textContent = "";
     try {
-      const res = await api.join(session, input.value, uid());
-      me = { pid: res.pid, pseudo: res.pseudo, answers: {} };
+      const res = await api.join(session, input.value, uid(), avatar);
+      me = { pid: res.pid, pseudo: res.pseudo, avatar: res.avatar, answers: {} };
       save();
       render();
     } catch (err) {
@@ -142,42 +214,92 @@ function renderJoin() {
       { class: "screen" },
       h("p", { class: "kicker" }, "AI Coffee · Brise-glace"),
       h("h1", {}, game.title),
+      face,
       h("label", { class: "field" }, "Ton pseudo", input),
-      h("button", { class: "link", type: "button", onclick: () => (input.value = randomPseudo()) }, "🎲 Un autre pseudo"),
+      h("button", { class: "link", type: "button", onclick: reroll }, "🎲 Un autre pseudo et un autre avatar"),
       go,
       error,
     ),
   );
 }
 
+// Participation streak: consecutive answered questions (a skipped one resets it).
+function streakLabel() {
+  let n = 0;
+  for (const q of game.questions) {
+    const a = me.answers[q.id];
+    if (!a) break;
+    n = a.skipped ? 0 : n + 1;
+  }
+  return n >= 2 ? `🔥 ${n}` : "";
+}
+
 function renderPlay() {
-  const next = game.questions.find((q) => !me.answers[q.id]);
-  if (!next) return renderWaiting();
-  const index = game.questions.indexOf(next);
+  stopTimer();
+  const q = game.questions.find((x) => !me.answers[x.id]);
+  if (!q) return renderWaiting();
+  const index = game.questions.indexOf(q);
+  let picked = null; // the choice made, waiting for its confidence
+  const fill = h("span", { class: "timer-fill" });
+  const secs = h("span", { class: "timer-secs" }, String(timeLimitFor(q)));
+  const timerEl = h("div", { class: "timer is-waiting", role: "timer", "aria-label": "Temps restant" }, h("span", { class: "timer-track" }, fill), secs);
   const stage = h("div", { class: "stage" });
-  stage.append(
-    GAMES[next.game].renderQuestion(next, (choice) => {
-      mount(
-        stage,
+  const question = GAMES[q.game].renderQuestion(q, (choice) => {
+    picked = { choice };
+    mount(
+      stage,
+      h(
+        "div",
+        { class: "confidence" },
+        h("p", { class: "consigne" }, "Tu es sûr de toi ?"),
+        h("div", { class: "choices" }, CONFIDENCE.map((c) => h("button", { class: "choice", type: "button", onclick: () => record(q.id, choice, c.value) }, c.label))),
         h(
-          "div",
-          { class: "screen" },
-          h("p", { class: "lead" }, "Réponse choisie."),
-          confidencePicker((confidence) => record(next.id, choice, confidence)),
-          h("button", { class: "link", type: "button", onclick: renderPlay }, "↩ Changer de réponse"),
+          "button",
+          {
+            class: "link",
+            type: "button",
+            onclick: () => {
+              picked = null;
+              mount(stage, question);
+            },
+          },
+          "↩ Changer de réponse",
         ),
-      );
-    }),
+      ),
+    );
+  });
+  stage.append(question);
+  unsentNote = h("p", { class: "unsent" }, unsentLabel(unsentCount()));
+  mount(
+    root,
+    h(
+      "section",
+      { class: "screen play" },
+      h("div", { class: "hud" }, h("span", {}, `${index + 1}/${game.questions.length}`), timerEl, h("span", {}, streakLabel())),
+      unsentNote,
+      stage,
+    ),
   );
-  unsentNote = h("span", {}, unsentLabel(unsentCount()));
-  mount(root, h("section", { class: "screen" }, h("p", { class: "kicker" }, `Question ${index + 1} / ${game.questions.length}`, unsentNote), stage));
+  waitForMedia(q.media, stage).then(() => {
+    if (!stage.isConnected || me.answers[q.id]) return; // moved on meanwhile
+    timerEl.classList.remove("is-waiting");
+    startTimer(q, timerEl, fill, secs, () => (picked ? record(q.id, picked.choice, 1) : skip(q.id)));
+  });
 }
 
 function record(qid, choice, confidence) {
+  stopTimer();
   me.answers[qid] = { choice, confidence, sent: false };
   save();
   send(qid); // queued first, so the next screen does not flag it as unsent
-  renderPlay();
+  flashThen("saved", render);
+}
+
+// Timer ran out without a choice: nothing is sent, the question counts as unanswered.
+function skip(qid) {
+  me.answers[qid] = { skipped: true, sent: true };
+  save();
+  flashThen("timeout", render);
 }
 
 function send(qid) {
@@ -223,8 +345,6 @@ async function deliver(qid) {
 
 // Refreshes the « non envoyée » indicator without redrawing the question being answered.
 function showUnsent() {
-  if (!me.pid || state.status !== "open") return;
-  if (allAnswered()) return renderWaiting();
   if (unsentNote?.isConnected) unsentNote.textContent = unsentLabel(unsentCount());
 }
 
@@ -233,14 +353,17 @@ function flushUnsent() {
 }
 
 function renderWaiting() {
+  stopTimer();
+  const answered = game.questions.filter((q) => me.answers[q.id] && !me.answers[q.id].skipped).length;
   const unsent = unsentCount();
   mount(
     root,
     h(
       "section",
       { class: "screen center" },
-      h("h1", {}, "C'est dans la boîte ☕"),
-      h("p", { class: "lead" }, "En attente de la révélation…"),
+      h("p", { class: "avatar-big" }, me.avatar ?? "☕"),
+      h("h1", {}, "C'est dans la boîte !"),
+      h("p", { class: "lead" }, `${answered}/${game.questions.length} répondues · en attente de la révélation…`),
       unsent ? h("p", { class: "error" }, `${unsent} réponse(s) pas encore envoyée(s), nouvel essai automatique.`) : null,
     ),
   );
@@ -265,38 +388,53 @@ async function loadResults() {
   return results;
 }
 
+function outcome(q, r) {
+  if (me.answers[q.id]?.late) return "late";
+  const mine = r?.answers?.[q.id];
+  if (!mine) return "none";
+  return mine.choice === q.answer ? "win" : "lose";
+}
+
 async function renderReveal() {
+  stopTimer();
   const r = await loadResults();
   if (!REVEALED.has(state.status)) return; // a reset/reopen happened meanwhile
   const i = state.revealIndex;
   if (i >= game.questions.length) return renderProfile(r);
   const q = game.questions[i];
-  mount(
-    root,
-    h(
-      "section",
-      { class: "screen" },
-      h("p", { class: "kicker" }, `Révélation · ${i + 1} / ${game.questions.length}`),
-      GAMES[q.game].renderReveal(q, game.stats?.[q.id], r?.answers?.[q.id]),
-      lateNote(me.answers[q.id]?.late),
-    ),
-  );
+  const card = () =>
+    mount(
+      root,
+      h(
+        "section",
+        { class: "screen reveal" },
+        h("p", { class: "kicker" }, `Révélation · ${i + 1} / ${game.questions.length}`),
+        GAMES[q.game].renderReveal(q, game.stats?.[q.id], r?.answers?.[q.id]),
+        lateNote(me.answers[q.id]?.late),
+      ),
+    );
+  if (!me.pid || flashedIndex === i) return card();
+  flashedIndex = i;
+  flashThen(outcome(q, r), () => {
+    if (REVEALED.has(state.status) && state.revealIndex === i) card();
+  });
 }
 
 function renderProfile(r) {
   const late = lateNote(Object.values(me.answers).some((a) => a.late));
-  if (!r || r.score === null) return message("Merci d'avoir suivi !", "Pas de réponse comptée cette fois. À la prochaine session !", late);
+  if (!r || r.score === null) return message("Merci d'avoir joué !", "Pas de réponse comptée cette fois. À la prochaine session !", late);
   const p = r.profile;
+  const score = h("strong", {}, "0");
   mount(
     root,
     h(
       "section",
       { class: "screen center" },
+      h("p", { class: "avatar-big" }, r.avatar ?? me.avatar ?? p.emoji),
       h("p", { class: "kicker" }, r.pseudo),
-      h("p", { class: "profile-emoji" }, p.emoji),
-      h("h1", {}, p.title),
+      h("h1", {}, `${p.emoji} ${p.title}`),
       h("p", { class: "lead" }, p.tagline),
-      h("p", { class: "score" }, h("strong", {}, String(r.score)), " / 100"),
+      h("p", { class: "score" }, score, " / 100"),
       h("p", {}, `${r.correct} bonne(s) réponse(s) sur ${r.answered}`),
       r.badges.length ? h("p", { class: "badges" }, r.badges.map((b) => `${b.emoji} ${b.title}`).join(" · ")) : null,
       r.missedConcepts.length ? h("p", { class: "revise" }, `À revoir : ${r.missedConcepts.join(", ")}`) : null,
@@ -311,6 +449,7 @@ function renderProfile(r) {
         : null,
     ),
   );
+  countUp(score, r.score);
 }
 
 main();

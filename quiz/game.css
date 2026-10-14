@@ -1,0 +1,89 @@
+/* Quiz brise-glace — « Plateau TV » theme for the player's phone only (see DESIGN.md,
+   « Exception : quiz joueur »). Loaded after quiz.css; uses its own --game-* variables. */
+body.game {
+  --game-bg: linear-gradient(160deg, #2a1650 0%, #5b2a86 45%, #c8622c 100%);
+  --game-ink: #ffffff;
+  --game-soft: rgba(255, 255, 255, 0.8);
+  --game-card: rgba(255, 255, 255, 0.14);
+  --game-yes: #ffd23f;
+  --game-yes-ink: #2a1650;
+  --game-alt: #3ec9a7;
+  --game-alt-ink: #0d2b26;
+  --game-win: #168a52;
+  --game-lose: #d63a3f;
+  --game-shadow: 0 5px 0 rgba(0, 0, 0, 0.35);
+  background: var(--game-bg) fixed;
+  color: var(--game-ink);
+  font-weight: 400;
+}
+body.game .app { padding-top: 16px; }
+body.game h1 { font-family: var(--sans); font-weight: 800; letter-spacing: -0.01em; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25); }
+body.game .lead, body.game .kicker, body.game .q-extra, body.game .link { color: var(--game-soft); }
+body.game .error, body.game .unsent { color: var(--game-yes); }
+body.game .input { background: rgba(255, 255, 255, 0.95); border: 0; color: var(--game-yes-ink); font-weight: 700; }
+body.game .cta { background: var(--game-yes); border: 0; color: var(--game-yes-ink); font-weight: 800; font-size: 20px; min-height: 60px; box-shadow: var(--game-shadow); }
+
+/* Answer buttons: big, raised, alternating colours */
+body.game .choice { min-height: 56px; border: 0; border-radius: 18px; background: rgba(255, 255, 255, 0.95); color: var(--game-yes-ink); font-weight: 700; font-size: 17px; box-shadow: var(--game-shadow); transition: transform 0.08s; }
+body.game .choice:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); }
+body.game .choices .choice:nth-child(odd) { background: var(--game-yes); color: var(--game-yes-ink); }
+body.game .choices .choice:nth-child(even) { background: var(--game-alt); color: var(--game-alt-ink); }
+body.game .consigne { font-family: var(--sans); font-size: 22px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); }
+body.game .media { background: var(--game-card); color: var(--game-ink); }
+body.game .media-text { border-left-color: var(--game-yes); }
+body.game .prompt-card { color: var(--game-yes-ink); }
+body.game .output { background: rgba(0, 0, 0, 0.08); }
+
+/* HUD: progress · timer · streak */
+body.game .hud { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-weight: 800; }
+body.game .timer { display: flex; align-items: center; gap: 8px; }
+body.game .timer-track { flex: 1; height: 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+body.game .timer-fill { display: block; height: 100%; width: 100%; background: var(--game-yes); border-radius: 99px; transition: width 0.2s linear; }
+body.game .timer-secs { min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
+body.game .timer.is-low .timer-fill { background: var(--game-lose); }
+body.game .timer.is-low .timer-secs { color: var(--game-yes); animation: game-pulse 0.5s infinite alternate; }
+body.game .timer.is-waiting { opacity: 0.5; }
+
+/* Investigation bubbles */
+body.game .bubble { color: var(--game-yes-ink); background: rgba(255, 255, 255, 0.92); border: 0; }
+body.game .bubble.user { background: rgba(255, 255, 255, 0.7); }
+body.game button.bubble { box-shadow: var(--game-shadow); }
+body.game .bubble.is-faulty { outline: 3px solid var(--game-yes); }
+body.game .bubble-count { color: var(--game-yes-ink); }
+
+/* Full-screen flashes */
+body.game .flash { position: fixed; inset: 0; display: grid; place-content: center; text-align: center; gap: 4px; overflow: hidden; animation: game-pop 0.25s ease-out; }
+body.game .flash-icon { font-size: 84px; margin: 0; }
+body.game .flash-text { font-size: 40px; font-weight: 800; margin: 0; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.25); }
+body.game .flash-saved { background: rgba(42, 22, 80, 0.94); }
+body.game .flash-saved .flash-text { font-size: 26px; }
+body.game .flash-win { background: var(--game-win); }
+body.game .flash-lose { background: var(--game-lose); }
+body.game .flash-none, body.game .flash-timeout { background: #3a2a5c; }
+body.game .confetti span { position: absolute; top: -40px; left: calc(var(--i) * 5.5%); font-size: 28px; animation: game-fall 1.3s ease-in forwards; animation-delay: calc(var(--i) * 30ms); }
+
+/* Reveal card */
+body.game .verdict { display: inline-block; align-self: flex-start; padding: 6px 14px; border-radius: 99px; font-family: var(--sans); font-weight: 800; font-size: 18px; color: #fff; }
+body.game .verdict.ok { background: var(--game-win); }
+body.game .verdict.ko { background: var(--game-lose); }
+body.game .bar-track { background: rgba(255, 255, 255, 0.2); }
+body.game .bar-fill { background: rgba(255, 255, 255, 0.6); }
+body.game .bar.is-correct .bar-fill { background: var(--game-yes); }
+body.game .bar-pct { color: var(--game-soft); }
+body.game .explain { border-top-color: rgba(255, 255, 255, 0.3); }
+
+/* Avatars & profile */
+body.game .avatar-big { font-size: 72px; line-height: 1; margin: 0; background: none; border: 0; padding: 0; animation: game-bob 1.6s ease-in-out infinite; }
+body.game button.avatar-big { cursor: pointer; align-self: center; }
+body.game .score strong { color: var(--game-yes); }
+body.game .badges, body.game .revise { color: var(--game-soft); }
+
+@keyframes game-pop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes game-fall { to { transform: translateY(110vh) rotate(260deg); } }
+@keyframes game-pulse { to { transform: scale(1.25); } }
+@keyframes game-bob { 50% { transform: translateY(-8px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  body.game *, body.game *::before, body.game *::after { animation: none !important; transition: none !important; }
+  body.game .confetti { display: none; }
+}
