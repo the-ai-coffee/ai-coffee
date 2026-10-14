@@ -47,9 +47,12 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
      (`watch?v=`, `youtu.be/`, Shorts, `t=` pour le début) ou Vimeo, image directe
      (`.jpg .png .webp .gif .avif`, avec `alt`) ou vidéo directe (`.mp4 .webm .mov`).
      Pas de TikTok/Instagram/X/Facebook : trouve la vidéo sur YouTube ou un mp4.
-     Ajoute `start`/`end` pour un extrait : avec `end` (YouTube/Vimeo) le timer démarre
-     à la fin de l'extrait, sinon tout de suite ; pour un fichier vidéo direct, il démarre
-     à la fin de la vidéo (plafonné à sa durée).
+     Ajoute `start`/`end` pour un extrait. YouTube/Vimeo avec `end` : le timer attend
+     (`end` − `start`) secondes après l'affichage de la question, que la vidéo soit
+     lancée ou non (les joueurs doivent appuyer sur lecture tout de suite) ; sans `end`,
+     il démarre aussitôt. Fichier vidéo direct : le timer attend la fin de la vidéo
+     (ou de l'extrait si `end` est donné), plafonné à sa durée. `media.fallback` doit
+     être une URL `https`.
    - `investigation` : la ligne fautive doit être une ligne `ai` ; une question
      « rien ne cloche » (`answer: null`) par partie au plus.
    - Le média ne doit pas trahir la réponse : noms de fichiers neutres (pas de

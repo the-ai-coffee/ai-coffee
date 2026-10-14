@@ -39,7 +39,7 @@
 
 > 💡 **Médias par URL** : collez simplement l'URL dans `"media": { "url": "https://…" }` — YouTube (`watch?v=`, `youtu.be/`, Shorts, `t=42`), Vimeo, image (`.jpg`, `.png`, `.webp`, `.gif`, `.avif`, avec `alt`) ou vidéo (`.mp4`, `.webm`, `.mov`). `start`/`end` (en secondes) découpent un extrait. TikTok, Instagram, X et Facebook ne sont pas pris en charge.
 >
-> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo YouTube ou Vimeo avec `end`, le timer démarre à la fin de l'extrait (sans `end`, tout de suite) ; pour un fichier vidéo direct, à la fin de la vidéo (plafonné à sa durée).
+> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo YouTube ou Vimeo avec `end`, le timer attend (`end` − `start`) secondes après l'affichage de la question, que la vidéo ait été lancée ou non : les joueurs doivent appuyer sur lecture tout de suite (sans `end`, le timer démarre immédiatement). Pour un fichier vidéo direct, le timer attend la fin de la vidéo, ou de l'extrait si `end` est donné (plafonné à sa durée). `media.fallback`, s'il est présent, doit être une URL `https`.
 
 4. Validez en mode strict :
 
@@ -59,8 +59,8 @@
 | Quand | Animateur | Joueurs |
 |---|---|---|
 | Avant la session | Ouvrir l'écran animateur, cliquer sur **Réinitialiser** | — |
-| 0:00 | Partager l'onglet animateur dans Meet (le QR s'affiche), coller l'URL joueurs dans le chat, cliquer sur **Ouvrir la partie** | Scanner le QR, valider le pseudo proposé, puis **Jouer** |
-| 1:00 – 6:00 | Suivre le **chrono global** (±1 min si besoin) et la colonne des joueurs (avatar, `n/8`, ✓ quand fini) | Répondre avant la fin du timer (choix, puis confiance) ; flash « Réponse enregistrée » |
+| 0:00 | Partager l'onglet animateur dans Meet (le QR s'affiche), coller l'URL joueurs dans le chat, cliquer sur **Ouvrir la partie** | Scanner le QR, valider le pseudo proposé (toucher l'avatar pour en changer, 🎲 tire un autre pseudo et un autre avatar), puis **Jouer** |
+| 1:00 – 6:00 | Suivre le **chrono global** (±1 min si besoin) et la colonne des joueurs (avatar, `n/8`, ✓ quand le joueur a répondu ou laissé passer toutes les questions) | Répondre avant la fin du timer (choix, puis confiance) ; flash « Réponse enregistrée » |
 | ~6:00 | **Révéler** quand tout le monde a fini, ou plus tôt s'il y a un retardataire | Les réponses sont verrouillées |
 | 6:00 – 10:00 | Débriefer au clavier : `Espace` / `→` question suivante, `←` précédente (la bonne réponse apparaît après ~1 s de suspense) | Flash **BRAVO ! / RATÉ / PAS RÉPONDU** puis le détail |
 | 10:00 | ▶ jusqu'au **Niveau du jour**, puis **Terminer** | Profil IA et progression personnelle |
