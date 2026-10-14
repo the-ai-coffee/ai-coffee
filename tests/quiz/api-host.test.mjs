@@ -19,7 +19,10 @@ test("host-state reports players, aggregates, history comparison and profiles", 
   await host("reveal");
   const { status, body } = await call("GET", "host-state?s=test", undefined, "secret");
   assert.equal(status, 200);
-  assert.deepEqual(body.players, [{ pseudo: "Alice", answered: 4 }, { pseudo: "Bob", answered: 3 }]);
+  assert.deepEqual(body.players, [
+    { id: "p1", pseudo: "Alice", avatar: "🦊", answered: 4, profile: "oracle" },
+    { id: "p2", pseudo: "Bob", avatar: "🦊", answered: 3, profile: "temeraire" },
+  ]);
   assert.equal(body.globalScore, 58);
   assert.equal(body.state.status, "reveal");
   assert.equal(body.game.questions[3].answer, 2);
@@ -84,4 +87,15 @@ test("reset clears players and state", async () => {
   assert.deepEqual(await host("reset"), { status: 200, body: { status: "closed", revealIndex: 0 } });
   assert.deepEqual((await call("GET", "state?s=test")).body, { status: "closed", revealIndex: 0 });
   assert.deepEqual([...store.data.keys()].filter((k) => k.startsWith("games/test/")), []);
+});
+
+test("open starts the countdown and extend adjusts it", async () => {
+  const { host } = setup();
+  assert.deepEqual(await host("extend", { deltaSec: 60 }), { status: 409, body: { error: "not_open" } });
+  const opened = await host("open");
+  assert.deepEqual(opened.body, { status: "open", revealIndex: 0, openedAt: "2026-10-20T19:00:00.000Z", durationSec: 240 });
+  assert.equal((await host("extend", { deltaSec: 60 })).body.durationSec, 300);
+  assert.deepEqual(await host("extend", { deltaSec: 30 }), { status: 400, body: { error: "invalid_delta" } });
+  for (let i = 0; i < 6; i++) await host("extend", { deltaSec: -60 });
+  assert.equal((await host("extend", { deltaSec: -60 })).body.durationSec, 60);
 });

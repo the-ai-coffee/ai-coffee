@@ -28,7 +28,7 @@ export function setup({ hostKey = "secret", maxPlayers } = {}) {
   };
   const host = (action, extra = {}) => call("POST", "host?s=test", { action, ...extra }, "secret");
   const play = async (pseudo, uid, answers) => {
-    const { body } = await call("POST", "join?s=test", { pseudo, uid });
+    const { body } = await call("POST", "join?s=test", { pseudo, uid, avatar: "🦊" });
     for (const [qid, [choice, confidence]] of Object.entries(answers)) {
       const r = await call("POST", "answer?s=test", { pid: body.pid, qid, choice, confidence });
       assert.equal(r.status, 200, JSON.stringify(r.body));
