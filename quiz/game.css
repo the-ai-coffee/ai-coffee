@@ -1,7 +1,9 @@
 /* Quiz brise-glace — « Plateau TV » theme for the player's phone only (see DESIGN.md,
-   « Exception : quiz joueur »). Loaded after quiz.css; uses its own --game-* variables. */
+   « Exception: quiz player phone »). Loaded after quiz.css; uses its own --game-* variables.
+   WCAG contrast, worst point of the gradient: white 7.4:1, --game-soft 5.4:1,
+   --game-yes 5.1:1; white on --game-win 5.7:1, on --game-lose 4.6:1. */
 body.game {
-  --game-bg: linear-gradient(160deg, #2a1650 0%, #5b2a86 45%, #c8622c 100%);
+  --game-bg: linear-gradient(160deg, #2a1650 0%, #5b2a86 45%, #8a4019 100%);
   --game-ink: #ffffff;
   --game-soft: rgba(255, 255, 255, 0.8);
   --game-card: rgba(255, 255, 255, 0.14);
@@ -9,7 +11,7 @@ body.game {
   --game-yes-ink: #2a1650;
   --game-alt: #3ec9a7;
   --game-alt-ink: #0d2b26;
-  --game-win: #168a52;
+  --game-win: #127547;
   --game-lose: #d63a3f;
   --game-shadow: 0 5px 0 rgba(0, 0, 0, 0.35);
   background: var(--game-bg) fixed;
@@ -20,6 +22,8 @@ body.game .app { padding-top: 16px; }
 body.game h1 { font-family: var(--sans); font-weight: 800; letter-spacing: -0.01em; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25); }
 body.game .lead, body.game .kicker, body.game .q-extra, body.game .link { color: var(--game-soft); }
 body.game .error, body.game .unsent { color: var(--game-yes); }
+body.game .field, body.game .none-line, body.game .media-fallback { color: var(--game-soft); }
+body.game .none-line.is-correct { color: var(--game-yes); font-weight: 700; }
 body.game .unsent:empty { display: none; }
 body.game .input { background: rgba(255, 255, 255, 0.95); border: 0; color: var(--game-yes-ink); font-weight: 700; }
 body.game .cta { background: var(--game-yes); border: 0; color: var(--game-yes-ink); font-weight: 800; font-size: 20px; min-height: 60px; box-shadow: var(--game-shadow); }
