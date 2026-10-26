@@ -1,0 +1,82 @@
+{
+  "session": "05",
+  "title": "Espresso — Waterfall : peut-on faire confiance aux questions d'une IA ?",
+  "questions": [
+    {
+      "id": "q0", "game": "human_or_ai", "warmup": true, "verify": true,
+      "media": { "url": "https://www.youtube.com/shorts/uFZ44IDqeo0", "start": 0, "end": 15 },
+      "answer": "ai", "concept": "video-generation",
+      "explanation": "Vidéo entièrement générée par IA (chaîne CinematicByte, « AI Cats Dancing to Trending Song »). Les modèles vidéo produisent des scènes crédibles, mais trahissent souvent la physique, les pattes et la cohérence d'un plan à l'autre."
+    },
+    {
+      "id": "q1", "game": "human_or_ai",
+      "media": { "kind": "text", "text": "Terraform est bien plus qu'un simple outil : c'est une véritable philosophie de l'infrastructure. En déclarant l'état souhaité plutôt que les étapes à suivre, il offre clarté, cohérence et sérénité aux équipes qui veulent avancer plus vite et plus loin." },
+      "answer": "ai", "concept": "ai-detection",
+      "explanation": "Généré par Claude pour l'occasion : la tournure « bien plus qu'un simple… », la triade « clarté, cohérence et sérénité » et le ton de brochure sans aucun détail concret sont des tics typiques."
+    },
+    {
+      "id": "q2", "game": "human_or_ai",
+      "media": { "kind": "text", "text": "Demain, dès l'aube, à l'heure où blanchit la campagne,\nJe partirai. Vois-tu, je sais que tu m'attends.\nJ'irai par la forêt, j'irai par la montagne.\nJe ne puis demeurer loin de toi plus longtemps." },
+      "answer": "human", "concept": "ai-detection",
+      "explanation": "Victor Hugo, « Demain, dès l'aube… » (Les Contemplations, 1856). Une émotion précise, des images concrètes et des ruptures de rythme : difficile à imiter sans tomber dans le pastiche."
+    },
+    {
+      "id": "q3", "game": "bet_machine", "verify": true,
+      "prompt": "On demande à un assistant IA sans accès au web : « Génère 20 questions pour l'examen CKAD. » Imaginons que le programme officiel ait été mis à jour après sa date de coupure. Que fait-il ?",
+      "choices": [
+        { "id": "a", "text": "Il refuse en expliquant que le programme a pu changer" },
+        { "id": "b", "text": "Il génère les questions sur l'ancien programme, sans prévenir" },
+        { "id": "c", "text": "Il récupère tout seul la dernière version du programme" }
+      ],
+      "answer": "b", "concept": "training-cutoff",
+      "explanation": "Sans outil de recherche, le modèle ne connaît que ce qu'il a vu à l'entraînement et ne sait pas ce qui a changé depuis : il répond avec assurance sur un programme périmé. Pour un simulateur d'examen, c'est le contenu qu'il faut vérifier."
+    },
+    {
+      "id": "q4", "game": "bet_machine", "verify": true,
+      "prompt": "On pose exactement la même demande trois fois, dans trois conversations neuves : « Écris une question à choix multiples sur Kubernetes. » Que se passe-t-il ?",
+      "choices": [
+        { "id": "a", "text": "Trois questions identiques, mot pour mot" },
+        { "id": "b", "text": "Trois questions différentes" },
+        { "id": "c", "text": "La première répond, les deux suivantes refusent" }
+      ],
+      "answer": "b", "concept": "non-determinism",
+      "explanation": "Le modèle tire chaque token au sort parmi les plus probables : la même consigne donne des résultats différents d'une fois sur l'autre. C'est utile pour varier une banque de questions, mais impossible de compter sur un résultat reproductible."
+    },
+    {
+      "id": "q5", "game": "investigation", "timeLimit": 40,
+      "transcript": [
+        { "role": "user", "text": "Génère-moi une question d'examen Terraform, avec la bonne réponse." },
+        { "role": "ai", "text": "Voici une question :" },
+        { "role": "ai", "text": "Quelle commande Terraform affiche les changements prévus sans rien modifier ? Réponse : terraform preview." },
+        { "role": "ai", "text": "Je peux t'en générer 19 autres sur le même modèle." }
+      ],
+      "answer": 2, "concept": "hallucination",
+      "explanation": "`terraform preview` n'existe pas : la bonne commande est `terraform plan`. Le modèle invente une réponse plausible avec assurance, c'est une hallucination. Dans un simulateur d'examen, chaque question générée doit être vérifiée avant d'être publiée."
+    },
+    {
+      "id": "q6", "game": "investigation", "timeLimit": 40,
+      "transcript": [
+        { "role": "user", "text": "Combien de fichiers y a-t-il dans le dossier sessions/ ?" },
+        { "role": "ai", "text": "Je lance la commande `ls sessions | wc -l`." },
+        { "role": "user", "text": "[Résultat de l'outil] 5" },
+        { "role": "ai", "text": "Il y a 3 fichiers dans le dossier sessions/." }
+      ],
+      "answer": 3, "concept": "agent", "revisits": "03",
+      "explanation": "L'outil a renvoyé 5 et l'agent répond 3. La boucle agentique (Input → LLM → Plan → Action → Feedback) ne vaut que si le feedback est bien lu : c'est pour ça qu'on journalise et qu'on évalue le comportement d'un agent."
+    },
+    {
+      "id": "q7", "game": "prompt_duel", "verify": true,
+      "task": "Générer des questions d'entraînement pour une certification IT",
+      "prompts": [
+        { "id": "a", "text": "Fais-moi des questions sur Kubernetes." },
+        { "id": "b", "text": "Tu es examinateur CKAD. Génère 2 questions à choix multiples (4 choix, une seule bonne réponse) sur les Deployments. Pour chacune : la bonne réponse et une explication d'une phrase." }
+      ],
+      "outputs": {
+        "a": "Bien sûr ! Voici quelques questions sur Kubernetes :\n1. Qu'est-ce que Kubernetes ?\n2. À quoi sert un pod ?\n3. Qu'est-ce qu'un cluster ?\n4. Quelle est la différence entre un pod et un conteneur ?",
+        "b": "1. Quel objet permet de mettre à jour progressivement les pods d'une application sans interruption ?\nA) Pod  B) Deployment  C) Namespace  D) ConfigMap\nRéponse : B. Un Deployment gère les ReplicaSets et pilote les mises à jour progressives.\n\n2. Quelle commande annule le dernier déploiement d'un Deployment ?\nA) kubectl undo  B) kubectl rollback  C) kubectl rollout undo  D) kubectl revert\nRéponse : C. `kubectl rollout undo` revient à la révision précédente."
+      },
+      "answer": "b", "concept": "prompt-format",
+      "explanation": "Un rôle, un nombre de questions, un format (4 choix, bonne réponse, explication) et un sujet précis donnent une sortie directement exploitable. La consigne vague donne des questions ouvertes sans réponse, inutilisables dans un simulateur."
+    }
+  ]
+}
