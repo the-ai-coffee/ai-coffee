@@ -24,7 +24,14 @@
       "explanation": "Victor Hugo, « Demain, dès l'aube… » (Les Contemplations, 1856). Une émotion précise, des images concrètes et un rythme qui se brise : difficile à imiter pour une IA sans tomber dans le pastiche."
     },
     {
-      "id": "q3", "game": "bet_machine", "verify": true,
+      "id": "q3", "game": "human_or_ai",
+      "question": "Regarde bien cette photo : prise par un photographe, ou fabriquée par une IA ?",
+      "media": { "kind": "image", "src": "https://imagedelivery.net/TkcHhODAR5Y7jFoICvSX0Q/48baa428-c068-4924-2c26-c1f25c1e4c00/q=85,fit=scale-down,w=1024", "alt": "Une jeune femme en robe fleurie, assise pieds nus sur un ponton au bord d'un étang au coucher du soleil, à côté d'un chat roux." },
+      "answer": "ai", "concept": "ai-detection",
+      "explanation": "Image générée par IA. Les indices : une lumière dorée trop parfaite, une peau sans aucun défaut, des jambes anormalement longues et une main qui dépasse derrière le chat, loin du bras. Une IA image produit des scènes « trop belles pour être vraies » et se trompe souvent sur le corps humain."
+    },
+    {
+      "id": "q4", "game": "bet_machine", "verify": true,
       "question": "Cette IA n'a pas accès à internet. Que répond-elle ?",
       "prompt": "« Combien coûte un timbre pour envoyer une lettre en France aujourd'hui ? »",
       "choices": [
@@ -36,7 +43,7 @@
       "explanation": "Une IA sans accès à internet ne connaît que ce qu'elle a lu pendant son apprentissage, jusqu'à une date limite. Elle répond avec assurance un prix qui a pu changer depuis : c'est la date limite de connaissances."
     },
     {
-      "id": "q4", "game": "bet_machine", "verify": true,
+      "id": "q5", "game": "bet_machine", "verify": true,
       "question": "On pose 3 fois exactement la même demande, dans 3 conversations différentes. Qu'obtient-on ?",
       "prompt": "« Propose un nom pour ma boulangerie. »",
       "choices": [
@@ -48,7 +55,7 @@
       "explanation": "L'IA choisit chaque mot avec une part de hasard : la même demande donne une réponse différente à chaque fois. Pratique pour trouver des idées, mais on ne peut pas compter sur une réponse identique."
     },
     {
-      "id": "q5", "game": "investigation", "timeLimit": 40,
+      "id": "q6", "game": "investigation", "timeLimit": 40,
       "question": "On demande à une IA une question de quiz pour des collègues. Une de ses réponses contient une erreur : laquelle ?",
       "transcript": [
         { "role": "user", "text": "Écris une question de quiz sur les mots de passe pour mes collègues, avec la bonne réponse." },
@@ -60,7 +67,7 @@
       "explanation": "Les 12 caractères correspondent bien à une recommandation de la CNIL, mais la loi « Mots de passe » de 2019 n'existe pas : l'IA invente une source qui sonne vrai. C'est une hallucination. D'où la règle de Waterfall : l'IA accélère, l'humain vérifie chaque question."
     },
     {
-      "id": "q6", "game": "investigation", "timeLimit": 40,
+      "id": "q7", "game": "investigation", "timeLimit": 40,
       "question": "Un assistant IA consulte un agenda pour répondre. Une de ses réponses pose problème : laquelle ?",
       "transcript": [
         { "role": "user", "text": "Combien de réunions ai-je mardi ?" },
@@ -72,7 +79,7 @@
       "explanation": "L'agenda indique 4 réunions, l'assistant en annonce 2. Un agent IA lit une information puis agit, mais il peut mal la reprendre : il faut vérifier ses réponses, surtout quand il agit à notre place."
     },
     {
-      "id": "q7", "game": "prompt_duel", "verify": true,
+      "id": "q8", "game": "prompt_duel", "verify": true,
       "question": "Tu veux faire un petit quiz pour tes collègues. Quelle demande donne un résultat prêt à l'emploi ?",
       "task": "Préparer un quiz « réflexes cybersécurité au bureau » pour ses collègues",
       "prompts": [
