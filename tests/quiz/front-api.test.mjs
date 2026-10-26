@@ -39,3 +39,13 @@ test("a successful answer resolves with the body", async (t) => {
   stubFetch(t, async () => new Response(JSON.stringify({ ok: true }), { status: 200 }));
   assert.deepEqual(await api.answer("demo", "p1", "q1", "ai", 1), { ok: true });
 });
+
+test("done posts the player id to the done route", async (t) => {
+  let seen;
+  stubFetch(t, async (url, init) => {
+    seen = { url, method: init.method, body: JSON.parse(init.body) };
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  });
+  assert.deepEqual(await api.done("demo", "p1"), { ok: true });
+  assert.deepEqual(seen, { url: "/api/quiz/done?s=demo", method: "POST", body: { pid: "p1" } });
+});

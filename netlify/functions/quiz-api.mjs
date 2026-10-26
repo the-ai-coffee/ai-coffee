@@ -7,7 +7,7 @@ export default async (req) => {
   const api = createApi({
     store: getStore({ name: "quiz", consistency: "strong" }),
     content,
-    hostKey: process.env.QUIZ_HOST_KEY,
+    hostKey: process.env.QUIZ_HOST_KEY?.trim(),
   });
   return api(req);
 };

@@ -1,4 +1,4 @@
-# ☕ Quiz brise-glace — mode d'emploi
+# ☕ Quiz Espresso — mode d'emploi
 
 > Le jeu de 8 à 12 min qui ouvre chaque session. Les participants scannent un QR code et jouent sur leur téléphone. L'animateur déclenche ensuite la révélation collective et affiche le **niveau du jour**.
 > Conception : [`superpowers/specs/2026-10-13-quiz-brise-glace-design.md`](superpowers/specs/2026-10-13-quiz-brise-glace-design.md).
@@ -36,6 +36,11 @@
    - le média ne doit pas trahir la réponse : pas de nom de fichier contenant « ai » ou un nom d'outil, pas de titre de vidéo révélateur. L'attribution va dans `explanation`.
 
    Retirez ensuite le drapeau `verify`.
+
+> 💡 **Médias par URL** : collez simplement l'URL dans `"media": { "url": "https://…" }` — YouTube (`watch?v=`, `youtu.be/`, Shorts, `t=42`), Vimeo, image (`.jpg`, `.png`, `.webp`, `.gif`, `.avif`, avec `alt`) ou vidéo (`.mp4`, `.webm`, `.mov`). `start`/`end` (en secondes) découpent un extrait. TikTok, Instagram, X et Facebook ne sont pas pris en charge.
+>
+> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo YouTube ou Vimeo avec `end`, le timer attend (`end` − `start`) secondes après l'affichage de la question, que la vidéo ait été lancée ou non : les joueurs doivent appuyer sur lecture tout de suite (sans `end`, le timer démarre immédiatement). Pour un fichier vidéo direct, le timer attend la fin de la vidéo, ou de l'extrait si `end` est donné (plafonné à sa durée). `media.fallback`, s'il est présent, doit être une URL `https`.
+
 4. Validez en mode strict :
 
    ```bash
@@ -43,7 +48,7 @@
    ```
 
 5. Commitez `quiz-data/` et déployez. Le contenu est embarqué dans la fonction au moment du build : **pas de déploiement, pas de partie**.
-6. Dans le deck, ajoutez une diapo « Brise-glace » sur l'archétype *Démo*, avec l'URL joueurs (voir `decks/_template/TEMPLATE-GUIDE.md`).
+6. Dans le deck, ajoutez une diapo « Espresso » sur l'archétype *Démo*, avec l'URL joueurs (voir `decks/_template/TEMPLATE-GUIDE.md`).
 
 > 💡 **Astuce** : `quiz-data/sessions/demo.json` est une partie de démonstration qui couvre les 4 jeux. Elle sert à s'entraîner, jamais en vraie session.
 
@@ -54,14 +59,16 @@
 | Quand | Animateur | Joueurs |
 |---|---|---|
 | Avant la session | Ouvrir l'écran animateur, cliquer sur **Réinitialiser** | — |
-| 0:00 | Partager l'onglet animateur dans Meet (le QR s'affiche), coller l'URL joueurs dans le chat, cliquer sur **Ouvrir la partie** | Scanner le QR, valider le pseudo proposé, puis **Jouer** |
-| 1:00 – 6:00 | Suivre la colonne de droite (connectés, terminés, progression `n/8`) | Répondre (choix, puis confiance) |
+| 0:00 | Partager l'onglet animateur dans Meet (le QR s'affiche), coller l'URL joueurs dans le chat, cliquer sur **Ouvrir la partie** | Scanner le QR, valider le pseudo proposé (toucher l'avatar pour en changer, 🎲 tire un autre pseudo et un autre avatar), puis **Jouer** |
+| 1:00 – 6:00 | Suivre le **chrono global** (10 min par défaut, ±1 min si besoin) et la colonne des joueurs (avatar, `n/8`, ✓ quand le joueur a répondu ou laissé passer toutes les questions) | Répondre avant la fin du timer (choix, puis confiance) ; flash « Réponse enregistrée » |
 | ~6:00 | **Révéler** quand tout le monde a fini, ou plus tôt s'il y a un retardataire | Les réponses sont verrouillées |
-| 6:00 – 10:00 | Débriefer avec ◀ ▶ : répartition, bonne réponse, concept et explication. Les questions sans intérêt peuvent être sautées | Chacun voit ✅ / ❌ sur son téléphone |
+| 6:00 – 10:00 | Débriefer au clavier : `Espace` / `→` question suivante, `←` précédente (la bonne réponse apparaît après ~1 s de suspense) | Flash **BRAVO ! / RATÉ / PAS RÉPONDU** puis le détail |
 | 10:00 | ▶ jusqu'au **Niveau du jour**, puis **Terminer** | Profil IA et progression personnelle |
 
 - La première fois, ouvrez l'écran animateur avec `#key=…` dans l'URL. La clé est ensuite mémorisée dans ce navigateur et retirée de la barre d'adresse.
 - Un retardataire qui arrive après la révélation suit en spectateur. Une réponse envoyée trop tard est signalée « Trop tard » sur son téléphone.
+- Raccourcis de l'écran animateur : `→` suivant · `←` précédent · `Espace` révéler puis suivant · `F` plein écran. Les boutons réagissent immédiatement.
+- Quand le chrono global atteint 0, il clignote et le bouton **Révéler** pulse : c'est vous qui décidez du moment.
 - Un joueur qui recharge sa page reprend où il en était. Les réponses non envoyées (réseau instable) sont réessayées automatiquement, et un compteur les affiche.
 
 ------

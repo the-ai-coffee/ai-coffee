@@ -236,3 +236,7 @@ The nine slide archetypes (cover, table of contents, definition, impact, flow, c
 - Put more than one `.stroke` in a title.
 - Add drop shadows, gradients or stock illustrations for decoration.
 - Change the 1920×1080 slide size.
+
+## Exception: quiz player phone
+
+The player's phone during the icebreaker quiz (`quiz/index.html`, `quiz/game.css`) uses a playful "Game-show set" theme: purple-to-orange gradient, raised rounded buttons, Geist 800 typography, confetti. This is the **only** exception to this charter: the host screen shared in Meet, the site and the decks stay sober. The theme uses its own `--game-*` variables and redeclares no token; it respects `prefers-reduced-motion` and never carries a result by colour alone.

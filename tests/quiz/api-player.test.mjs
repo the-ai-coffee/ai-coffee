@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { isValidChoice } from "../../netlify/lib/quiz/api.mjs";
+import { AVATARS } from "../../quiz/lib/avatars.js";
 import { fixtureGame } from "../fixtures/quiz.mjs";
 import { A, setup, UID } from "../helpers/quiz-api.mjs";
 
@@ -19,8 +20,8 @@ test("state defaults to closed", async () => {
 test("join validates the pseudo and returns a pid", async () => {
   const { call } = setup();
   assert.deepEqual(await call("POST", "join?s=test", { pseudo: "   " }), { status: 400, body: { error: "invalid_pseudo" } });
-  const r = await call("POST", "join?s=test", { pseudo: "Token  Têtu", uid: UID });
-  assert.deepEqual(r, { status: 200, body: { pid: "p1", pseudo: "Token Têtu", status: "closed" } });
+  const r = await call("POST", "join?s=test", { pseudo: "Token  Têtu", uid: UID, avatar: "🐙" });
+  assert.deepEqual(r, { status: 200, body: { pid: "p1", pseudo: "Token Têtu", avatar: "🐙", status: "closed" } });
 });
 
 test("malformed or non-object JSON bodies are refused with invalid_json", async () => {
@@ -130,7 +131,7 @@ test("concurrent answers from one player are all kept", async () => {
   );
   assert.deepEqual(results.map((r) => r.status), [200, 200, 200, 200, 200]);
   const hostState = await call("GET", "host-state?s=test", undefined, "secret");
-  assert.deepEqual(hostState.body.players, [{ pseudo: "Rapide", answered: 5 }]);
+  assert.deepEqual(hostState.body.players.map(({ pseudo, answered }) => ({ pseudo, answered })), [{ pseudo: "Rapide", answered: 5 }]);
   await host("reveal");
   const me = await call("GET", `me?s=test&pid=${body.pid}`);
   assert.deepEqual(Object.keys(me.body.answers).sort(), ["q0", "q1", "q2", "q3", "q4"]);
@@ -149,4 +150,18 @@ test("a pid that is not a safe key is refused with invalid_player", async () => 
   }
   await host("reveal");
   assert.deepEqual(await call("GET", "me?s=test&pid=p1%2Fx"), { status: 400, body: { error: "invalid_player" } });
+});
+
+test("join replaces an unknown avatar with one from the list", async () => {
+  const { call } = setup();
+  const { body } = await call("POST", "join?s=test", { pseudo: "Un", avatar: "<img>" });
+  assert.ok(AVATARS.includes(body.avatar));
+});
+
+test("me returns the player's avatar", async () => {
+  const { call, host, play } = setup();
+  await host("open");
+  const pid = await play("Alice", UID, A);
+  await host("reveal");
+  assert.equal((await call("GET", `me?s=test&pid=${pid}`)).body.avatar, "🦊");
 });

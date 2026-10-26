@@ -72,3 +72,49 @@ test("validateConcepts rejects duplicates and unknown families", () => {
   has(errors, "hallucination: id dupliqué");
   has(errors, "tokenization: famille inconnue « magie »");
 });
+
+test("timeLimit must be an integer between 5 and 120", () => {
+  for (const bad of [4, 121, 12.5, "20"]) {
+    const g = clone();
+    g.questions[2].timeLimit = bad;
+    has(validateGame(g, fixtureConcepts).errors, "q2: timeLimit doit être un entier entre 5 et 120");
+  }
+  const ok = clone();
+  ok.questions[2].timeLimit = 45;
+  assert.deepEqual(validateGame(ok, fixtureConcepts).errors, []);
+});
+
+test("question is an optional text of at most 300 characters", () => {
+  const g = clone();
+  g.questions[1].question = "x".repeat(301);
+  has(validateGame(g, fixtureConcepts).errors, "q1: question doit être un texte de 300 caractères maximum");
+  const ok = clone();
+  ok.questions[1].question = "Regardez bien les mains.";
+  assert.deepEqual(validateGame(ok, fixtureConcepts).errors, []);
+});
+
+test("media.url is resolved, images need alt, social networks are refused", () => {
+  const img = clone();
+  img.questions[1].media = { url: "https://ex.com/a.png" };
+  has(validateGame(img, fixtureConcepts).errors, "q1: media.alt requis pour une image");
+  const social = clone();
+  social.questions[1].media = { url: "https://www.instagram.com/p/abc/" };
+  has(validateGame(social, fixtureConcepts).errors, "q1: réseaux sociaux non pris en charge");
+  const video = clone();
+  video.questions[1].media = { url: "https://youtu.be/dQw4w9WgXcQ?t=12", end: 5 };
+  has(validateGame(video, fixtureConcepts).errors, "q1: media.end doit être > media.start");
+  const ok = clone();
+  ok.questions[1].media = { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", start: 3, end: 18 };
+  assert.deepEqual(validateGame(ok, fixtureConcepts).errors, []);
+});
+
+test("media.fallback must be an https URL", () => {
+  for (const fallback of ["javascript:alert(1)", "http://ex.com/a.png", "pas une url", 42]) {
+    const g = clone();
+    g.questions[1].media = { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fallback };
+    has(validateGame(g, fixtureConcepts).errors, "q1: media.fallback doit être une URL https");
+  }
+  const ok = clone();
+  ok.questions[1].media = { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fallback: "https://ex.com/a.png" };
+  assert.deepEqual(validateGame(ok, fixtureConcepts).errors, []);
+});

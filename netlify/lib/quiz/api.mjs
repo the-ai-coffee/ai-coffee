@@ -2,6 +2,8 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { badgesFor, profileFor } from "../../../quiz/lib/profiles.js";
 import { cleanPseudo } from "../../../quiz/lib/pseudo.js";
 import { aggregate, scorePlayer } from "../../../quiz/lib/scoring.js";
+import { isAvatar, randomAvatar } from "../../../quiz/lib/avatars.js";
+import { gameDurationSec } from "../../../quiz/lib/timing.js";
 
 export const MAX_PLAYERS = 40;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -133,20 +135,22 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
     "GET state": async ({ s }) => readState(s),
 
     "POST join": async ({ s, req }) => {
-      const { pseudo, uid } = await readBody(req);
+      const { pseudo, uid, avatar } = await readBody(req);
       const clean = cleanPseudo(pseudo);
       if (!clean) throw new HttpError(400, "invalid_pseudo");
       const { blobs } = await store.list({ prefix: keys.players(s) });
       if (blobs.length >= maxPlayers) throw new HttpError(403, "game_full");
       const state = await readState(s);
       const pid = newId();
+      const face = isAvatar(avatar) ? avatar : randomAvatar();
       await store.setJSON(keys.player(s, pid), {
         pid,
         pseudo: clean,
+        avatar: face,
         uid: typeof uid === "string" && UUID_RE.test(uid) ? uid : null,
         joinedAt: now().toISOString(),
       });
-      return { pid, pseudo: clean, status: state.status };
+      return { pid, pseudo: clean, avatar: face, status: state.status };
     },
 
     "POST answer": async ({ s, game, req }) => {
@@ -162,6 +166,17 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
       return { ok: true };
     },
 
+    // Skipped questions send nothing, so the player says when they reach the
+    // waiting screen. Only this player writes their identity blob.
+    "POST done": async ({ s, req }) => {
+      const { pid } = await readBody(req);
+      const state = await readState(s);
+      if (state.status !== "open") throw new HttpError(409, "not_open");
+      const player = await requirePlayer(s, pid);
+      await store.setJSON(keys.player(s, pid), { ...player, finishedAt: now().toISOString() });
+      return { ok: true };
+    },
+
     "GET me": async ({ s, game, url }) => {
       const state = await readState(s);
       if (!REVEALED.has(state.status)) throw new HttpError(409, "not_revealed");
@@ -173,6 +188,7 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
       if (result.score !== null) progression.push({ session: s, score: result.score });
       return {
         pseudo: player.pseudo,
+        avatar: player.avatar ?? null,
         answers: player.answers,
         score: result.score,
         correct: result.correct,
@@ -188,13 +204,13 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
 
     "POST host": async ({ s, game, req }) => {
       requireHost(req);
-      const { action, index } = await readBody(req);
+      const { action, index, deltaSec } = await readBody(req);
       const state = await readState(s);
       const last = game.questions.length; // index « last » = the « niveau du jour » screen
       let next;
       switch (action) {
         case "open":
-          next = { status: "open", revealIndex: 0 };
+          next = { status: "open", revealIndex: 0, openedAt: now().toISOString(), durationSec: gameDurationSec(game.questions) };
           break;
         case "reveal":
           next = { status: "reveal", revealIndex: 0 };
@@ -208,6 +224,11 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
           if (!REVEALED.has(state.status)) throw new HttpError(409, "not_revealed");
           await recordMembers(s, game);
           next = { status: "done", revealIndex: last };
+          break;
+        case "extend":
+          if (state.status !== "open") throw new HttpError(409, "not_open");
+          if (deltaSec !== 60 && deltaSec !== -60) throw new HttpError(400, "invalid_delta");
+          next = { ...state, durationSec: Math.max(60, (state.durationSec ?? 0) + deltaSec) };
           break;
         case "reset": {
           const { blobs } = await store.list({ prefix: keys.game(s) });
@@ -226,16 +247,19 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
       const [state, players] = await Promise.all([readState(s), listPlayers(s)]);
       const agg = aggregate(game.questions, players);
       const profiles = {};
-      for (const p of players) {
-        const profile = profileFor(scorePlayer(game.questions, p.answers));
-        if (profile) profiles[profile.id] = (profiles[profile.id] ?? 0) + 1;
-      }
+      const rows = [...players]
+        .sort((a, b) => a.joinedAt.localeCompare(b.joinedAt))
+        .map((p) => {
+          const profile = profileFor(scorePlayer(game.questions, p.answers))?.id ?? null;
+          if (profile) profiles[profile] = (profiles[profile] ?? 0) + 1;
+          const answered = Object.keys(p.answers).length;
+          const finished = Boolean(p.finishedAt) || answered >= game.questions.length;
+          return { id: p.pid, pseudo: p.pseudo, avatar: p.avatar ?? null, answered, finished, profile };
+        });
       return {
         game: content.publicGame(game, { revealed: true }),
         state,
-        players: players
-          .sort((a, b) => a.joinedAt.localeCompare(b.joinedAt))
-          .map((p) => ({ pseudo: p.pseudo, answered: Object.keys(p.answers).length })),
+        players: rows,
         stats: agg.perQuestion,
         globalScore: agg.globalScore,
         concepts: content.compareWithHistory(agg.concepts, s),
