@@ -40,9 +40,10 @@ const qs = (s, extra = "") => `?s=${encodeURIComponent(s)}${extra}`;
 export const api = {
   game: (s) => request(`/game${qs(s)}`),
   state: (s) => request(`/state${qs(s)}`),
-  join: (s, pseudo, uid) => request(`/join${qs(s)}`, { method: "POST", body: { pseudo, uid } }),
+  join: (s, pseudo, uid, avatar) => request(`/join${qs(s)}`, { method: "POST", body: { pseudo, uid, avatar } }),
   answer: (s, pid, qid, choice, confidence) =>
     request(`/answer${qs(s)}`, { method: "POST", body: { pid, qid, choice, confidence }, timeout: ANSWER_TIMEOUT_MS }),
+  done: (s, pid) => request(`/done${qs(s)}`, { method: "POST", body: { pid } }),
   me: (s, pid) => request(`/me${qs(s, `&pid=${encodeURIComponent(pid)}`)}`),
   hostState: (s, key) => request(`/host-state${qs(s)}`, { key }),
   host: (s, key, action, extra = {}) => request(`/host${qs(s)}`, { method: "POST", key, body: { action, ...extra } }),

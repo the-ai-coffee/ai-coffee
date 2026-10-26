@@ -1,12 +1,14 @@
 import { h } from "../dom.js";
-import { explanation, verdict } from "./common.js";
+import { explanation, okMark, questionHeader, verdict } from "./common.js";
+
+export const CONSIGNE = "Quelle réponse de l'IA pose problème ?";
 
 export function renderQuestion(q, onPick) {
   return h(
     "div",
     { class: "q" },
-    h("p", { class: "q-title" }, "L'Enquête : trouve ce qui cloche"),
-    h("p", { class: "lead" }, "Touche la réponse de l'IA qui pose problème."),
+    questionHeader(CONSIGNE, q),
+    h("p", { class: "lead" }, "Touche la bulle de l'IA qui cloche."),
     h(
       "ol",
       { class: "transcript" },
@@ -20,7 +22,7 @@ export function renderQuestion(q, onPick) {
         ),
       ),
     ),
-    h("button", { class: "choice", type: "button", onclick: () => onPick(null) }, "🤷 Rien ne cloche"),
+    h("button", { class: "choice", type: "button", onclick: () => onPick(null) }, "🤷 Tout est correct"),
   );
 }
 
@@ -29,7 +31,7 @@ export function renderReveal(q, stats, mine) {
   return h(
     "div",
     { class: "q" },
-    h("p", { class: "q-title" }, "L'Enquête"),
+    questionHeader(CONSIGNE, q),
     verdict(q, mine),
     h(
       "ol",
@@ -41,13 +43,15 @@ export function renderReveal(q, stats, mine) {
           h(
             "div",
             { class: `bubble ${line.role}${i === q.answer ? " is-faulty" : ""}${mine?.choice === i ? " is-mine" : ""}` },
+            okMark(i === q.answer),
             line.text,
+            mine?.choice === i ? " · toi" : null,
             line.role === "ai" ? h("span", { class: "bubble-count" }, `${count(String(i))} 👆`) : null,
           ),
         ),
       ),
     ),
-    h("p", { class: q.answer === null ? "none-line is-correct" : "none-line" }, `${q.answer === null ? "✅ " : ""}Rien ne cloche : ${count("none")} 👆`),
+    h("p", { class: q.answer === null ? "none-line is-correct" : "none-line" }, okMark(q.answer === null), `Tout est correct : ${count("none")} 👆`),
     explanation(q),
   );
 }

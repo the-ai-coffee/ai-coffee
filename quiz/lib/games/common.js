@@ -9,6 +9,17 @@ export const CONFIDENCE = [
 
 const percent = (n, total) => (total ? Math.round((n * 100) / total) : 0);
 
+// Fixed, explicit instruction for each game, plus the optional per-question precision.
+export function questionHeader(consigne, q) {
+  return [
+    h("p", { class: "consigne" }, q.warmup ? `Échauffement · ${consigne}` : consigne),
+    q.question ? h("p", { class: "q-extra" }, q.question) : null,
+  ];
+}
+
+// The ✅ marker is a separate span so the host screen can hide it until its reveal.
+export const okMark = (show) => (show ? h("span", { class: "ok-mark" }, "✅ ") : null);
+
 export function choiceButtons(options, onPick) {
   return h(
     "div",
@@ -38,7 +49,7 @@ export function revealBars(options, q, stats, mine) {
       return h(
         "li",
         { class: `bar${correct ? " is-correct" : ""}${isMine ? " is-mine" : ""}` },
-        h("span", { class: "bar-label" }, `${correct ? "✅ " : ""}${o.label}${isMine ? " · toi" : ""}`),
+        h("span", { class: "bar-label" }, okMark(correct), `${o.label}${isMine ? " · toi" : ""}`),
         h("span", { class: "bar-track" }, h("span", { class: "bar-fill", style: `width:${pct}%` })),
         h("span", { class: "bar-pct" }, `${pct} %`),
       );
