@@ -15,7 +15,9 @@
   "Tout part d'un besoin clair : m'entraîner efficacement sans passer des soirées à chercher, ni payer des examens blancs. J'en ai d'abord discuté dans un chat avec Claude, qui m'a challengé sur ce que l'outil devait faire. Dans la même conversation, j'ai obtenu un premier artefact : un prototype cliquable pour tester l'idée. Puis j'ai extrait de cette discussion une spec produit. Ensuite, dans Claude Code, j'ai créé et déployé le moteur, je l'ai testé, et j'ai passé mon premier examen avec. Depuis, j'ajoute progressivement de nouveaux examens et j'améliore l'outil petit à petit.",
   "Voici ce qui se passe quand je demande un nouvel examen à mon agent. Il fait la recherche : la fiche officielle de l'examen, qui donne les thèmes et leur poids, le nombre de questions, la durée et le score à atteindre ; les retours de candidats qui l'ont passé avant moi, pour savoir où insister ; et la documentation officielle, qui sert de source. Il en fait la synthèse, crée le fichier de l'examen sans toucher au code de l'application, puis rédige un brouillon de questions avec leurs explications et leurs sources. Des contrôles automatiques vérifient le format, les sources et le dosage par thème. Ensuite je relis chaque question. Si un contrôle ou ma relecture bloque, on revient au brouillon. Quand tout est validé, l'examen apparaît dans le simulateur.",
   "En chiffres : cinq certifications disponibles dans le simulateur, 631 questions originales, chacune avec son explication et sa source, et plus de 230 tests automatiques qui tournent à chaque changement. Et surtout : une seule demande à mon agent suffit pour ajouter un nouvel examen. J'ai obtenu la certification OpenTelemetry sans acheter d'examens blancs. Pour la prochaine, il me suffira d'une demande.",
-  "Place à la démo. Je partage mon écran. D'abord une visite rapide : le catalogue des examens, un examen avec son chrono, puis un résultat avec le score par thème et l'explication d'une question ratée. Ensuite, la partie en direct : vous choisissez un thème dans le chat, je fais une seule demande à mon agent, et vous voyez le nouvel examen apparaître dans le simulateur. Plan B si ça plante : le fichier de l'examen déjà généré, prêt à être ajouté."
+  "Place à la démo. Je partage mon écran. D'abord une visite rapide : le catalogue des examens, un examen avec son chrono, puis un résultat avec le score par thème et l'explication d'une question ratée. Ensuite, la partie en direct : vous choisissez un thème dans le chat, je fais une seule demande à mon agent, et vous voyez le nouvel examen apparaître dans le simulateur. Plan B si ça plante : le fichier de l'examen déjà généré, prêt à être ajouté.",
+  "",
+  ""
 ]
 </script>
 <script src="../deck-stage.js"></script>
@@ -394,6 +396,14 @@
   .w5.figs .fig.key .v { font-style: italic; color: var(--accent); }
   .w5.figs .fig p { font-family: var(--sans); font-weight: 300; font-size: 30px; line-height: 1.4; margin: 0; color: var(--ink-2); max-width: 19ch; }
   .w5.figs .moral { top: 770px; }
+  /* intro d'une intervention : numéro, titre, sujet, intervenant */
+  .w5.intro .num { position: absolute; top: 190px; left: var(--pad-x); font-family: var(--mono); font-size: 26px; letter-spacing: 0.2em; color: var(--accent); }
+  .w5.intro .head { position: absolute; top: 290px; left: var(--pad-x); right: var(--pad-x); display: flex; flex-direction: column; gap: 56px; }
+  .w5.intro h2.title { position: static; font-size: 168px; line-height: 1; }
+  .w5.intro h2.title.long { font-size: 128px; }
+  .w5.intro .topic { font-family: var(--serif); font-style: italic; font-size: 60px; line-height: 1.15; margin: 0; color: var(--ink-2); }
+  .w5.intro .by { position: absolute; top: 760px; left: var(--pad-x); right: var(--pad-x); border-top: 2px solid var(--accent); padding-top: 30px; display: flex; align-items: baseline; gap: 40px; }
+  .w5.intro .by .name { font-family: var(--serif); font-size: 52px; }
 </style>
 </head>
 <body>
@@ -446,7 +456,7 @@
   <section data-label="02 Sommaire">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Au programme</div>
-      <div class="folio">02 / 07</div>
+      <div class="folio">02 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Waterfall</span></div>
     </div>
 
@@ -485,7 +495,7 @@
   <section data-label="03 Waterfall · Ouverture" class="ink">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> IA Coffee #05 · Démo de projet · Waterfall</div>
-      <div class="folio">03 / 07</div>
+      <div class="folio">03 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall · Michael Pambo Ognana</span></div>
     </div>
 
@@ -510,7 +520,7 @@
   <section data-label="04 Process de fabrication">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Le process de fabrication</div>
-      <div class="folio">04 / 07</div>
+      <div class="folio">04 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall · Concevoir, puis construire</span></div>
     </div>
 
@@ -536,7 +546,7 @@
   <section data-label="05 Workflow · Nouvel examen">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Workflow · Nouvel examen</div>
-      <div class="folio">05 / 07</div>
+      <div class="folio">05 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>L'IA accélère, l'humain valide</span></div>
     </div>
 
@@ -602,7 +612,7 @@
   <section data-label="06 Chiffres clés" class="paper-2">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Chiffres clés</div>
-      <div class="folio">06 / 07</div>
+      <div class="folio">06 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall en chiffres</span></div>
     </div>
 
@@ -621,7 +631,7 @@
   <section data-label="07 Démo" class="ink">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Démo en direct</div>
-      <div class="folio">07 / 07</div>
+      <div class="folio">07 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>github.com/mikamboo/waterfall</span></div>
     </div>
 
@@ -642,6 +652,40 @@
       </div>
     </div>
   </section>
+  <section data-label="08 Intro · Hermes Agent">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme · Démo</div>
+      <div class="folio">08 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Hermes Agent</span></div>
+    </div>
+
+    <div class="w5 intro">
+      <div class="num">03 / 04</div>
+      <div class="head">
+        <h2 class="title">Hermes <em>Agent</em></h2>
+        <p class="topic">Utiliser les profils spécialisés.</p>
+      </div>
+      <div class="by"><span class="label">Présenté par</span><span class="name">Xavier Gueret</span></div>
+    </div>
+  </section>
+
+  <section data-label="09 Intro · Discussion">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme · Discussion</div>
+      <div class="folio">09 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Discussion</span></div>
+    </div>
+
+    <div class="w5 intro">
+      <div class="num">04 / 04</div>
+      <div class="head">
+        <h2 class="title long">L'avenir du <em>métier de développeur</em></h2>
+        <p class="topic">Une discussion ouverte.</p>
+      </div>
+      <div class="by"><span class="label">Animée par</span><span class="name">Jean-Noé Kollo</span></div>
+    </div>
+  </section>
+
 </deck-stage>
 
 </body>
