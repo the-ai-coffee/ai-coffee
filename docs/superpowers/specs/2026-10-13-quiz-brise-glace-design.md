@@ -15,7 +15,7 @@ Au-delà du brise-glace, le module est un **outil de progression** : chaque ques
 
 | Sujet | Décision |
 |---|---|
-| Mécanique | Moteur modulaire de mini-jeux. V1 : *Humain ou IA ?*, *Pariez sur la machine*, *L'Enquête*, *Duel de prompts*. Plus tard (nice to have) : *Atelier de prompts* (C, rédaction libre + LLM-juge). |
+| Mécanique | Moteur modulaire de mini-jeux. V1 : *Humain ou IA ?*, *Pariez sur la machine*, *L'Enquête*, *Duel de prompts*, *Définition*. Plus tard (nice to have) : *Atelier de prompts* (C, rédaction libre + LLM-juge). |
 | Durée | Jeu + debrief : **8 à 12 min** (cible 10). |
 | Rythme | **Hybride** : chacun joue à son rythme, l'animateur déclenche une révélation collective. |
 | Identité | **Pseudo** généré par défaut (modifiable) + **profil IA** personnel ; pas de classement nominatif. |
@@ -41,7 +41,7 @@ Jeu C (*Atelier de prompts*), back-office d'administration, comptes utilisateurs
 | 6:00–10:00 | Debrief question par question (◀ ▶) : répartition, bonne réponse, concept + explication. Questions sautables. | Sa réponse ✅/❌ et la répartition du groupe |
 | 10:00 | **Niveau du jour** : score 0–100, concepts forts/faibles, comparaison avec l'historique | **Profil IA** + progression personnelle (si ID local connu) |
 
-Composition type d'une partie : 1 échauffement vidéo (non compté) + ~2 *Humain ou IA ?* + ~2 *Pariez sur la machine* + 2–3 *Enquête* / *Duel de prompts*, dont 1–2 questions de **rappel** de sessions passées.
+Composition type d'une partie : 1 échauffement vidéo (non compté) + ~2 *Humain ou IA ?* + ~2 *Pariez sur la machine* + 2–3 *Enquête* / *Duel de prompts* + au moins 2 *Définition* (notions de base : LLM, agent, contexte…), dont 1–2 questions de **rappel** de sessions passées.
 
 ### Les mini-jeux V1
 
@@ -50,6 +50,7 @@ Tous partagent la mécanique **réponse + confiance** (3 crans : « Je pense »,
 - **Humain ou IA ?** — un média (texte, image, code ou **vidéo**) ; le joueur tranche Humain / IA. Les vidéos d'IA manifestement absurdes font de bons échauffements.
 - **Pariez sur la machine** — une question posée à un LLM ; le joueur prédit sa réponse (ou s'il se trompe).
 - **L'Enquête** — une conversation avec une IA en bulles ; le joueur **tape la phrase fautive** (ou « Rien ne cloche »). Illustre hallucination, complaisance, perte de contexte, tokenisation…
+- **Définition** — un terme de base (LLM, agent, contexte…) ; le joueur choisit sa définition parmi 3–4 propositions.
 - **Duel de prompts** — 2–3 prompts pour une même tâche ; le joueur parie sur le meilleur. Au debrief : les **vraies sorties obtenues** côte à côte et le principe de prompting en jeu.
 
 ### Résilience
@@ -86,6 +87,7 @@ Champs communs obligatoires par question : `id`, `game`, `answer`, `concept` (ex
 |---|---|---|
 | `human_or_ai` | `media` | `"human"` \| `"ai"` |
 | `bet_machine` | `prompt`, `choices[{id,text}]` | id d'un choix |
+| `definition` | `term`, `choices[{id,text}]` | id d'un choix |
 | `investigation` | `transcript[{role,text}]` | index de la ligne fautive, ou `null` (« rien ne cloche ») |
 | `prompt_duel` | `task`, `prompts[{id,text}]`, `outputs{id: texte}` | id du meilleur prompt |
 

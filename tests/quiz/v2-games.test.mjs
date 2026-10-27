@@ -21,10 +21,12 @@ const CONSIGNES = {
   bet_machine: "On a posé cette question à une IA. Que va-t-elle répondre ?",
   investigation: "Quelle réponse de l'IA pose problème ?",
   prompt_duel: "Lequel de ces prompts donnera le meilleur résultat ?",
+  definition: "Que veut dire ce terme ?",
 };
+const definitionQ = { id: "d1", game: "definition", term: "LLM", choices: [{ id: "a", text: "Un moteur de recherche" }, { id: "b", text: "Un modèle qui prédit le texte suivant" }], answer: "b", concept: "tokenization", explanation: "Large Language Model." };
 
 test("every game shows its explicit instruction and the optional question", () => {
-  for (const q of fixtureGame.questions) {
+  for (const q of [...fixtureGame.questions, definitionQ]) {
     const mod = GAMES[q.game];
     assert.equal(mod.CONSIGNE, CONSIGNES[q.game]);
     const text = mod.renderQuestion({ ...q, question: "Indice : regardez bien." }, () => {}).text;
@@ -85,4 +87,11 @@ test("the bet machine reveal shows the question's media", () => {
   const q = { ...fixtureGame.questions[2], media: { url: "https://ex.com/a.png", alt: "Capture" }, conceptLabel: "X" };
   const imgs = findAll(GAMES.bet_machine.renderReveal(q, { counts: {}, answered: 0 }, undefined), (n) => n.tag === "img");
   assert.equal(imgs[0]?.attrs.src, "https://ex.com/a.png");
+});
+
+test("a definition shows the term and its choices, then the term again at the reveal", () => {
+  const text = GAMES.definition.renderQuestion(definitionQ, () => {}).text;
+  assert.ok(text.includes("LLM") && text.includes("Un modèle qui prédit le texte suivant"), text);
+  const reveal = GAMES.definition.renderReveal({ ...definitionQ, conceptLabel: "X" }, { counts: { b: 1 }, answered: 1 }, { choice: "b", confidence: 1 }).text;
+  assert.ok(reveal.includes("LLM") && reveal.includes("Large Language Model."), reveal);
 });

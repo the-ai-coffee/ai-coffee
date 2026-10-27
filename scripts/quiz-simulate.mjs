@@ -30,6 +30,7 @@ function randomChoice(q) {
     case "human_or_ai":
       return pick(["human", "ai"]);
     case "bet_machine":
+    case "definition":
       return pick(q.choices).id;
     case "investigation":
       return pick([null, ...q.transcript.flatMap((line, i) => (line.role === "ai" ? [i] : []))]);

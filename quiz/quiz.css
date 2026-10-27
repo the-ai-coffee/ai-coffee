@@ -93,6 +93,8 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 /* v2: explicit instructions, prompt text inside buttons */
 .consigne { font-family: var(--serif); font-size: 28px; line-height: 1.1; margin: 0; }
 .q-extra { margin: 0; color: var(--ink-2); }
+.term { font-family: var(--serif); font-size: 40px; line-height: 1.1; margin: 0; color: var(--accent); }
+.host #main .term { font-size: 72px; }
 .prompt-text { font-family: var(--mono); font-size: 13px; white-space: pre-wrap; display: block; }
 .prompt-card { display: flex; flex-direction: column; gap: 6px; text-align: left; border: 1px solid var(--rule-2); border-radius: 14px; padding: 14px; background: var(--paper-3); }
 

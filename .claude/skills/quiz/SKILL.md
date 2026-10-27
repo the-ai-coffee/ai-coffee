@@ -26,13 +26,15 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
      Si l'historique est vide, rappeler des concepts des *Concepts / rappels* des
      sessions précédentes.
 3. **Composer** 1 échauffement (`warmup: true`, idéalement une vidéo IA manifestement
-   absurde) + 6–7 questions comptées : ~2 `human_or_ai`, ~2 `bet_machine`, 2–3
+   absurde) + 6–7 questions comptées : ~2 `human_or_ai`, ~2 `bet_machine`, au moins 2 `definition`
+   (notion de base : LLM, agent, contexte… ; `term` + `choices`, bonne réponse jamais
+   la plus longue ni la plus détaillée), 2–3
    `investigation` / `prompt_duel`. Chaque question a un `concept` et une
    `explanation` pédagogique de 1–2 phrases qui **nomme** le phénomène.
    Chaque jeu affiche déjà sa consigne fixe (« Ce contenu a-t-il été créé par un humain
    ou par une IA ? », etc.) : n'ajoute un champ `question` (≤ 300 caractères) que pour
    préciser ce qu'il faut regarder. Les durées par défaut (15 s *Humain ou IA ?*, 20 s
-   *Pariez*, 30 s *Enquête* et *Duel*) conviennent en général ; pose `timeLimit`
+   *Pariez* et *Définition*, 30 s *Enquête* et *Duel*) conviennent en général ; pose `timeLimit`
    (5–120) seulement si la lecture est plus longue ou plus courte que la normale.
 4. **Seulement du contenu vérifiable** :
    - `bet_machine` et `prompt_duel` : les réponses et `outputs` doivent être de vraies

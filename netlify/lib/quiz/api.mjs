@@ -30,6 +30,7 @@ export function isValidChoice(question, choice) {
     case "human_or_ai":
       return choice === "human" || choice === "ai";
     case "bet_machine":
+    case "definition":
       return question.choices.some((c) => c.id === choice);
     case "investigation":
       return choice === null || (Number.isInteger(choice) && choice >= 0 && choice < question.transcript.length);

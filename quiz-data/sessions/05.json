@@ -3,94 +3,183 @@
   "title": "On se met en jambes",
   "questions": [
     {
-      "id": "q0", "game": "human_or_ai", "warmup": true,
+      "id": "q0",
+      "game": "human_or_ai",
+      "warmup": true,
       "question": "Regarde bien la vidéo : vraie scène filmée, ou vidéo fabriquée par une IA ?",
-      "media": { "url": "https://www.youtube.com/shorts/uFZ44IDqeo0", "start": 0, "end": 15 },
-      "answer": "ai", "concept": "video-generation",
+      "media": {
+        "url": "https://www.youtube.com/shorts/uFZ44IDqeo0",
+        "start": 0,
+        "end": 15
+      },
+      "answer": "ai",
+      "concept": "video-generation",
       "explanation": "Vidéo entièrement générée par IA (chaîne CinematicByte, « AI Cats Dancing to Trending Song »). Les IA vidéo produisent des scènes crédibles, mais se trompent souvent sur les mouvements, les pattes et la continuité d'une image à l'autre."
     },
     {
-      "id": "q1", "game": "human_or_ai",
-      "question": "Lis ce message posté sur un réseau professionnel. Qui l'a écrit : une personne ou une IA ?",
-      "media": { "kind": "text", "text": "Le télétravail est bien plus qu'une simple organisation : c'est une véritable philosophie du travail. En offrant flexibilité, autonomie et équilibre, il permet à chacun de donner le meilleur de lui-même. Et vous, quelle est votre vision du travail de demain ? 🚀" },
-      "answer": "ai", "concept": "ai-detection",
-      "explanation": "Texte généré par Claude pour ce quiz. Les indices typiques : « bien plus qu'un simple… », trois mots qui vont par trois (« flexibilité, autonomie et équilibre »), une question finale pour faire réagir, et aucun exemple concret."
+      "id": "q1",
+      "game": "definition",
+      "term": "LLM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Un moteur qui cherche les réponses sur internet"
+        },
+        {
+          "id": "b",
+          "text": "Un modèle qui écrit en prédisant le mot suivant"
+        },
+        {
+          "id": "c",
+          "text": "Une base de questions avec leurs réponses"
+        }
+      ],
+      "answer": "b",
+      "concept": "next-token",
+      "explanation": "LLM veut dire Large Language Model, « grand modèle de langage ». Il écrit mot après mot en prédisant la suite la plus probable : il ne cherche pas, il prédit. C'est le moteur de ChatGPT, Claude ou Gemini."
     },
     {
-      "id": "q2", "game": "human_or_ai",
+      "id": "q2",
+      "game": "human_or_ai",
       "question": "Lis ces quatre vers. Qui les a écrits : une personne ou une IA ?",
-      "media": { "kind": "text", "text": "Demain, dès l'aube, à l'heure où blanchit la campagne,\nJe partirai. Vois-tu, je sais que tu m'attends.\nJ'irai par la forêt, j'irai par la montagne.\nJe ne puis demeurer loin de toi plus longtemps." },
-      "answer": "human", "concept": "ai-detection",
+      "media": {
+        "kind": "text",
+        "text": "Demain, dès l'aube, à l'heure où blanchit la campagne,\nJe partirai. Vois-tu, je sais que tu m'attends.\nJ'irai par la forêt, j'irai par la montagne.\nJe ne puis demeurer loin de toi plus longtemps."
+      },
+      "answer": "human",
+      "concept": "ai-detection",
       "explanation": "Victor Hugo, « Demain, dès l'aube… » (Les Contemplations, 1856). Une émotion précise, des images concrètes et un rythme qui se brise : difficile à imiter pour une IA sans tomber dans le pastiche."
     },
     {
-      "id": "q3", "game": "human_or_ai",
+      "id": "q3",
+      "game": "human_or_ai",
       "question": "Regarde bien cette photo : prise par un photographe, ou fabriquée par une IA ?",
-      "media": { "kind": "image", "src": "https://imagedelivery.net/TkcHhODAR5Y7jFoICvSX0Q/48baa428-c068-4924-2c26-c1f25c1e4c00/q=85,fit=scale-down,w=1024", "alt": "Une jeune femme en robe fleurie, assise pieds nus sur un ponton au bord d'un étang au coucher du soleil, à côté d'un chat roux." },
-      "answer": "ai", "concept": "ai-detection",
+      "media": {
+        "kind": "image",
+        "src": "https://imagedelivery.net/TkcHhODAR5Y7jFoICvSX0Q/48baa428-c068-4924-2c26-c1f25c1e4c00/q=85,fit=scale-down,w=1024",
+        "alt": "Une jeune femme en robe fleurie, assise pieds nus sur un ponton au bord d'un étang au coucher du soleil, à côté d'un chat roux."
+      },
+      "answer": "ai",
+      "concept": "ai-detection",
       "explanation": "Image générée par IA. Les indices : une lumière dorée trop parfaite, une peau sans aucun défaut, des jambes anormalement longues et une main qui dépasse derrière le chat, loin du bras. Une IA image produit des scènes « trop belles pour être vraies » et se trompe souvent sur le corps humain."
     },
     {
-      "id": "q4", "game": "bet_machine",
+      "id": "q4",
+      "game": "definition",
+      "term": "Le contexte d'une IA",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Tout ce qu'elle a appris à l'entraînement"
+        },
+        {
+          "id": "b",
+          "text": "Ce qu'elle voit de la conversation en cours"
+        },
+        {
+          "id": "c",
+          "text": "Les réglages enregistrés dans votre compte"
+        }
+      ],
+      "answer": "b",
+      "concept": "context-window",
+      "explanation": "Le contexte, c'est la « mémoire de travail » de l'IA : tout ce qu'elle voit pendant la conversation. Sa taille est limitée (la fenêtre de contexte) : au-delà, elle oublie le début ou s'y perd. Ce qu'elle a appris à l'entraînement, lui, ne change pas."
+    },
+    {
+      "id": "q5",
+      "game": "bet_machine",
       "question": "Cette IA n'a pas accès à internet. Que répond-elle ?",
       "prompt": "« Combien coûte un timbre pour envoyer une lettre en France aujourd'hui ? »",
       "choices": [
-        { "id": "a", "text": "Elle donne un prix précis, sans dire qu'il est peut-être dépassé" },
-        { "id": "b", "text": "Elle refuse de répondre" },
-        { "id": "c", "text": "Elle trouve quand même le prix du jour" }
+        {
+          "id": "a",
+          "text": "Elle donne un prix précis, sans dire qu'il est peut-être dépassé"
+        },
+        {
+          "id": "b",
+          "text": "Elle refuse de répondre"
+        },
+        {
+          "id": "c",
+          "text": "Elle trouve quand même le prix du jour"
+        }
       ],
-      "answer": "a", "concept": "training-cutoff",
+      "answer": "a",
+      "concept": "training-cutoff",
       "explanation": "Une IA sans accès à internet ne connaît que ce qu'elle a lu pendant son apprentissage, jusqu'à une date limite. Elle répond avec assurance un prix qui a pu changer depuis : c'est la date limite de connaissances."
     },
     {
-      "id": "q5", "game": "bet_machine",
+      "id": "q6",
+      "game": "bet_machine",
       "question": "On pose 3 fois exactement la même demande, dans 3 conversations différentes. Qu'obtient-on ?",
       "prompt": "« Propose un nom pour ma boulangerie. »",
       "choices": [
-        { "id": "a", "text": "3 fois le même nom" },
-        { "id": "b", "text": "3 noms différents" },
-        { "id": "c", "text": "Un nom la 1re fois, puis un refus" }
+        {
+          "id": "a",
+          "text": "3 fois le même nom"
+        },
+        {
+          "id": "b",
+          "text": "3 noms différents"
+        },
+        {
+          "id": "c",
+          "text": "Un nom la 1re fois, puis un refus"
+        }
       ],
-      "answer": "b", "concept": "non-determinism",
+      "answer": "b",
+      "concept": "non-determinism",
       "explanation": "L'IA choisit chaque mot avec une part de hasard : la même demande donne une réponse différente à chaque fois. Pratique pour trouver des idées, mais on ne peut pas compter sur une réponse identique."
     },
     {
-      "id": "q6", "game": "investigation", "timeLimit": 40,
-      "question": "On demande à une IA une question de quiz pour des collègues. Une de ses réponses contient une erreur : laquelle ?",
-      "transcript": [
-        { "role": "user", "text": "Écris une question de quiz sur les mots de passe pour mes collègues, avec la bonne réponse." },
-        { "role": "ai", "text": "Bonne idée ! Voici une question :" },
-        { "role": "ai", "text": "Question : quelle longueur minimale conseille-t-on pour un mot de passe ? Réponse : 12 caractères. C'est obligatoire pour tous les salariés depuis la loi « Mots de passe » de 2019." },
-        { "role": "ai", "text": "Je peux en préparer d'autres sur le même modèle." }
-      ],
-      "answer": 2, "concept": "hallucination",
-      "explanation": "Les 12 caractères correspondent bien à une recommandation de la CNIL, mais la loi « Mots de passe » de 2019 n'existe pas : l'IA invente une source qui sonne vrai. C'est une hallucination. D'où la règle de Waterfall : l'IA accélère, l'humain vérifie chaque question."
-    },
-    {
-      "id": "q7", "game": "investigation", "timeLimit": 40,
+      "id": "q7",
+      "game": "investigation",
+      "timeLimit": 40,
       "question": "Un assistant IA consulte un agenda pour répondre. Une de ses réponses pose problème : laquelle ?",
       "transcript": [
-        { "role": "user", "text": "Combien de réunions ai-je mardi ?" },
-        { "role": "ai", "text": "Je consulte ton agenda." },
-        { "role": "user", "text": "[Agenda] Mardi : 4 réunions" },
-        { "role": "ai", "text": "Tu as 2 réunions mardi." }
+        {
+          "role": "user",
+          "text": "Combien de réunions ai-je mardi ?"
+        },
+        {
+          "role": "ai",
+          "text": "Je consulte ton agenda."
+        },
+        {
+          "role": "user",
+          "text": "[Agenda] Mardi : 4 réunions"
+        },
+        {
+          "role": "ai",
+          "text": "Tu as 2 réunions mardi."
+        }
       ],
-      "answer": 3, "concept": "agent", "revisits": "03",
+      "answer": 3,
+      "concept": "agent",
+      "revisits": "03",
       "explanation": "L'agenda indique 4 réunions, l'assistant en annonce 2. Un agent IA lit une information puis agit, mais il peut mal la reprendre : il faut vérifier ses réponses, surtout quand il agit à notre place."
     },
     {
-      "id": "q8", "game": "prompt_duel",
+      "id": "q8",
+      "game": "prompt_duel",
       "question": "Tu veux faire un petit quiz pour tes collègues. Quelle demande donne un résultat prêt à l'emploi ?",
       "task": "Préparer un quiz « réflexes cybersécurité au bureau » pour ses collègues",
       "prompts": [
-        { "id": "a", "text": "Fais-moi un quiz sur la sécurité." },
-        { "id": "b", "text": "Prépare 2 questions à choix multiples (4 réponses, une seule bonne) pour des collègues qui ne sont pas informaticiens, sur les e-mails piégés. Pour chaque question, donne la bonne réponse et une explication en une phrase." }
+        {
+          "id": "a",
+          "text": "Fais-moi un quiz sur la sécurité."
+        },
+        {
+          "id": "b",
+          "text": "Prépare 2 questions à choix multiples (4 réponses, une seule bonne) pour des collègues qui ne sont pas informaticiens, sur les e-mails piégés. Pour chaque question, donne la bonne réponse et une explication en une phrase."
+        }
       ],
       "outputs": {
         "a": "Bien sûr ! Voici un quiz sur la sécurité :\n1. Qu'est-ce que la sécurité ?\n2. Pourquoi la sécurité est-elle importante ?\n3. Quels sont les risques au quotidien ?\n4. Comment se protéger ?",
         "b": "1. Un e-mail de « votre banque » vous demande de confirmer vos codes en urgence. Que faites-vous ?\nA) Je clique et je confirme  B) Je réponds avec mes codes  C) Je ne clique pas et j'appelle ma banque  D) Je le transfère à mes collègues\nRéponse : C. Une banque ne demande jamais vos codes par e-mail.\n\n2. Quel indice doit vous alerter dans un e-mail ?\nA) Une adresse d'expéditeur bizarre  B) Le logo de l'entreprise  C) Une formule de politesse  D) Une signature\nRéponse : A. Les e-mails piégés imitent le logo, mais rarement la vraie adresse."
       },
-      "answer": "b", "concept": "prompt-format",
+      "answer": "b",
+      "concept": "prompt-format",
       "explanation": "Préciser le public, le nombre de questions, le format (4 réponses, la bonne, une explication) et le sujet donne un quiz utilisable tout de suite. La demande vague donne des questions générales, sans réponses."
     }
   ]
