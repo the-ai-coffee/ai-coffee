@@ -93,3 +93,11 @@ test("question, timeLimit and media.url are public before the reveal", () => {
   assert.equal(q.timeLimit, 25);
   assert.deepEqual(q.media, { url: "https://youtu.be/dQw4w9WgXcQ" });
 });
+
+test("publicGame keeps a definition's term and choices, never its answer", () => {
+  const q = { id: "d1", game: "definition", term: "LLM", choices: [{ id: "a", text: "A" }, { id: "b", text: "B" }], answer: "b", concept: "tokenization", explanation: "E." };
+  const [pub] = content.publicGame({ ...fixtureGame, questions: [q] }, { revealed: false }).questions;
+  assert.equal(pub.term, "LLM");
+  assert.equal(pub.choices.length, 2);
+  for (const field of SECRET) assert.ok(!(field in pub), `expose ${field}`);
+});

@@ -3,7 +3,7 @@ import historyDoc from "../../../quiz-data/history.json" with { type: "json" };
 import sessionRegistry from "../../../quiz-data/sessions/index.mjs";
 
 // Allowlist, not denylist: a new secret field can never leak by default.
-const PUBLIC_FIELDS = ["id", "game", "warmup", "media", "prompt", "choices", "transcript", "task", "prompts", "question", "timeLimit"];
+const PUBLIC_FIELDS = ["id", "game", "warmup", "media", "prompt", "choices", "transcript", "task", "prompts", "question", "timeLimit", "term"];
 // Same for media: a credit or source sub-field could give the answer away.
 const PUBLIC_MEDIA_FIELDS = ["kind", "text", "src", "alt", "provider", "id", "start", "end", "fallback", "url"];
 const pick = (obj, fields) => Object.fromEntries(fields.filter((f) => f in obj).map((f) => [f, obj[f]]));

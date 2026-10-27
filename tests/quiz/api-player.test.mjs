@@ -118,6 +118,9 @@ test("isValidChoice per game", () => {
   assert.equal(isValidChoice(q3, 3), false);
   assert.equal(isValidChoice(q3, "2"), false);
   assert.equal(isValidChoice(q4, "a"), true);
+  const def = { game: "definition", choices: [{ id: "a", text: "A" }, { id: "b", text: "B" }] };
+  assert.equal(isValidChoice(def, "b"), true);
+  assert.equal(isValidChoice(def, "c"), false);
   assert.equal(isValidChoice({ game: "nope" }, "a"), false);
 });
 

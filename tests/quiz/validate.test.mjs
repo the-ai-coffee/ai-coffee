@@ -118,3 +118,12 @@ test("media.fallback must be an https URL", () => {
   ok.questions[1].media = { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", fallback: "https://ex.com/a.png" };
   assert.deepEqual(validateGame(ok, fixtureConcepts).errors, []);
 });
+
+test("a definition needs a term and an answer among its choices", () => {
+  const ok = { id: "d1", game: "definition", term: "LLM", choices: [{ id: "a", text: "A" }, { id: "b", text: "B" }], answer: "b", concept: "tokenization", explanation: "E." };
+  const withQ = (q) => { const g = clone(); g.questions[6] = q; return validateGame(g, fixtureConcepts).errors; };
+  assert.deepEqual(withQ(ok), []);
+  has(withQ({ ...ok, term: " " }), "term manquant");
+  has(withQ({ ...ok, answer: "c" }), "answer ne correspond à aucun choix");
+  has(withQ({ ...ok, choices: [{ id: "a", text: "A" }] }), "au moins 2 choices");
+});

@@ -1,5 +1,5 @@
 // Question timers and the host's countdown. The timer never changes the score.
-export const DEFAULT_TIME_LIMITS = { human_or_ai: 15, bet_machine: 20, investigation: 30, prompt_duel: 30 };
+export const DEFAULT_TIME_LIMITS = { human_or_ai: 15, bet_machine: 20, investigation: 30, prompt_duel: 30, definition: 20 };
 export const MIN_TIME_LIMIT = 5;
 export const MAX_TIME_LIMIT = 120;
 

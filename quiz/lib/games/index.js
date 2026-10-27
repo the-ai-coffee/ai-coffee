@@ -1,4 +1,5 @@
 import * as betMachine from "./bet-machine.js";
+import * as definition from "./definition.js";
 import * as humanOrAi from "./human-or-ai.js";
 import * as investigation from "./investigation.js";
 import * as promptDuel from "./prompt-duel.js";
@@ -9,4 +10,5 @@ export const GAMES = {
   bet_machine: betMachine,
   investigation,
   prompt_duel: promptDuel,
+  definition,
 };

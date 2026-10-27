@@ -28,7 +28,7 @@
 1. Écrivez `sessions/NN.md`. Le quiz part du thème et de la section *Concepts / rappels*.
 2. Dans Claude Code, lancez **`/quiz NN`**. Le skill :
    - choisit 3 ou 4 concepts liés au thème, plus 1 ou 2 rappels des sessions précédentes (concepts faibles dans `quiz-data/history.json` d'abord) ;
-   - compose 1 échauffement et 6 ou 7 questions mêlant *Humain ou IA ?*, *Pariez sur la machine*, *L'Enquête* et *Duel de prompts* ;
+   - compose 1 échauffement et 6 ou 7 questions mêlant *Humain ou IA ?*, *Pariez sur la machine*, *L'Enquête*, *Duel de prompts* et au moins 2 *Définition* (LLM, agent, contexte…) ;
    - écrit `quiz-data/sessions/NN.json`, l'enregistre dans `quiz-data/sessions/index.mjs`, puis lance la validation.
 3. **Relisez et vérifiez** chaque question marquée `"verify": true` :
    - *Pariez sur la machine* et *Duel de prompts* : capturez les **vraies** réponses du modèle cité ;
@@ -39,7 +39,7 @@
 
 > 💡 **Médias par URL** : collez simplement l'URL dans `"media": { "url": "https://…" }` — YouTube (`watch?v=`, `youtu.be/`, Shorts, `t=42`), Vimeo, image (`.jpg`, `.png`, `.webp`, `.gif`, `.avif`, avec `alt`) ou vidéo (`.mp4`, `.webm`, `.mov`). `start`/`end` (en secondes) découpent un extrait. TikTok, Instagram, X et Facebook ne sont pas pris en charge.
 >
-> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo YouTube ou Vimeo avec `end`, le timer attend (`end` − `start`) secondes après l'affichage de la question, que la vidéo ait été lancée ou non : les joueurs doivent appuyer sur lecture tout de suite (sans `end`, le timer démarre immédiatement). Pour un fichier vidéo direct, le timer attend la fin de la vidéo, ou de l'extrait si `end` est donné (plafonné à sa durée). `media.fallback`, s'il est présent, doit être une URL `https`.
+> ⏱ **Timer** : 15 s *Humain ou IA ?*, 20 s *Pariez sur la machine* et *Définition*, 30 s *L'Enquête* et *Duel de prompts* ; `timeLimit` (5–120) le change pour une question. Pour une vidéo YouTube ou Vimeo avec `end`, le timer attend (`end` − `start`) secondes après l'affichage de la question, que la vidéo ait été lancée ou non : les joueurs doivent appuyer sur lecture tout de suite (sans `end`, le timer démarre immédiatement). Pour un fichier vidéo direct, le timer attend la fin de la vidéo, ou de l'extrait si `end` est donné (plafonné à sa durée). `media.fallback`, s'il est présent, doit être une URL `https`.
 
 4. Validez en mode strict :
 
