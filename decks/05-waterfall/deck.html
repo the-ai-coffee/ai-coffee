@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>IA Coffee · Épisode 05 — Waterfall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../../design/tokens.css">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/json" id="speaker-notes">
+[
+  "",
+  "",
+  "",
+  "Je prépare régulièrement des certifications. Mon processus d'entraînement était long, fastidieux et instable : chercher des questions, compiler mes notes à la main, payer des examens blancs, puis tout recommencer à la certification suivante. Aujourd'hui, une seule demande à mon agent suffit pour qu'un nouvel examen apparaisse dans mon simulateur. Je vais vous montrer comment je l'ai conçu.",
+  "Tout part d'un besoin clair : m'entraîner efficacement sans passer des soirées à chercher, ni payer des examens blancs. J'en ai d'abord discuté dans un chat avec Claude, qui m'a challengé sur ce que l'outil devait faire. Dans la même conversation, j'ai obtenu un premier artefact : un prototype cliquable pour tester l'idée. Puis j'ai extrait de cette discussion une spec produit. Ensuite, dans Claude Code, j'ai créé et déployé le moteur, je l'ai testé, et j'ai passé mon premier examen avec. Depuis, j'ajoute progressivement de nouveaux examens et j'améliore l'outil petit à petit.",
+  "Voici ce qui se passe quand je demande un nouvel examen à mon agent. Il fait la recherche : la fiche officielle de l'examen, qui donne les thèmes et leur poids, le nombre de questions, la durée et le score à atteindre ; les retours de candidats qui l'ont passé avant moi, pour savoir où insister ; et la documentation officielle, qui sert de source. Il en fait la synthèse, crée le fichier de l'examen sans toucher au code de l'application, puis rédige un brouillon de questions avec leurs explications et leurs sources. Des contrôles automatiques vérifient le format, les sources et le dosage par thème. Ensuite je relis chaque question. Si un contrôle ou ma relecture bloque, on revient au brouillon. Quand tout est validé, l'examen apparaît dans le simulateur.",
+  "En chiffres : cinq certifications disponibles dans le simulateur, 631 questions originales, chacune avec son explication et sa source, et plus de 230 tests automatiques qui tournent à chaque changement. Et surtout : une seule demande à mon agent suffit pour ajouter un nouvel examen. J'ai obtenu la certification OpenTelemetry sans acheter d'examens blancs. Pour la prochaine, il me suffira d'une demande.",
+  "Place à la démo. Je partage mon écran. D'abord une visite rapide : le catalogue des examens, un examen avec son chrono, puis un résultat avec le score par thème et l'explication d'une question ratée. Ensuite, la partie en direct : vous choisissez un thème dans le chat, je fais une seule demande à mon agent, et vous voyez le nouvel examen apparaître dans le simulateur. Plan B si ça plante : le fichier de l'examen déjà généré, prêt à être ajouté.",
+  "",
+  ""
+]
+</script>
+<script src="../deck-stage.js"></script>
+<style>
+  :root {
+    /* échelle typo (canvas 1920×1080) — dramatique, contraste fort */
+    --t-mega:    300px;   /* chiffre géant       */
+    --t-display: 224px;   /* cover               */
+    --t-title:   108px;   /* titre de slide      */
+    --t-h2:      64px;
+    --t-lead:    46px;
+    --t-body:    30px;
+    --t-small:   23px;
+    --t-micro:   18px;
+
+    --pad-x: 132px;
+  }
+
+  html, body { margin: 0; padding: 0; background: oklch(0.18 0.012 60); color: var(--ink); font-family: var(--sans); }
+  * { box-sizing: border-box; }
+
+  deck-stage section {
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+    position: relative;
+  }
+  /* slide sombre — beat de contraste (réutilisable via class="ink") */
+  deck-stage section.ink { background: var(--espresso); color: var(--paper-on-ink); }
+
+  /* ── chrome partagé ────────────────────────────────────────── */
+  .chrome { position: absolute; inset: 0; pointer-events: none; }
+  .chrome .kicker {
+    position: absolute; top: 52px; left: var(--pad-x);
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .chrome .kicker .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .chrome .folio {
+    position: absolute; top: 52px; right: var(--pad-x);
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.18em; color: var(--ink-3);
+  }
+  .chrome .baseline {
+    position: absolute; bottom: 52px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.14em; color: var(--ink-3);
+  }
+  .chrome .baseline .mark {
+    font-family: var(--serif); font-style: italic; font-size: 24px;
+    letter-spacing: 0; color: var(--ink); text-transform: none;
+  }
+  /* chrome sur fond sombre */
+  section.ink .chrome .kicker,
+  section.ink .chrome .folio,
+  section.ink .chrome .baseline { color: var(--muted-on-ink); }
+  section.ink .chrome .baseline .mark { color: var(--paper-on-ink); }
+
+  .body { position: absolute; inset: 132px var(--pad-x) 120px var(--pad-x); }
+
+  /* ── primitives typo ──────────────────────────────────────── */
+  .label {
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3);
+  }
+  section.ink .label { color: var(--muted-on-ink); }
+  h1.display, h2.title {
+    font-family: var(--serif); font-weight: 400; margin: 0;
+    letter-spacing: -0.025em; line-height: 0.98;
+  }
+  h2.title { font-size: var(--t-title); }
+  em { font-style: italic; color: var(--accent); }
+  /* geste signature : trait rust sous le mot-clé en italique d'un titre */
+  .stroke { position: relative; font-style: italic; color: var(--accent); }
+  .stroke::after {
+    content: ""; position: absolute; left: 0.02em; right: 0.02em; bottom: 0.12em;
+    height: 0.06em; background: var(--accent); opacity: 0.32; border-radius: 2px;
+  }
+  p.lead {
+    font-family: var(--serif); font-size: var(--t-lead); line-height: 1.26;
+    color: var(--ink-2); margin: 0; max-width: 24ch;
+  }
+  section.ink p.lead { color: var(--paper-on-ink); }
+  p.txt {
+    font-family: var(--sans); font-weight: 300; font-size: var(--t-body);
+    line-height: 1.5; color: var(--ink-2); margin: 0; max-width: 34ch;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  /* ============================================================
+     1 · COVER
+  ============================================================ */
+  .cover {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: 64px;
+    padding: 104px var(--pad-x);
+  }
+  .cover .topbar {
+    position: absolute; top: 52px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: var(--t-micro);
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .cover .topbar .brand {
+    display: flex; align-items: center; gap: 16px;
+    font-family: var(--serif); font-style: italic; font-size: 30px;
+    letter-spacing: 0; text-transform: none; color: var(--ink);
+  }
+  .seal {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    display: grid; place-items: center;
+    font-family: var(--mono); font-style: normal; font-size: 15px;
+  }
+  .cover .left { display: flex; flex-direction: column; gap: 40px; }
+  .cover .episode { font-family: var(--mono); font-size: 24px; letter-spacing: 0.32em; color: var(--ink-3); }
+  .cover h1 { font-family: var(--serif); font-weight: 400; font-size: var(--t-display); line-height: 0.86; letter-spacing: -0.045em; margin: 0; }
+  .cover .meta {
+    display: flex; gap: 28px; align-items: center;
+    font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--ink-2);
+  }
+  .cover .meta .pip { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); }
+
+  /* disque espresso simplifié — un seul geste, plus présent */
+  .cover .right { display: grid; place-items: center; }
+  .espresso-disc {
+    position: relative; width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle at 36% 30%, oklch(0.42 0.07 50) 0%, var(--espresso) 56%, oklch(0.17 0.02 55) 100%);
+    box-shadow: 0 36px 90px -34px oklch(0.25 0.03 55 / 0.55);
+  }
+  .espresso-disc::before {
+    content: ""; position: absolute; inset: -38px;
+    border: 1px solid var(--rule-2); border-radius: 50%;
+  }
+  .espresso-disc .crema {
+    position: absolute; width: 132px; height: 132px; border-radius: 50%;
+    top: 100px; right: 116px;
+    background: radial-gradient(circle at 40% 38%, var(--accent-soft) 0%, var(--accent) 72%);
+    opacity: 0.92;
+  }
+  .espresso-disc .steam {
+    position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.4em; color: var(--paper); opacity: 0.5;
+  }
+
+  .cover .topics {
+    grid-column: 1 / -1; align-self: end;
+    display: flex; gap: 12px; flex-wrap: wrap;
+    border-top: 1px solid var(--rule); padding-top: 28px;
+  }
+  .chip {
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.04em;
+    color: var(--ink-2); border: 1px solid var(--rule-2);
+    padding: 9px 18px; border-radius: 999px;
+  }
+  .chip.lead-chip { color: var(--paper); background: var(--accent); border-color: var(--accent); }
+  /* QR « offrez-nous un café » sur la cover : artefact fonctionnel, exempté de la règle accent unique */
+  .cover .support { display: flex; align-items: center; gap: 24px; margin-top: 8px; }
+  .cover .support img { width: 148px; height: 148px; border-radius: 14px; display: block; }
+  .cover .support .lines { display: flex; flex-direction: column; gap: 8px; }
+  .cover .support .headline { font-family: var(--serif); font-style: italic; font-size: 40px; line-height: 1; color: var(--ink); }
+  .cover .support .sub { font-family: var(--mono); font-size: 17px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .cover .support .url { font-family: var(--mono); font-size: 20px; letter-spacing: 0.04em; color: var(--accent); }
+
+  /* ============================================================
+     2 · SOMMAIRE
+  ============================================================ */
+  .toc { display: grid; grid-template-columns: 1fr 1.25fr; gap: 96px; height: 100%; align-items: center; }
+  .toc .intro { display: flex; flex-direction: column; gap: 32px; }
+  .toc .list { display: flex; flex-direction: column; }
+  .toc .row {
+    display: grid; grid-template-columns: 72px 1fr auto; gap: 32px;
+    align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--rule);
+  }
+  .toc .row:first-child { border-top: 1px solid var(--rule); }
+  .toc .row .n { font-family: var(--mono); font-size: 20px; color: var(--ink-3); letter-spacing: 0.08em; }
+  .toc .row .name { font-family: var(--serif); font-size: 52px; line-height: 1; letter-spacing: -0.015em; }
+  .toc .row .sub { display: block; font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.05em; margin-top: 8px; }
+  .toc .row .dur { font-family: var(--mono); font-size: 18px; letter-spacing: 0.1em; color: var(--accent); }
+
+  /* ============================================================
+     3 · DÉFINITION (un concept)
+  ============================================================ */
+  .define { display: grid; grid-template-rows: auto 1fr; gap: 60px; height: 100%; }
+  .define .head { display: flex; flex-direction: column; gap: 24px; }
+  .define .points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 72px; align-items: start; align-content: center; }
+  .define .point { display: flex; flex-direction: column; gap: 16px; }
+  .define .point .n { font-family: var(--mono); font-size: 17px; letter-spacing: 0.18em; color: var(--accent); }
+  .define .point h3 { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; letter-spacing: -0.01em; }
+  .define .point p { font-family: var(--sans); font-weight: 300; font-size: 24px; line-height: 1.5; color: var(--ink-2); margin: 0; }
+
+  /* ============================================================
+     4 · CHIFFRE / IMPACT  (slide sombre, drenched)
+  ============================================================ */
+  .stat { height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+  .stat .top { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted-on-ink); }
+  .stat .big {
+    font-family: var(--serif); font-weight: 400; font-size: var(--t-mega);
+    line-height: 0.84; letter-spacing: -0.04em; color: var(--paper-on-ink);
+  }
+  .stat .big em { color: var(--accent); font-style: italic; }
+  .stat .big .unit { font-size: 0.32em; color: var(--accent); letter-spacing: 0; }
+  .stat .ctx {
+    font-family: var(--serif); font-size: var(--t-lead); line-height: 1.24;
+    color: var(--paper-on-ink); max-width: 26ch; margin-top: 32px;
+  }
+  .stat .foot { display: flex; gap: 40px; font-family: var(--mono); font-size: var(--t-small); color: var(--muted-on-ink); letter-spacing: 0.04em; }
+  .stat .foot b { color: var(--accent-soft); font-weight: 500; }
+
+  /* ============================================================
+     5 · SCHÉMA SIMPLE (3–4 étapes)
+  ============================================================ */
+  .flow-wrap { display: grid; grid-template-rows: auto 1fr; gap: 64px; height: 100%; }
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; }
+  .flow .step { padding-right: 44px; display: flex; flex-direction: column; gap: 18px; }
+  .flow .step + .step { padding-left: 44px; border-left: 1px solid var(--rule); }
+  .flow .step .n { font-family: var(--mono); font-size: 16px; letter-spacing: 0.2em; color: var(--ink-3); }
+  .flow .step h3 { font-family: var(--serif); font-weight: 400; font-size: 50px; line-height: 1; margin: 0; letter-spacing: -0.01em; }
+  .flow .step h3 .arrow { color: var(--accent); }
+  .flow .step p { font-family: var(--sans); font-weight: 300; font-size: 22px; line-height: 1.45; color: var(--ink-2); margin: 0; }
+
+  /* ============================================================
+     6 · COMPARAISON (avant / après)
+  ============================================================ */
+  .compare-wrap { display: grid; grid-template-rows: auto 1fr; gap: 56px; height: 100%; }
+  .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 40px; align-items: stretch; }
+  .compare .side { display: flex; flex-direction: column; gap: 22px; padding-top: 28px; border-top: 2px solid var(--rule-2); }
+  .compare .side .tag { font-family: var(--mono); font-size: 17px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .compare .side .head { font-family: var(--serif); font-size: 56px; line-height: 1; letter-spacing: -0.015em; }
+  .compare .side ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .compare .side li { font-family: var(--sans); font-weight: 300; font-size: 25px; line-height: 1.4; color: var(--ink-2); }
+  /* avant : atténué.  après : accentué. (asymétrie volontaire, pas deux cartes identiques) */
+  .compare .side.before { opacity: 0.62; }
+  .compare .side.after { border-top-color: var(--accent); }
+  .compare .side.after .head { color: var(--ink); }
+  .compare .side.after .tag { color: var(--accent); }
+  .compare .side.after li b { color: var(--accent); font-weight: 500; }
+  .compare .arrow { align-self: center; font-family: var(--serif); font-style: italic; font-size: 72px; color: var(--accent); }
+
+  /* ============================================================
+     7 · DÉMO
+  ============================================================ */
+  .demo { display: grid; grid-template-columns: 1fr 1.1fr; gap: 88px; height: 100%; align-items: center; }
+  .demo .frame { display: flex; flex-direction: column; gap: 32px; }
+  .demo .marker { font-family: var(--mono); font-size: 22px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); }
+  .demo .marker .seq { color: var(--ink-3); }
+  .demo .build { display: flex; flex-direction: column; gap: 14px; }
+  .demo .build .row { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: baseline; font-family: var(--sans); font-weight: 300; font-size: 26px; color: var(--ink-2); }
+  .demo .build .row .b { font-family: var(--mono); font-size: 17px; color: var(--accent); letter-spacing: 0.1em; }
+  .terminal {
+    background: var(--espresso); color: var(--paper-on-ink);
+    border-radius: 10px; padding: 36px 40px;
+    font-family: var(--mono); font-size: 22px; line-height: 1.7;
+    box-shadow: 0 30px 70px -34px oklch(0.25 0.03 55 / 0.55);
+  }
+  .terminal .p { color: var(--accent-soft); }
+  .terminal .c { color: oklch(0.72 0.05 150); }
+  .terminal .dim { color: var(--muted-on-ink); }
+
+  /* ============================================================
+     8 · GLOSSAIRE / TERMES
+  ============================================================ */
+  .gloss-wrap { display: grid; grid-template-rows: auto 1fr; gap: 56px; height: 100%; }
+  .gloss { display: grid; grid-template-columns: 1fr 1fr; gap: 0 80px; align-content: center; }
+  .gloss .term {
+    display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: baseline;
+    padding: 24px 0; border-bottom: 1px solid var(--rule);
+  }
+  .gloss .term .name { font-family: var(--serif); font-size: 40px; line-height: 1; letter-spacing: -0.01em; white-space: nowrap; }
+  .gloss .term .def { font-family: var(--sans); font-weight: 300; font-size: 21px; line-height: 1.4; color: var(--ink-2); }
+
+  /* ============================================================
+     9 · CLÔTURE / RESSOURCES
+  ============================================================ */
+  /* QR en haut, centré ; recap et prochain épisode centrés dessous */
+  .close { display: grid; align-content: center; justify-items: center; gap: 60px; height: 100%; text-align: center; }
+  .close .recap { font-family: var(--serif); font-size: 64px; line-height: 1.08; letter-spacing: -0.015em; color: var(--ink); }
+  .close .recap .sep { color: var(--accent); font-family: var(--mono); font-size: 36px; margin: 0 14px; vertical-align: middle; }
+  /* grille ressources : optionnelle (voir guide), gardée disponible mais hors markup par défaut */
+  .close .grid { display: grid; grid-template-columns: 1.2fr 0.9fr auto; gap: 64px; align-items: end; }
+  .close .res { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px; }
+  .close .res .item { display: flex; flex-direction: column; gap: 6px; }
+  .close .res .src { font-family: var(--mono); font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+  .close .res .url { font-family: var(--mono); font-size: 22px; color: var(--ink); }
+  .close .next {
+    background: var(--espresso); color: var(--paper-on-ink); border-radius: 10px;
+    padding: 36px 44px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .close .next .ep { font-family: var(--mono); font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-soft); }
+  .close .next .t { font-family: var(--serif); font-style: italic; font-size: 48px; line-height: 1; }
+  .close .next .cta { font-family: var(--sans); font-weight: 300; font-size: 19px; color: var(--paper-on-ink); opacity: 0.68; }
+  /* QR « offrez-nous un café » : artefact fonctionnel, exempté de la règle accent unique */
+  .close .support { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .close .support img { width: 210px; height: 210px; border-radius: 14px; display: block; }
+  .close .support .cap { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
+  .close .support .url { font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--accent); }
+
+  /* ── Waterfall · slides propres à cet épisode (tokens uniquement) ── */
+  .w5 { position: absolute; inset: 0; }
+  section:has(> .w5) > .chrome { z-index: 1; }
+  .w5 h2.title { position: absolute; top: 190px; left: var(--pad-x); right: var(--pad-x); font-size: 104px; }
+  section.ink .w5 em { color: var(--accent-soft); }
+  .w5 i { font-family: var(--serif); font-style: italic; }
+
+  /* ouverture + démo : grand titre, deux colonnes, disque espresso */
+  .w5.hero h2.title { font-size: 150px; line-height: 1; max-width: 1500px; }
+  .w5.hero .glow {
+    position: absolute; right: -260px; top: -360px; width: 1080px; height: 1080px; border-radius: 50%;
+    background: oklch(from var(--espresso) calc(l + 0.06) c h);
+    box-shadow: 0 0 160px 40px oklch(from var(--accent) l c h / 0.22);
+  }
+  .w5.hero .cols { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 682px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .w5.hero .col { border-top: 1px solid var(--muted-on-ink); padding-top: 34px; opacity: 0.95; }
+  .w5.hero .col.now { border-top-color: var(--accent); }
+  .w5.hero .col .label { margin-bottom: 22px; }
+  .w5.hero .col.now .label { color: var(--accent-soft); }
+  .w5.hero .col h3 { font-family: var(--serif); font-weight: 400; font-size: 46px; line-height: 1.1; margin: 0 0 22px; color: var(--paper-on-ink); }
+  .w5.hero .col p { font-family: var(--sans); font-weight: 300; font-size: 28px; line-height: 1.5; margin: 0; color: var(--muted-on-ink); }
+
+  /* process de fabrication : 2 phases, 7 étapes */
+  .w5.make .phases { position: absolute; top: 362px; left: var(--pad-x); right: var(--pad-x); display: grid; grid-template-columns: 4fr 3fr; gap: 24px; }
+  .w5.make .phase {
+    display: flex; justify-content: space-between; align-items: center; height: 58px; padding: 0 28px; border-radius: 29px;
+    font-family: var(--mono); font-size: 22px; letter-spacing: 0.16em; text-transform: uppercase;
+    background: var(--paper-2); color: var(--ink);
+  }
+  .w5.make .phase span:last-child { text-transform: none; letter-spacing: 0.08em; color: var(--ink-3); }
+  .w5.make .phase.build { background: var(--ink); color: var(--paper-3); }
+  .w5.make .phase.build span:last-child { color: var(--muted-on-ink); }
+  .w5.make .steps { position: absolute; top: 452px; left: var(--pad-x); right: var(--pad-x); display: grid; grid-template-columns: repeat(7, 1fr); gap: 24px; }
+  .w5.make .step { border-top: 2px solid var(--accent); padding-top: 26px; }
+  .w5.make .step.b { border-top-color: var(--ink); }
+  .w5.make .step .n { font-family: var(--mono); font-size: 22px; color: var(--ink-3); }
+  .w5.make .step h3 { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.1; margin: 18px 0 14px; }
+  .w5.make .step p { font-family: var(--sans); font-weight: 300; font-size: 24px; line-height: 1.38; margin: 0; color: var(--ink-2); }
+  .w5 .moral { position: absolute; left: var(--pad-x); right: var(--pad-x); font-family: var(--serif); font-size: 44px; line-height: 1.2; margin: 0; }
+  .w5.make .moral { top: 790px; }
+
+  /* workflow nouvel examen : 8 cartes, 2 rangées */
+  .w5.flow8 h2.title { top: 180px; }
+  .w5.flow8 .card {
+    position: absolute; width: 360px; height: 230px; padding: 28px; border-radius: 10px;
+    background: var(--paper-3); border: 1px solid var(--rule);
+  }
+  .w5.flow8 .card.soft { background: var(--paper-2); border-color: var(--rule-2); }
+  .w5.flow8 .card.dark { background: var(--ink); border-color: var(--ink); color: var(--paper-on-ink); }
+  .w5.flow8 .card .top { display: flex; justify-content: space-between; align-items: center; }
+  .w5.flow8 .card .n { font-family: var(--mono); font-size: 22px; color: var(--ink-3); }
+  .w5.flow8 .card.dark .n { color: var(--muted-on-ink); }
+  .w5.flow8 .card.dark.done .n, .w5.flow8 .card .ok { color: var(--accent-soft); }
+  .w5.flow8 .card .ok { font-family: var(--mono); font-size: 26px; }
+  .w5.flow8 .badge {
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 22px; border: 1px solid var(--rule-2); color: var(--ink);
+  }
+  .w5.flow8 .badge.me { background: var(--accent); border-color: var(--accent); color: var(--paper-3); }
+  .w5.flow8 .card h3 { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.1; margin: 22px 0 12px; }
+  .w5.flow8 .card p { font-family: var(--sans); font-weight: 300; font-size: 23px; line-height: 1.42; margin: 0; color: var(--ink-2); }
+  .w5.flow8 .card.dark p { color: var(--muted-on-ink); }
+  .w5.flow8 .card.dark p.quote { font-style: italic; }
+  .w5.flow8 svg.links { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: visible; }
+  .w5.flow8 .loop { position: absolute; left: 1220px; top: 860px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.1em; color: var(--ink-2); }
+
+  /* chiffres clés : 4 nombres */
+  section.paper-2 { background: var(--paper-2); }
+  .w5.figs .grid { position: absolute; top: 354px; left: var(--pad-x); right: var(--pad-x); display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .w5.figs .fig { border-top: 1px solid var(--rule-2); }
+  .w5.figs .fig.key { border-top: 2px solid var(--accent); }
+  .w5.figs .fig .v { font-family: var(--serif); font-size: 190px; line-height: 1; letter-spacing: -0.02em; margin: 30px 0 22px; }
+  .w5.figs .fig.key .v { font-style: italic; color: var(--accent); }
+  .w5.figs .fig p { font-family: var(--sans); font-weight: 300; font-size: 30px; line-height: 1.4; margin: 0; color: var(--ink-2); max-width: 19ch; }
+  .w5.figs .moral { top: 770px; }
+  /* intro d'une intervention : numéro, titre, sujet, intervenant */
+  .w5.intro .num { position: absolute; top: 190px; left: var(--pad-x); font-family: var(--mono); font-size: 26px; letter-spacing: 0.2em; color: var(--accent); }
+  .w5.intro .head { position: absolute; top: 290px; left: var(--pad-x); right: var(--pad-x); display: flex; flex-direction: column; gap: 56px; }
+  .w5.intro h2.title { position: static; font-size: 168px; line-height: 1; }
+  .w5.intro h2.title.long { font-size: 128px; }
+  .w5.intro .topic { font-family: var(--serif); font-style: italic; font-size: 60px; line-height: 1.15; margin: 0; color: var(--ink-2); }
+  .w5.intro .by { position: absolute; top: 760px; left: var(--pad-x); right: var(--pad-x); border-top: 2px solid var(--accent); padding-top: 30px; display: flex; align-items: baseline; gap: 40px; }
+  .w5.intro .by .name { font-family: var(--serif); font-size: 52px; }
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Cover">
+    <div class="cover">
+      <div class="topbar">
+        <div class="brand"><span class="seal">IA</span> IA Coffee</div>
+        <div>Épisode 05 · 1h30 · Saison 2026</div>
+      </div>
+
+      <div class="left">
+        <div class="episode">— ÉPISODE Nº 05 —</div>
+        <h1>Water<br><span class="stroke">fall.</span></h1>
+        <div class="meta">
+          <span>1h30</span><span class="pip"></span>
+          <span>Espresso</span><span class="pip"></span>
+          <span>3 intervenants</span>
+        </div>
+
+        <div class="support">
+          <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee, soutenir IA Coffee">
+          <div class="lines">
+            <span class="headline">Offrez-nous un café</span>
+            <span class="sub">Scannez pour nous soutenir</span>
+            <span class="url">buymeacoffee.com/ai.coffee</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="espresso-disc">
+          <span class="steam">~~~</span>
+          <div class="crema"></div>
+        </div>
+      </div>
+
+      <div class="topics">
+        <span class="chip lead-chip">Waterfall</span>
+        <span class="chip">Mock exam</span>
+        <span class="chip">Hermes Agent</span>
+        <span class="chip">Métier de développeur</span>
+        <span class="chip">Espresso</span>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="02 Sommaire">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme</div>
+      <div class="folio">02 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Waterfall</span></div>
+    </div>
+
+    <div class="body toc">
+      <div class="intro">
+        <div class="label">Ce soir</div>
+        <h2 class="title">Quatre temps,<br>trois <span class="stroke">voix</span>.</h2>
+        <p class="txt">Un quiz pour se lancer, deux retours d'expérience, puis une discussion ouverte sur le métier.</p>
+      </div>
+
+      <div class="list">
+        <div class="row">
+          <span class="n">01</span>
+          <div><span class="name">Espresso</span><span class="sub">Quiz · Humain ou IA ? · Niveau du jour</span></div>
+          <span class="dur">La salle</span>
+        </div>
+        <div class="row">
+          <span class="n">02</span>
+          <div><span class="name">Waterfall</span><span class="sub">Comment j'ai créé un simulateur d'examen</span></div>
+          <span class="dur">Michael</span>
+        </div>
+        <div class="row">
+          <span class="n">03</span>
+          <div><span class="name">Hermes Agent</span><span class="sub">Utiliser les profils spécialisés</span></div>
+          <span class="dur">Xavier</span>
+        </div>
+        <div class="row">
+          <span class="n">04</span>
+          <div><span class="name">Discussion</span><span class="sub">L'avenir du métier de développeur</span></div>
+          <span class="dur">Jean-Noé</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="03 Espresso">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme · Quiz</div>
+      <div class="folio">03 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Espresso</span></div>
+    </div>
+
+    <div class="w5 intro">
+      <div class="num">01 / 04</div>
+      <div class="head">
+        <h2 class="title">On lance l'<em>Espresso</em></h2>
+        <p class="topic">Scannez le QR code, jouez sur votre téléphone.</p>
+      </div>
+      <div class="by"><span class="label">Ensuite</span><span class="name">Révélation collective et niveau du jour de la salle</span></div>
+    </div>
+  </section>
+
+  <section data-label="04 Waterfall · Ouverture" class="ink">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> IA Coffee #05 · Démo de projet · Waterfall</div>
+      <div class="folio">04 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall · Michael Pambo Ognana</span></div>
+    </div>
+
+    <div class="w5 hero">
+      <div class="glow"></div>
+      <h2 class="title">Comment j'ai conçu un <em>simulateur d'examen</em></h2>
+      <div class="cols">
+        <div class="col">
+          <div class="label">Avant</div>
+          <h3>Long, fastidieux et instable.</h3>
+          <p>Chercher, compiler à la main, payer des examens blancs… et recommencer à chaque certification.</p>
+        </div>
+        <div class="col now">
+          <div class="label">Aujourd'hui</div>
+          <h3><i>Une seule demande</i> à mon agent.</h3>
+          <p>Et un nouvel examen apparaît dans le simulateur, prêt à être passé.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="05 Process de fabrication">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Le process de fabrication</div>
+      <div class="folio">05 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall · Concevoir, puis construire</span></div>
+    </div>
+
+    <div class="w5 make">
+      <h2 class="title">Du besoin au simulateur, <em>avec Claude</em></h2>
+      <div class="phases">
+        <div class="phase"><span>Concevoir</span><span>Chat Claude</span></div>
+        <div class="phase build"><span>Construire</span><span>Claude Code</span></div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="n">01</span><h3>Besoin</h3><p>S'entraîner sans chercher ni payer</p></div>
+        <div class="step"><span class="n">02</span><h3>Discussion</h3><p>Brainstorm dans un chat</p></div>
+        <div class="step"><span class="n">03</span><h3>Artefact</h3><p>Un premier prototype cliquable</p></div>
+        <div class="step"><span class="n">04</span><h3>Spec produit</h3><p>Extraite de la conversation</p></div>
+        <div class="step b"><span class="n">05</span><h3>Moteur</h3><p>Créé, testé et déployé</p></div>
+        <div class="step b"><span class="n">06</span><h3>1er examen</h3><p>Passé en conditions réelles</p></div>
+        <div class="step b"><span class="n">07</span><h3>Itérer</h3><p>Nouveaux examens, amélioration continue</p></div>
+      </div>
+      <p class="moral">On ne code pas tout de suite : <i>on clarifie le besoin</i>, on le teste en prototype, puis on construit.</p>
+    </div>
+  </section>
+
+  <section data-label="06 Workflow · Nouvel examen">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Workflow · Nouvel examen</div>
+      <div class="folio">06 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>L'IA accélère, l'humain valide</span></div>
+    </div>
+
+    <div class="w5 flow8">
+      <h2 class="title"><em>Une seule demande</em>, un examen en ligne</h2>
+
+      <svg class="links" viewBox="0 0 1920 1080" aria-hidden="true">
+        <defs>
+          <marker id="w5-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" style="fill: var(--accent)"/>
+          </marker>
+        </defs>
+        <g style="stroke: var(--accent); stroke-width: 2.5; fill: none">
+          <path d="M492 425 H562" marker-end="url(#w5-arrow)"/>
+          <path d="M924 425 H994" marker-end="url(#w5-arrow)"/>
+          <path d="M1356 425 H1426" marker-end="url(#w5-arrow)"/>
+          <path d="M1608 540 V575 H312 V608" marker-end="url(#w5-arrow)"/>
+          <path d="M492 725 H562" marker-end="url(#w5-arrow)"/>
+          <path d="M924 725 H994" marker-end="url(#w5-arrow)"/>
+          <path d="M1356 725 H1426" marker-end="url(#w5-arrow)"/>
+          <path d="M744 840 V880" stroke-dasharray="7 7"/>
+          <path d="M1176 840 V880 H312 V842" stroke-dasharray="7 7" marker-end="url(#w5-arrow)"/>
+        </g>
+      </svg>
+
+      <div class="card dark" style="left:132px; top:310px">
+        <div class="top"><span class="n">01</span><span class="badge me">Moi</span></div>
+        <h3>Ma demande</h3><p class="quote">« Ajoute l'examen X au simulateur »</p>
+      </div>
+      <div class="card soft" style="left:564px; top:310px">
+        <div class="top"><span class="n">02</span><span class="badge">Agent</span></div>
+        <h3>Recherche</h3><p>Fiche officielle, retours de candidats, doc</p>
+      </div>
+      <div class="card" style="left:996px; top:310px">
+        <div class="top"><span class="n">03</span><span class="badge">Agent</span></div>
+        <h3>Synthèse</h3><p>Mêmes thèmes, mêmes poids que l'examen</p>
+      </div>
+      <div class="card" style="left:1428px; top:310px">
+        <div class="top"><span class="n">04</span><span class="badge">Agent</span></div>
+        <h3>Un fichier</h3><p>Zéro ligne de code dans l'appli</p>
+      </div>
+      <div class="card" style="left:132px; top:610px">
+        <div class="top"><span class="n">05</span><span class="badge">Agent</span></div>
+        <h3>Brouillon</h3><p>Questions, explications, sources</p>
+      </div>
+      <div class="card" style="left:564px; top:610px">
+        <div class="top"><span class="n">06</span><span class="badge">Robot</span></div>
+        <h3>Contrôles</h3><p>Format, sources, dosage par thème</p>
+      </div>
+      <div class="card" style="left:996px; top:610px">
+        <div class="top"><span class="n">07</span><span class="badge me">Moi</span></div>
+        <h3>Relecture</h3><p>Chaque question validée à la main</p>
+      </div>
+      <div class="card dark done" style="left:1428px; top:610px">
+        <div class="top"><span class="n">08</span><span class="ok">✓</span></div>
+        <h3>En ligne</h3><p>L'examen apparaît dans le simulateur</p>
+      </div>
+
+      <div class="loop">À corriger → retour au brouillon</div>
+    </div>
+  </section>
+
+  <section data-label="07 Chiffres clés" class="paper-2">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Chiffres clés</div>
+      <div class="folio">07 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall en chiffres</span></div>
+    </div>
+
+    <div class="w5 figs">
+      <h2 class="title">Ce que le simulateur <em>fait déjà</em></h2>
+      <div class="grid">
+        <div class="fig"><div class="v">5</div><p>certifications dans le simulateur</p></div>
+        <div class="fig"><div class="v">631</div><p>questions, chacune expliquée et sourcée</p></div>
+        <div class="fig"><div class="v">230+</div><p>tests automatiques à chaque changement</p></div>
+        <div class="fig key"><div class="v">1</div><p>demande à mon agent pour un nouvel examen</p></div>
+      </div>
+      <p class="moral">Certification OTCA obtenue, <i>sans un euro d'examens blancs</i>. La prochaine ? Une demande.</p>
+    </div>
+  </section>
+
+  <section data-label="08 Démo" class="ink">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Démo en direct</div>
+      <div class="folio">08 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>github.com/mikamboo/waterfall</span></div>
+    </div>
+
+    <div class="w5 hero">
+      <div class="glow"></div>
+      <h2 class="title">Place à la <em>démo</em></h2>
+      <div class="cols">
+        <div class="col">
+          <div class="label">01 · Visite</div>
+          <h3>Le simulateur en action</h3>
+          <p>Catalogue, examen chronométré, score par thème et explications.</p>
+        </div>
+        <div class="col now">
+          <div class="label">02 · En live</div>
+          <h3><i>Une demande</i>, un nouvel examen</h3>
+          <p>Vous choisissez le thème, l'agent le crée, il apparaît dans le simulateur.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section data-label="09 Intro · Hermes Agent">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme · Démo</div>
+      <div class="folio">09 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Hermes Agent</span></div>
+    </div>
+
+    <div class="w5 intro">
+      <div class="num">03 / 04</div>
+      <div class="head">
+        <h2 class="title">Hermes <em>Agent</em></h2>
+        <p class="topic">Utiliser les profils spécialisés.</p>
+      </div>
+      <div class="by"><span class="label">Présenté par</span><span class="name">Xavier Gueret</span></div>
+    </div>
+  </section>
+
+  <section data-label="10 Intro · Discussion">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Au programme · Discussion</div>
+      <div class="folio">10 / 10</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Discussion</span></div>
+    </div>
+
+    <div class="w5 intro">
+      <div class="num">04 / 04</div>
+      <div class="head">
+        <h2 class="title long">L'avenir du <em>métier de développeur</em></h2>
+        <p class="topic">Une discussion ouverte.</p>
+      </div>
+      <div class="by"><span class="label">Animée par</span><span class="name">Jean-Noé Kollo</span></div>
+    </div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>
