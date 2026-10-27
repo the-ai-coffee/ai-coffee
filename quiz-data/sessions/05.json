@@ -3,7 +3,7 @@
   "title": "Espresso — Waterfall : peut-on faire confiance à ce qu'écrit une IA ?",
   "questions": [
     {
-      "id": "q0", "game": "human_or_ai", "warmup": true, "verify": true,
+      "id": "q0", "game": "human_or_ai", "warmup": true,
       "question": "Regarde bien la vidéo : vraie scène filmée, ou vidéo fabriquée par une IA ?",
       "media": { "url": "https://www.youtube.com/shorts/uFZ44IDqeo0", "start": 0, "end": 15 },
       "answer": "ai", "concept": "video-generation",
@@ -31,7 +31,7 @@
       "explanation": "Image générée par IA. Les indices : une lumière dorée trop parfaite, une peau sans aucun défaut, des jambes anormalement longues et une main qui dépasse derrière le chat, loin du bras. Une IA image produit des scènes « trop belles pour être vraies » et se trompe souvent sur le corps humain."
     },
     {
-      "id": "q4", "game": "bet_machine", "verify": true,
+      "id": "q4", "game": "bet_machine",
       "question": "Cette IA n'a pas accès à internet. Que répond-elle ?",
       "prompt": "« Combien coûte un timbre pour envoyer une lettre en France aujourd'hui ? »",
       "choices": [
@@ -43,7 +43,7 @@
       "explanation": "Une IA sans accès à internet ne connaît que ce qu'elle a lu pendant son apprentissage, jusqu'à une date limite. Elle répond avec assurance un prix qui a pu changer depuis : c'est la date limite de connaissances."
     },
     {
-      "id": "q5", "game": "bet_machine", "verify": true,
+      "id": "q5", "game": "bet_machine",
       "question": "On pose 3 fois exactement la même demande, dans 3 conversations différentes. Qu'obtient-on ?",
       "prompt": "« Propose un nom pour ma boulangerie. »",
       "choices": [
@@ -79,7 +79,7 @@
       "explanation": "L'agenda indique 4 réunions, l'assistant en annonce 2. Un agent IA lit une information puis agit, mais il peut mal la reprendre : il faut vérifier ses réponses, surtout quand il agit à notre place."
     },
     {
-      "id": "q8", "game": "prompt_duel", "verify": true,
+      "id": "q8", "game": "prompt_duel",
       "question": "Tu veux faire un petit quiz pour tes collègues. Quelle demande donne un résultat prêt à l'emploi ?",
       "task": "Préparer un quiz « réflexes cybersécurité au bureau » pour ses collègues",
       "prompts": [
