@@ -96,7 +96,7 @@ Exemple :
 ```json
 {
   "session": "05",
-  "title": "Le quiz brise-glace",
+  "title": "On se met en jambes",
   "questions": [
     { "id": "q0", "game": "human_or_ai", "warmup": true,
       "media": { "kind": "video", "provider": "youtube", "id": "abc123", "start": 12, "end": 27 },

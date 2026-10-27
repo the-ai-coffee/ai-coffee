@@ -59,7 +59,7 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
      « ai », « human » ni de nom d'outil dans `src`), aucun champ de crédit ou de
      source dans `media` (l'attribution va uniquement dans `explanation`), et
      vérifier que le titre des vidéos ne donne pas la réponse.
-5. **Écrire** `quiz-data/sessions/NN.json` (`"session": "NN"`, `"title": "Le quiz brise-glace"` :
+5. **Écrire** `quiz-data/sessions/NN.json` (`"session": "NN"`, `"title": "On se met en jambes"` :
    titre générique, sans « Espresso », déjà affiché au-dessus, ni thème de session) et ajouter au registre
    `quiz-data/sessions/index.mjs` :
    `import sNN from "./NN.json" with { type: "json" };` et la clé `"NN": sNN` dans
