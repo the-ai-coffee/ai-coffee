@@ -7,6 +7,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="../../design/tokens.css">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/json" id="speaker-notes">
+[
+  "",
+  "",
+  "Je prépare régulièrement des certifications. Mon processus d'entraînement était long, fastidieux et instable : chercher des questions, compiler mes notes à la main, payer des examens blancs, puis tout recommencer à la certification suivante. Aujourd'hui, une seule demande à mon agent suffit pour qu'un nouvel examen apparaisse dans mon simulateur. Je vais vous montrer comment je l'ai conçu.",
+  "Tout part d'un besoin clair : m'entraîner efficacement sans passer des soirées à chercher, ni payer des examens blancs. J'en ai d'abord discuté dans un chat avec Claude, qui m'a challengé sur ce que l'outil devait faire. Dans la même conversation, j'ai obtenu un premier artefact : un prototype cliquable pour tester l'idée. Puis j'ai extrait de cette discussion une spec produit. Ensuite, dans Claude Code, j'ai créé et déployé le moteur, je l'ai testé, et j'ai passé mon premier examen avec. Depuis, j'ajoute progressivement de nouveaux examens et j'améliore l'outil petit à petit.",
+  "Voici ce qui se passe quand je demande un nouvel examen à mon agent. Il fait la recherche : la fiche officielle de l'examen, qui donne les thèmes et leur poids, le nombre de questions, la durée et le score à atteindre ; les retours de candidats qui l'ont passé avant moi, pour savoir où insister ; et la documentation officielle, qui sert de source. Il en fait la synthèse, crée le fichier de l'examen sans toucher au code de l'application, puis rédige un brouillon de questions avec leurs explications et leurs sources. Des contrôles automatiques vérifient le format, les sources et le dosage par thème. Ensuite je relis chaque question. Si un contrôle ou ma relecture bloque, on revient au brouillon. Quand tout est validé, l'examen apparaît dans le simulateur.",
+  "En chiffres : cinq certifications disponibles dans le simulateur, 631 questions originales, chacune avec son explication et sa source, et plus de 230 tests automatiques qui tournent à chaque changement. Et surtout : une seule demande à mon agent suffit pour ajouter un nouvel examen. J'ai obtenu la certification OpenTelemetry sans acheter d'examens blancs. Pour la prochaine, il me suffira d'une demande.",
+  "Place à la démo. Je partage mon écran. D'abord une visite rapide : le catalogue des examens, un examen avec son chrono, puis un résultat avec le score par thème et l'explication d'une question ratée. Ensuite, la partie en direct : vous choisissez un thème dans le chat, je fais une seule demande à mon agent, et vous voyez le nouvel examen apparaître dans le simulateur. Plan B si ça plante : le fichier de l'examen déjà généré, prêt à être ajouté."
+]
+</script>
 <script src="../deck-stage.js"></script>
 <style>
   :root {
@@ -308,26 +319,81 @@
   .close .support .cap { font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); text-align: center; }
   .close .support .url { font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--accent); }
 
-  /* ── Waterfall · workflow (slide propre à cet épisode, tokens uniquement) ── */
-  .wf { position: absolute; inset: 0; }
-  .wf h2 { position: absolute; left: 0; top: 0; margin: 0; font-family: var(--serif); font-weight: 400; font-size: 64px; letter-spacing: -0.02em; line-height: 1; }
-  .wf h2 em { color: var(--accent); font-style: italic; }
-  .wf svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  .wf .rowlab { position: absolute; left: 0; width: 200px; font-family: var(--mono); font-size: 18px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); transform: translateY(-50%); line-height: 1.7; }
-  .wf .rowlab b { display: block; color: var(--accent); font-weight: 400; }
-  .wf .box { position: absolute; width: 433px; height: 150px; border-radius: 14px; padding: 24px 30px; border: 1px solid var(--rule-2); background: var(--paper-3); }
-  .wf .box.src { background: var(--paper-2); }
-  .wf .box.dark { background: var(--espresso); border-color: var(--espresso); color: var(--paper-on-ink); }
-  .wf .box h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 38px; line-height: 1.05; letter-spacing: -0.01em; }
-  .wf .box h3 i { font-style: normal; color: var(--accent); margin-right: 10px; font-size: 44px; }
-  .wf .box p { margin: 12px 0 0; font-family: var(--sans); font-weight: 300; font-size: 23px; line-height: 1.32; color: var(--ink-2); }
-  .wf .box.dark p { color: var(--muted-on-ink); }
-  .wf .badge { position: absolute; top: 22px; right: 24px; font-family: var(--mono); font-size: 15px; letter-spacing: 0.2em; text-transform: uppercase; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--rule-2); color: var(--ink); }
-  .wf .badge.fill { background: var(--accent); border-color: var(--accent); color: var(--paper-3); }
-  .wf .badge.ink { background: var(--ink); border-color: var(--ink); color: var(--paper-3); }
-  .wf .check { position: absolute; font-family: var(--mono); font-size: 20px; color: var(--accent); transform: translate(-50%, -100%); }
-  .wf .loop { position: absolute; left: 0; width: 1656px; top: 745px; transform: translateY(-50%); text-align: center; font-family: var(--mono); font-size: 18px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
-  .wf .loop span { background: var(--paper); padding: 0 24px; }
+  /* ── Waterfall · slides propres à cet épisode (tokens uniquement) ── */
+  .w5 { position: absolute; inset: 0; }
+  section:has(> .w5) > .chrome { z-index: 1; }
+  .w5 h2.title { position: absolute; top: 190px; left: var(--pad-x); right: var(--pad-x); font-size: 104px; }
+  section.ink .w5 em { color: var(--accent-soft); }
+  .w5 i { font-family: var(--serif); font-style: italic; }
+
+  /* ouverture + démo : grand titre, deux colonnes, disque espresso */
+  .w5.hero h2.title { font-size: 150px; line-height: 1; max-width: 1500px; }
+  .w5.hero .glow {
+    position: absolute; right: -260px; top: -360px; width: 1080px; height: 1080px; border-radius: 50%;
+    background: oklch(from var(--espresso) calc(l + 0.06) c h);
+    box-shadow: 0 0 160px 40px oklch(from var(--accent) l c h / 0.22);
+  }
+  .w5.hero .cols { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 682px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .w5.hero .col { border-top: 1px solid var(--muted-on-ink); padding-top: 34px; opacity: 0.95; }
+  .w5.hero .col.now { border-top-color: var(--accent); }
+  .w5.hero .col .label { margin-bottom: 22px; }
+  .w5.hero .col.now .label { color: var(--accent-soft); }
+  .w5.hero .col h3 { font-family: var(--serif); font-weight: 400; font-size: 46px; line-height: 1.1; margin: 0 0 22px; color: var(--paper-on-ink); }
+  .w5.hero .col p { font-family: var(--sans); font-weight: 300; font-size: 28px; line-height: 1.5; margin: 0; color: var(--muted-on-ink); }
+
+  /* process de fabrication : 2 phases, 7 étapes */
+  .w5.make .phases { position: absolute; top: 362px; left: var(--pad-x); right: var(--pad-x); display: grid; grid-template-columns: 4fr 3fr; gap: 24px; }
+  .w5.make .phase {
+    display: flex; justify-content: space-between; align-items: center; height: 58px; padding: 0 28px; border-radius: 29px;
+    font-family: var(--mono); font-size: 22px; letter-spacing: 0.16em; text-transform: uppercase;
+    background: var(--paper-2); color: var(--ink);
+  }
+  .w5.make .phase span:last-child { text-transform: none; letter-spacing: 0.08em; color: var(--ink-3); }
+  .w5.make .phase.build { background: var(--ink); color: var(--paper-3); }
+  .w5.make .phase.build span:last-child { color: var(--muted-on-ink); }
+  .w5.make .steps { position: absolute; top: 452px; left: var(--pad-x); right: var(--pad-x); display: grid; grid-template-columns: repeat(7, 1fr); gap: 24px; }
+  .w5.make .step { border-top: 2px solid var(--accent); padding-top: 26px; }
+  .w5.make .step.b { border-top-color: var(--ink); }
+  .w5.make .step .n { font-family: var(--mono); font-size: 22px; color: var(--ink-3); }
+  .w5.make .step h3 { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.1; margin: 18px 0 14px; }
+  .w5.make .step p { font-family: var(--sans); font-weight: 300; font-size: 24px; line-height: 1.38; margin: 0; color: var(--ink-2); }
+  .w5 .moral { position: absolute; left: var(--pad-x); right: var(--pad-x); font-family: var(--serif); font-size: 44px; line-height: 1.2; margin: 0; }
+  .w5.make .moral { top: 790px; }
+
+  /* workflow nouvel examen : 8 cartes, 2 rangées */
+  .w5.flow8 h2.title { top: 180px; }
+  .w5.flow8 .card {
+    position: absolute; width: 360px; height: 230px; padding: 28px; border-radius: 10px;
+    background: var(--paper-3); border: 1px solid var(--rule);
+  }
+  .w5.flow8 .card.soft { background: var(--paper-2); border-color: var(--rule-2); }
+  .w5.flow8 .card.dark { background: var(--ink); border-color: var(--ink); color: var(--paper-on-ink); }
+  .w5.flow8 .card .top { display: flex; justify-content: space-between; align-items: center; }
+  .w5.flow8 .card .n { font-family: var(--mono); font-size: 22px; color: var(--ink-3); }
+  .w5.flow8 .card.dark .n { color: var(--muted-on-ink); }
+  .w5.flow8 .card.dark.done .n, .w5.flow8 .card .ok { color: var(--accent-soft); }
+  .w5.flow8 .card .ok { font-family: var(--mono); font-size: 26px; }
+  .w5.flow8 .badge {
+    font-family: var(--mono); font-size: 20px; letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 22px; border: 1px solid var(--rule-2); color: var(--ink);
+  }
+  .w5.flow8 .badge.me { background: var(--accent); border-color: var(--accent); color: var(--paper-3); }
+  .w5.flow8 .card h3 { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.1; margin: 22px 0 12px; }
+  .w5.flow8 .card p { font-family: var(--sans); font-weight: 300; font-size: 23px; line-height: 1.42; margin: 0; color: var(--ink-2); }
+  .w5.flow8 .card.dark p { color: var(--muted-on-ink); }
+  .w5.flow8 .card.dark p.quote { font-style: italic; }
+  .w5.flow8 svg.links { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: visible; }
+  .w5.flow8 .loop { position: absolute; left: 1220px; top: 860px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.1em; color: var(--ink-2); }
+
+  /* chiffres clés : 4 nombres */
+  section.paper-2 { background: var(--paper-2); }
+  .w5.figs .grid { position: absolute; top: 354px; left: var(--pad-x); right: var(--pad-x); display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .w5.figs .fig { border-top: 1px solid var(--rule-2); }
+  .w5.figs .fig.key { border-top: 2px solid var(--accent); }
+  .w5.figs .fig .v { font-family: var(--serif); font-size: 190px; line-height: 1; letter-spacing: -0.02em; margin: 30px 0 22px; }
+  .w5.figs .fig.key .v { font-style: italic; color: var(--accent); }
+  .w5.figs .fig p { font-family: var(--sans); font-weight: 300; font-size: 30px; line-height: 1.4; margin: 0; color: var(--ink-2); max-width: 19ch; }
+  .w5.figs .moral { top: 770px; }
 </style>
 </head>
 <body>
@@ -380,7 +446,7 @@
   <section data-label="02 Sommaire">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Au programme</div>
-      <div class="folio">02 / 06</div>
+      <div class="folio">02 / 07</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 05 · Waterfall</span></div>
     </div>
 
@@ -416,130 +482,166 @@
     </div>
   </section>
 
-  <section data-label="03 Workflow">
+  <section data-label="03 Waterfall · Ouverture" class="ink">
     <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Waterfall · Workflow</div>
-      <div class="folio">03 / 06</div>
-      <div class="baseline"><span class="mark">IA Coffee</span><span>L'IA accélère. L'humain valide chaque question.</span></div>
+      <div class="kicker"><span class="dot"></span> IA Coffee #05 · Démo de projet · Waterfall</div>
+      <div class="folio">03 / 07</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall · Michael Pambo Ognana</span></div>
     </div>
 
-    <div class="body">
-     <div class="wf">
-      <h2>Ajouter un nouvel examen : <em>de la recherche</em> à l'appli</h2>
-      <svg viewBox="0 0 1656 828" aria-hidden="true">
-        <style>
-          .wf svg line, .wf svg path { stroke: var(--accent); stroke-width: 3; fill: none; }
-          .wf svg .dash { stroke-dasharray: 9 8; stroke-width: 2.5; }
-          .wf svg .hd { fill: var(--accent); stroke: none; }
-        </style>
-        <path d="M436 250 V287 M919 250 V287 M1402 250 V287 M436 287 H1402"/>
-        <line x1="436" y1="287" x2="436" y2="309"/><polygon class="hd" points="436,325 425,307 447,307"/>
-        <line x1="653" y1="400" x2="689" y2="400"/><polygon class="hd" points="703,400 685,389 685,411"/>
-        <line x1="1136" y1="400" x2="1172" y2="400"/><polygon class="hd" points="1186,400 1168,389 1168,411"/>
-        <path d="M1402 475 V512 H436 V534"/><polygon class="hd" points="436,550 425,532 447,532"/>
-        <line x1="653" y1="625" x2="689" y2="625"/><polygon class="hd" points="703,625 685,614 685,636"/>
-        <line x1="1136" y1="625" x2="1172" y2="625"/><polygon class="hd" points="1186,625 1168,614 1168,636"/>
-        <path class="dash" d="M436 700 V745 H1645 V400 H1635"/>
-        <path class="dash" d="M919 700 V745"/>
-        <polygon class="hd" points="1619,400 1637,389 1637,411"/>
-      </svg>
-      <div class="rowlab" style="top:175px;"><b>01</b>Recherche</div>
-      <div class="rowlab" style="top:400px;"><b>02</b>Fabrication</div>
-      <div class="rowlab" style="top:625px;"><b>03</b>Qualité<br>&amp; en ligne</div>
-      <div class="box src" style="left:220px; top:100px;"><h3>Fiche officielle</h3><p>Thèmes, poids, nb de questions, durée, score à atteindre</p></div>
-      <div class="box src" style="left:703px; top:100px;"><h3>Retours de candidats</h3><p>Sujets sous-estimés, pièges<br>→ où insister (jamais copiés)</p></div>
-      <div class="box src" style="left:1186px; top:100px;"><h3>Documentation officielle</h3><p>La source de chaque explication et de chaque lien de référence</p></div>
-      <div class="box " style="left:220px; top:325px;"><h3><i>1</i>Synthèse</h3><p>Le modèle de l'examen : mêmes thèmes, mêmes poids</p><span class="badge fill">Claude</span></div>
-      <div class="box " style="left:703px; top:325px;"><h3><i>2</i>Un fichier</h3><p>Un examen = un fichier. Zéro ligne de code de l'appli</p><span class="badge">1 commande</span></div>
-      <div class="box " style="left:1186px; top:325px;"><h3><i>3</i>Brouillon</h3><p>Questions, explications et lien vers la source</p><span class="badge fill">Claude</span></div>
-      <div class="box " style="left:220px; top:550px;"><h3><i>4</i>Contrôles auto</h3><p>Format, explication, source, dosage par thème</p><span class="badge">Robot</span></div>
-      <div class="box " style="left:703px; top:550px;"><h3><i>5</i>Relecture</h3><p>Chaque question validée à la main, par un humain</p><span class="badge ink">Moi</span></div>
-      <div class="box dark" style="left:1186px; top:550px;"><h3><i>6</i>En ligne</h3><p>Version de test, puis l'examen apparaît dans l'appli</p></div>
-      <div class="check" style="left:678px; top:611px;">✓</div>
-      <div class="check" style="left:1161px; top:611px;">✓</div>
-      <div class="loop"><span>✗ À corriger → retour au brouillon</span></div>
-     </div>
-    </div>
-  </section>
-
-  <section data-label="04 Démo · Nouvelle évaluation">
-    <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Waterfall · En direct</div>
-      <div class="folio">04 / 06</div>
-      <div class="baseline"><span class="mark">IA Coffee</span><span>Démo : une nouvelle évaluation</span></div>
-    </div>
-
-    <div class="body demo">
-      <div class="frame">
-        <div class="marker"><span class="seq">Nº 01</span> · Démo live</div>
-        <h2 class="title">Une évaluation en <span class="stroke">5 minutes</span>.</h2>
-        <div class="build">
-          <div class="row"><span class="b">→</span><span>Vote chat : le thème du nouvel examen</span></div>
-          <div class="row"><span class="b">→</span><span>Visite de l'outil : catalogue, examen, chrono, résultat</span></div>
-          <div class="row"><span class="b">→</span><span>Ajout d'un examen en live avec Claude Code</span></div>
+    <div class="w5 hero">
+      <div class="glow"></div>
+      <h2 class="title">Comment j'ai conçu un <em>simulateur d'examen</em></h2>
+      <div class="cols">
+        <div class="col">
+          <div class="label">Avant</div>
+          <h3>Long, fastidieux et instable.</h3>
+          <p>Chercher, compiler à la main, payer des examens blancs… et recommencer à chaque certification.</p>
+        </div>
+        <div class="col now">
+          <div class="label">Aujourd'hui</div>
+          <h3><i>Une seule demande</i> à mon agent.</h3>
+          <p>Et un nouvel examen apparaît dans le simulateur, prêt à être passé.</p>
         </div>
       </div>
-
-      <div class="terminal">
-        <div class="c"># la demande préparée, collée dans Claude Code</div>
-        <div><span class="p">›</span> fiche de référence + 2-3 retours</div>
-        <div><span class="p">›</span> 10 questions <span class="dim">explication + source</span></div>
-        <div><span class="p">›</span> procédure docs/INGESTION.md</div>
-        <div><span class="p">›</span> validation du contenu</div>
-        <div>&nbsp;</div>
-        <div class="dim">↳ validation verte, rafraîchir l'application</div>
-        <div class="c">  6ᵉ évaluation visible au catalogue</div>
-      </div>
     </div>
   </section>
 
-  <section data-label="05 Impact" class="ink">
+  <section data-label="04 Process de fabrication">
     <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Certifié</div>
-      <div class="folio">05 / 06</div>
+      <div class="kicker"><span class="dot"></span> Le process de fabrication</div>
+      <div class="folio">04 / 07</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall · Concevoir, puis construire</span></div>
+    </div>
+
+    <div class="w5 make">
+      <h2 class="title">Du besoin au simulateur, <em>avec Claude</em></h2>
+      <div class="phases">
+        <div class="phase"><span>Concevoir</span><span>Chat Claude</span></div>
+        <div class="phase build"><span>Construire</span><span>Claude Code</span></div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="n">01</span><h3>Besoin</h3><p>S'entraîner sans chercher ni payer</p></div>
+        <div class="step"><span class="n">02</span><h3>Discussion</h3><p>Brainstorm dans un chat</p></div>
+        <div class="step"><span class="n">03</span><h3>Artefact</h3><p>Un premier prototype cliquable</p></div>
+        <div class="step"><span class="n">04</span><h3>Spec produit</h3><p>Extraite de la conversation</p></div>
+        <div class="step b"><span class="n">05</span><h3>Moteur</h3><p>Créé, testé et déployé</p></div>
+        <div class="step b"><span class="n">06</span><h3>1er examen</h3><p>Passé en conditions réelles</p></div>
+        <div class="step b"><span class="n">07</span><h3>Itérer</h3><p>Nouveaux examens, amélioration continue</p></div>
+      </div>
+      <p class="moral">On ne code pas tout de suite : <i>on clarifie le besoin</i>, on le teste en prototype, puis on construit.</p>
+    </div>
+  </section>
+
+  <section data-label="05 Workflow · Nouvel examen">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Workflow · Nouvel examen</div>
+      <div class="folio">05 / 07</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>L'IA accélère, l'humain valide</span></div>
+    </div>
+
+    <div class="w5 flow8">
+      <h2 class="title"><em>Une seule demande</em>, un examen en ligne</h2>
+
+      <svg class="links" viewBox="0 0 1920 1080" aria-hidden="true">
+        <defs>
+          <marker id="w5-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" style="fill: var(--accent)"/>
+          </marker>
+        </defs>
+        <g style="stroke: var(--accent); stroke-width: 2.5; fill: none">
+          <path d="M492 425 H562" marker-end="url(#w5-arrow)"/>
+          <path d="M924 425 H994" marker-end="url(#w5-arrow)"/>
+          <path d="M1356 425 H1426" marker-end="url(#w5-arrow)"/>
+          <path d="M1608 540 V575 H312 V608" marker-end="url(#w5-arrow)"/>
+          <path d="M492 725 H562" marker-end="url(#w5-arrow)"/>
+          <path d="M924 725 H994" marker-end="url(#w5-arrow)"/>
+          <path d="M1356 725 H1426" marker-end="url(#w5-arrow)"/>
+          <path d="M744 840 V880" stroke-dasharray="7 7"/>
+          <path d="M1176 840 V880 H312 V842" stroke-dasharray="7 7" marker-end="url(#w5-arrow)"/>
+        </g>
+      </svg>
+
+      <div class="card dark" style="left:132px; top:310px">
+        <div class="top"><span class="n">01</span><span class="badge me">Moi</span></div>
+        <h3>Ma demande</h3><p class="quote">« Ajoute l'examen X au simulateur »</p>
+      </div>
+      <div class="card soft" style="left:564px; top:310px">
+        <div class="top"><span class="n">02</span><span class="badge">Agent</span></div>
+        <h3>Recherche</h3><p>Fiche officielle, retours de candidats, doc</p>
+      </div>
+      <div class="card" style="left:996px; top:310px">
+        <div class="top"><span class="n">03</span><span class="badge">Agent</span></div>
+        <h3>Synthèse</h3><p>Mêmes thèmes, mêmes poids que l'examen</p>
+      </div>
+      <div class="card" style="left:1428px; top:310px">
+        <div class="top"><span class="n">04</span><span class="badge">Agent</span></div>
+        <h3>Un fichier</h3><p>Zéro ligne de code dans l'appli</p>
+      </div>
+      <div class="card" style="left:132px; top:610px">
+        <div class="top"><span class="n">05</span><span class="badge">Agent</span></div>
+        <h3>Brouillon</h3><p>Questions, explications, sources</p>
+      </div>
+      <div class="card" style="left:564px; top:610px">
+        <div class="top"><span class="n">06</span><span class="badge">Robot</span></div>
+        <h3>Contrôles</h3><p>Format, sources, dosage par thème</p>
+      </div>
+      <div class="card" style="left:996px; top:610px">
+        <div class="top"><span class="n">07</span><span class="badge me">Moi</span></div>
+        <h3>Relecture</h3><p>Chaque question validée à la main</p>
+      </div>
+      <div class="card dark done" style="left:1428px; top:610px">
+        <div class="top"><span class="n">08</span><span class="ok">✓</span></div>
+        <h3>En ligne</h3><p>L'examen apparaît dans le simulateur</p>
+      </div>
+
+      <div class="loop">À corriger → retour au brouillon</div>
+    </div>
+  </section>
+
+  <section data-label="06 Chiffres clés" class="paper-2">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Chiffres clés</div>
+      <div class="folio">06 / 07</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Waterfall en chiffres</span></div>
     </div>
 
-    <div class="body stat">
-      <div class="top">Certification OTCA · une recherche qui travaille pour moi</div>
-      <div class="mid">
-        <div class="big">631<span class="unit">questions</span></div>
-        <div class="ctx">tirées de ma propre recherche. <em>0 € dépensé en examens blancs.</em></div>
+    <div class="w5 figs">
+      <h2 class="title">Ce que le simulateur <em>fait déjà</em></h2>
+      <div class="grid">
+        <div class="fig"><div class="v">5</div><p>certifications dans le simulateur</p></div>
+        <div class="fig"><div class="v">631</div><p>questions, chacune expliquée et sourcée</p></div>
+        <div class="fig"><div class="v">230+</div><p>tests automatiques à chaque changement</p></div>
+        <div class="fig key"><div class="v">1</div><p>demande à mon agent pour un nouvel examen</p></div>
       </div>
-      <div class="foot">
-        <span>Avant : <b>150</b> questions, <b>1</b> examen</span>
-        <span>Après : <b>5</b> examens (6 depuis la démo)</span>
-        <span>Examen officiel : <b>250 $</b></span>
-      </div>
+      <p class="moral">Certification OTCA obtenue, <i>sans un euro d'examens blancs</i>. La prochaine ? Une demande.</p>
     </div>
   </section>
 
-  <section data-label="06 Clôture">
+  <section data-label="07 Démo" class="ink">
     <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Pour aller plus loin</div>
-      <div class="folio">06 / 06</div>
-      <div class="baseline"><span class="mark">IA Coffee</span><span>Merci · Q&amp;R, puis Xavier</span></div>
+      <div class="kicker"><span class="dot"></span> Démo en direct</div>
+      <div class="folio">07 / 07</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>github.com/mikamboo/waterfall</span></div>
     </div>
 
-    <div class="body close">
-      <div class="support">
-        <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee, soutenir IA Coffee">
-        <span class="cap">Offrez-nous un café · scannez pour nous soutenir</span>
-        <span class="url">buymeacoffee.com/ai.coffee</span>
-      </div>
-
-      <div class="label">Trois leçons</div>
-      <div class="recap">
-        Votre recherche <span class="sep">·</span> Une évaluation qui <em>explique</em> <span class="sep">·</span> Votre jugement
-      </div>
-
-      <div class="next">
-        <span class="ep">Dans votre entreprise</span>
-        <span class="t">Quelle évaluation sur mesure créeriez-vous ?</span>
+    <div class="w5 hero">
+      <div class="glow"></div>
+      <h2 class="title">Place à la <em>démo</em></h2>
+      <div class="cols">
+        <div class="col">
+          <div class="label">01 · Visite</div>
+          <h3>Le simulateur en action</h3>
+          <p>Catalogue, examen chronométré, score par thème et explications.</p>
+        </div>
+        <div class="col now">
+          <div class="label">02 · En live</div>
+          <h3><i>Une demande</i>, un nouvel examen</h3>
+          <p>Vous choisissez le thème, l'agent le crée, il apparaît dans le simulateur.</p>
+        </div>
       </div>
     </div>
   </section>
-
 </deck-stage>
 
 </body>
