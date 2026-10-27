@@ -9,8 +9,6 @@ body.game {
   --game-card: rgba(255, 255, 255, 0.14);
   --game-yes: #ffd23f;
   --game-yes-ink: #2a1650;
-  --game-alt: #3ec9a7;
-  --game-alt-ink: #0d2b26;
   --game-win: #127547;
   --game-lose: #d63a3f;
   --game-shadow: 0 5px 0 rgba(0, 0, 0, 0.35);
@@ -28,16 +26,24 @@ body.game .unsent:empty { display: none; }
 body.game .input { background: rgba(255, 255, 255, 0.95); border: 0; color: var(--game-yes-ink); font-weight: 700; }
 body.game .cta { background: var(--game-yes); border: 0; color: var(--game-yes-ink); font-weight: 800; font-size: 20px; min-height: 60px; box-shadow: var(--game-shadow); }
 
-/* Answer buttons: big, raised, alternating colours */
+/* Answer buttons: big, raised, all the same white so no colour hints at the right answer
+   (green means « Bien vu ! », yellow marks the right answer at the reveal). Listed answers
+   carry a letter badge A, B, C… to tell them apart. */
 body.game .choice { min-height: 56px; border: 0; border-radius: 18px; background: rgba(255, 255, 255, 0.95); color: var(--game-yes-ink); font-weight: 700; font-size: 17px; box-shadow: var(--game-shadow); transition: transform 0.08s; }
 body.game .choice:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); }
-body.game .choices .choice:nth-child(odd) { background: var(--game-yes); color: var(--game-yes-ink); }
-body.game .choices .choice:nth-child(even) { background: var(--game-alt); color: var(--game-alt-ink); }
+body.game .choices:not(.choices-row) { counter-reset: answer; }
+body.game .choices:not(.choices-row) > .choice:not(.prompt-card) { display: flex; align-items: center; gap: 14px; }
+body.game .choices:not(.choices-row) > .choice:not(.prompt-card)::before {
+  counter-increment: answer; content: counter(answer, upper-alpha);
+  flex: none; display: grid; place-content: center; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--game-yes-ink); color: #fff; font-size: 16px; font-weight: 800;
+}
 body.game .consigne { font-family: var(--sans); font-size: 22px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); }
 body.game .media { background: var(--game-card); color: var(--game-ink); }
 body.game .media-text { border-left-color: var(--game-yes); }
 body.game .term { font-family: var(--sans); font-weight: 800; color: var(--game-yes); text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25); }
 body.game .prompt-card { color: var(--game-yes-ink); }
+body.game .prompt-card .kicker { color: var(--game-yes-ink); opacity: 0.7; font-weight: 800; }
 body.game .output { background: rgba(0, 0, 0, 0.08); }
 
 /* HUD: progress · timer · streak */
