@@ -6,6 +6,7 @@ import { GAMES } from "./lib/games/index.js";
 import { waitForMedia } from "./lib/media.js";
 import { countUp, reducedMotion } from "./lib/motion.js";
 import { MAX_PSEUDO_LENGTH, randomPseudo } from "./lib/pseudo.js";
+import { pacedLoop } from "./lib/pacing.js";
 import { timeLimitFor } from "./lib/timing.js";
 
 const root = document.getElementById("app");
@@ -114,6 +115,10 @@ function startTimer(q, timerEl, fill, secs, onExpire) {
   tick();
 }
 
+// Shown when polling pauses after a long idle stretch (quiz/lib/pacing.js).
+const pauseBanner = h("p", { class: "paused", role: "status", hidden: true }, "Pause — touchez pour reprendre");
+document.body.append(pauseBanner);
+
 async function main() {
   if (!session) return message("Lien incomplet", "Scanne le QR code affiché par l'animateur.");
   try {
@@ -128,17 +133,16 @@ async function main() {
   }
   if (!me.pid && !REVEALED.has(state.status)) renderJoin();
   else render();
-  setTimeout(loop, 3000);
-}
-
-// Faster polling during the reveal so phones follow the shared screen.
-async function loop() {
-  try {
-    await refresh();
-  } catch (err) {
-    console.warn("[quiz] poll", err);
-  }
-  setTimeout(loop, REVEALED.has(state?.status) ? 1500 : 3000);
+  // main() just fetched the game: wait one delay before the first poll.
+  pacedLoop({
+    role: "player",
+    tick: refresh,
+    status: () => state?.status,
+    signature: () => (state ? `${state.status}:${state.revealIndex}:${state.durationSec ?? ""}` : ""),
+    onPause: () => (pauseBanner.hidden = false),
+    onResume: () => (pauseBanner.hidden = true),
+    immediate: false,
+  });
 }
 
 const flashed = new Set(); // revealed questions whose BRAVO/RATÉ flash already played
