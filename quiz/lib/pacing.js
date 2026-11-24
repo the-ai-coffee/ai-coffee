@@ -62,16 +62,24 @@ export function pacedLoop({
     running = true;
     try {
       await tick();
+      const sig = signature();
+      if (sig !== lastSig) {
+        lastSig = sig;
+        lastChange = now();
+      }
     } catch (err) {
       console.warn("[quiz] poll", err);
+    } finally {
+      running = false;
     }
-    running = false;
-    const sig = signature();
-    if (sig !== lastSig) {
-      lastSig = sig;
-      lastChange = now();
+    try {
+      schedule();
+    } catch (err) {
+      // status() threw: keep the loop alive at the lobby cadence
+      console.warn("[quiz] poll", err);
+      const delay = nextDelay({ role, status: undefined });
+      if (!stopped && !doc.hidden) timer = timers.setTimeout(run, delay);
     }
-    schedule();
   };
 
   const wake = () => {

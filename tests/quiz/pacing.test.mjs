@@ -58,6 +58,7 @@ function harness({ role = "player", status = "open", immediate = true, failFirst
     doc,
     status,
     sig: "a",
+    sigThrows: false,
     ticks: 0,
     pauses: 0,
     resumes: 0,
@@ -77,7 +78,13 @@ function harness({ role = "player", status = "open", immediate = true, failFirst
     timers,
     now: () => t,
     status: () => h.status,
-    signature: () => h.sig,
+    signature: () => {
+      if (h.sigThrows) {
+        h.sigThrows = false; // throw once, on the first read after it is set
+        throw new Error("signature broke");
+      }
+      return h.sig;
+    },
     tick: async () => {
       h.ticks++;
       if (failFirst && h.ticks === 1) throw new Error("network down");
@@ -185,4 +192,19 @@ test("pacedLoop.stop() clears the timer for good", async () => {
   h.doc.dispatchEvent(new Event("visibilitychange"));
   await flush();
   assert.equal(h.ticks, 1);
+});
+
+test("pacedLoop survives a throwing signature()", async () => {
+  const warn = mock.method(console, "warn", () => {});
+  try {
+    const h = harness();
+    h.sigThrows = true; // the first post-tick read throws
+    await flush();
+    assert.equal(warn.mock.callCount(), 1);
+    assert.deepEqual(h.pending(), [3000], "the loop still armed its next poll");
+    await h.fire();
+    assert.equal(h.ticks, 2);
+  } finally {
+    warn.mock.restore();
+  }
 });

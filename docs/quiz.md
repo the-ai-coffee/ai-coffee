@@ -123,3 +123,4 @@ pnpm dev                                    # http://localhost:8888 (Netlify Blo
 | `quiz:validate --strict` échoue sur `verify: true` | Contenu pas encore vérifié | Vérifier la question, puis retirer le drapeau |
 | Bandeau « Pause — touchez/cliquez pour reprendre » | 15 min sans aucun changement : les appels sont suspendus pour économiser le quota | Toucher ou cliquer la page : la partie reprend aussitôt |
 | Netlify : « exceeded the Functions limit » ou erreurs 5xx sur `/api/quiz/*` | Quota mensuel Netlify épuisé (*Team → Usage*) | Attendre la remise à zéro mensuelle ou passer à une offre payante ; option long terme : spec `docs/superpowers/specs/2026-11-24-quiz-quota-design.md`, section Cloudflare |
+| Après **Réinitialiser** en fin de partie, les téléphones restent sur l'écran des résultats | Une fois la partie terminée, les téléphones n'interrogent plus l'API (économie de quota) | Les joueurs rechargent la page ou rescannent le QR code |
