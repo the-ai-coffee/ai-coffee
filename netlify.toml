@@ -16,10 +16,6 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-
 # The site publishes the repo root: never serve quiz answers or tooling.
 [[redirects]]
   from = "/quiz-data/*"
