@@ -45,7 +45,7 @@ Composition type d'une partie : 1 échauffement vidéo (non compté) + ~2 *Humai
 
 ### Les mini-jeux V1
 
-Tous partagent la mécanique **réponse + confiance** (3 crans : « Je pense », « Je suis sûr », « Certain »), et chaque question porte obligatoirement un **concept** et une **explication** affichés au debrief.
+Le joueur choisit sa réponse, qui est enregistrée aussitôt (l'étape « niveau de confiance » a été retirée en novembre 2026). Chaque question porte obligatoirement un **concept** et une **explication** affichés au debrief.
 
 - **Humain ou IA ?** — un média (texte, image, code ou **vidéo**) ; le joueur tranche Humain / IA. Les vidéos d'IA manifestement absurdes font de bons échauffements.
 - **Pariez sur la machine** — une question posée à un LLM ; le joueur prédit sa réponse (ou s'il se trompe).
@@ -116,8 +116,6 @@ Exemple :
 }
 ```
 
-La confiance n'apparaît pas dans le contrat : c'est une mécanique transverse du moteur.
-
 **Validateur** `scripts/quiz-validate.mjs` (Node, sans dépendance) : schéma par type de jeu, unicité des `id`, `answer` cohérente avec les choix/lignes, `concept` existant, exactement 0 ou 1 échauffement, nombre de questions comptées entre 5 et 8.
 
 ### 2.3 `quiz-data/history.json` — mémoire collective
@@ -177,28 +175,25 @@ Téléphone joueur ──┐                       ┌── quiz-data/ (privé,
 ### 3.3 Stockage (Netlify Blobs, store `quiz`)
 
 - `games/NN/state` → `{status, revealIndex}`
-- `games/NN/players/<pid>` → `{pseudo, uid?, answers: {qid: {choice, confidence}}}` — un blob par joueur, pas de conflit d'écriture.
+- `games/NN/players/<pid>` → `{pseudo, uid?, answers: {qid: {choice}}}` — un blob par joueur, pas de conflit d'écriture.
 - `members/<uid>` → `[{session, score, concepts}]` — progression individuelle, UUID anonyme uniquement.
 
 ### 3.4 Scoring
 
-| Confiance | ✅ Juste | ❌ Faux |
-|---|---|---|
-| 1 · Je pense | 70 | 30 |
-| 2 · Je suis sûr | 85 | 15 |
-| 3 · Certain | 100 | 0 |
+Une bonne réponse vaut 100 points, une mauvaise 0 : le score d'un joueur est son pourcentage de bonnes réponses.
 
 - Score joueur = moyenne sur les questions répondues (échauffement exclu), 0–100. Une question non répondue n'est pas comptée.
 - Niveau du jour = moyenne des scores joueurs + taux de réussite par concept, comparé à la dernière occurrence du concept dans `history.json`.
 
 ### 3.5 Profils (valeurs par défaut, modifiables dans `profiles.js`)
 
-Axes : **justesse** (≥ 60 % de bonnes réponses) × **assurance** (confiance moyenne ≥ 2).
+Un seul axe, la **justesse** (part de bonnes réponses) :
 
-| | Assurance haute | Assurance basse |
-|---|---|---|
-| **Justesse haute** | 🎯 Oracle calibré | 🧐 Sceptique éclairé |
-| **Justesse basse** | 🚀 Optimiste téméraire | 🔭 Explorateur prudent |
+| Bonnes réponses | Profil |
+|---|---|
+| ≥ 80 % | 🎯 Œil de lynx |
+| 50 – 79 % | 🧐 Bon flair |
+| < 50 % | 🔭 Explorateur |
 
 Chaque profil : une phrase + « À revoir : » les concepts ratés. Badge bonus : 🕵️ *Détecteur de machines* (toutes les *Humain ou IA ?* justes).
 

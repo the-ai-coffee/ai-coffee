@@ -1,20 +1,19 @@
 // Default « profil IA » values. Tweak the copy freely; keep the ids stable
 // (the host screen counts players per profile id).
-export const THRESHOLDS = { correctRate: 0.6, avgConfidence: 2 };
+// The profile depends only on the share of right answers.
+export const THRESHOLDS = { oracle: 0.8, sceptique: 0.5 };
 
 export const PROFILES = {
-  oracle: { id: "oracle", emoji: "🎯", title: "Oracle calibré", tagline: "Tu sais, et tu sais que tu sais." },
-  sceptique: { id: "sceptique", emoji: "🧐", title: "Sceptique éclairé", tagline: "Tu doutes, mais tu vises juste." },
-  temeraire: { id: "temeraire", emoji: "🚀", title: "Optimiste téméraire", tagline: "La machine t'a eu en beauté." },
-  explorateur: { id: "explorateur", emoji: "🔭", title: "Explorateur prudent", tagline: "Tu avances à tâtons, et c'est sain." },
+  oracle: { id: "oracle", emoji: "🎯", title: "Œil de lynx", tagline: "La machine ne t'a presque jamais eu." },
+  sceptique: { id: "sceptique", emoji: "🧐", title: "Bon flair", tagline: "Tu vises juste, plus souvent qu'à ton tour." },
+  explorateur: { id: "explorateur", emoji: "🔭", title: "Explorateur", tagline: "La machine t'a eu, et c'est comme ça qu'on apprend." },
 };
 
-export function profileFor({ correctRate, avgConfidence }) {
+export function profileFor({ correctRate }) {
   if (correctRate === null || correctRate === undefined) return null;
-  const accurate = correctRate >= THRESHOLDS.correctRate;
-  const confident = avgConfidence >= THRESHOLDS.avgConfidence;
-  if (accurate) return confident ? PROFILES.oracle : PROFILES.sceptique;
-  return confident ? PROFILES.temeraire : PROFILES.explorateur;
+  if (correctRate >= THRESHOLDS.oracle) return PROFILES.oracle;
+  if (correctRate >= THRESHOLDS.sceptique) return PROFILES.sceptique;
+  return PROFILES.explorateur;
 }
 
 export const BADGES = {

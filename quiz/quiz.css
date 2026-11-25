@@ -22,7 +22,6 @@ h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 9vw, 52
 .choices-row .choice { flex: 1 1 30%; text-align: center; }
 .q { display: flex; flex-direction: column; gap: 14px; }
 .q-title { font-family: var(--serif); font-size: 28px; line-height: 1.1; margin: 0; }
-.confidence { display: flex; flex-direction: column; gap: 10px; }
 
 .media { width: 100%; margin: 0; border-radius: 14px; background: var(--paper-2); }
 .media-text { font-family: var(--serif); font-size: 20px; padding: 18px; border-left: 3px solid var(--accent); white-space: pre-line; }

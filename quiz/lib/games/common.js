@@ -1,12 +1,6 @@
 import { h } from "../dom.js";
 import { choiceKey } from "../scoring.js";
 
-export const CONFIDENCE = [
-  { value: 1, label: "Je pense" },
-  { value: 2, label: "Je suis sûr" },
-  { value: 3, label: "Certain" },
-];
-
 const percent = (n, total) => (total ? Math.round((n * 100) / total) : 0);
 
 // Fixed, explicit instruction for each game, plus the optional per-question precision.
@@ -25,15 +19,6 @@ export function choiceButtons(options, onPick) {
     "div",
     { class: "choices" },
     options.map((o) => h("button", { class: "choice", type: "button", onclick: () => onPick(o.value) }, o.label)),
-  );
-}
-
-export function confidencePicker(onPick) {
-  return h(
-    "div",
-    { class: "confidence" },
-    h("p", { class: "kicker" }, "Ton niveau de confiance ?"),
-    h("div", { class: "choices choices-row" }, CONFIDENCE.map((c) => h("button", { class: "choice", type: "button", onclick: () => onPick(c.value) }, c.label))),
   );
 }
 

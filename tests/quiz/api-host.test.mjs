@@ -20,15 +20,15 @@ test("host-state reports players, aggregates, history comparison and profiles", 
   const { status, body } = await call("GET", "host-state?s=test", undefined, "secret");
   assert.equal(status, 200);
   assert.deepEqual(body.players, [
-    { id: "p1", pseudo: "Alice", avatar: "🦊", answered: 4, finished: false, profile: "oracle" },
-    { id: "p2", pseudo: "Bob", avatar: "🦊", answered: 3, finished: false, profile: "temeraire" },
+    { id: "p1", pseudo: "Alice", avatar: "🦊", answered: 4, finished: false, profile: "sceptique" },
+    { id: "p2", pseudo: "Bob", avatar: "🦊", answered: 3, finished: false, profile: "sceptique" },
   ]);
-  assert.equal(body.globalScore, 58);
+  assert.equal(body.globalScore, 59);
   assert.equal(body.state.status, "reveal");
   assert.equal(body.game.questions[3].answer, 2);
   assert.equal(body.concepts.hallucination.correctRate, 1);
   assert.deepEqual(body.concepts.hallucination.previous, { session: "03", correctRate: 0.45 });
-  assert.deepEqual(body.profiles, { oracle: 1, temeraire: 1 });
+  assert.deepEqual(body.profiles, { sceptique: 2 });
   assert.deepEqual(body.stats.q0.counts, { human: 1, ai: 1 });
 });
 
@@ -53,9 +53,9 @@ test("finish records member progression for players with a local id", async () =
   await host("reveal");
   assert.deepEqual(await host("finish"), { status: 200, body: { status: "done", revealIndex: 7 } });
   const member = await store.get(`members/${UID}`, { type: "json" });
-  assert.deepEqual(member.map((e) => [e.session, e.score]), [["04", 40], ["test", 57]]);
+  assert.deepEqual(member.map((e) => [e.session, e.score]), [["04", 40], ["test", 67]]);
   const me = await call("GET", `me?s=test&pid=${pid}`);
-  assert.deepEqual(me.body.progression, [{ session: "04", score: 40 }, { session: "test", score: 57 }]);
+  assert.deepEqual(me.body.progression, [{ session: "04", score: 40 }, { session: "test", score: 67 }]);
   await host("finish"); // idempotent: no duplicate entry
   assert.equal((await store.get(`members/${UID}`, { type: "json" })).length, 2);
 });
@@ -73,11 +73,11 @@ test("export returns the aggregated history entry once the game is done", async 
   assert.equal(body.session, "test");
   assert.equal(body.date, "2026-10-20");
   assert.equal(body.players, 2);
-  assert.equal(body.globalScore, 58);
-  assert.deepEqual(body.concepts.tokenization, { asked: 2, correctRate: 0, avgConfidence: 3 });
-  assert.deepEqual(body.concepts.hallucination, { asked: 2, correctRate: 1, avgConfidence: 2 });
-  assert.deepEqual(body.concepts["ai-detection"], { asked: 1, correctRate: 0.5, avgConfidence: 2.5 });
-  assert.deepEqual(body.concepts["prompt-context"], { asked: 1, correctRate: null, avgConfidence: null });
+  assert.equal(body.globalScore, 59);
+  assert.deepEqual(body.concepts.tokenization, { asked: 2, correctRate: 0 });
+  assert.deepEqual(body.concepts.hallucination, { asked: 2, correctRate: 1 });
+  assert.deepEqual(body.concepts["ai-detection"], { asked: 1, correctRate: 0.5 });
+  assert.deepEqual(body.concepts["prompt-context"], { asked: 1, correctRate: null });
 });
 
 test("reset clears players and state", async () => {
@@ -105,7 +105,7 @@ test("done marks a player who skipped questions as finished", async () => {
   const early = await call("POST", "join?s=test", { pseudo: "Tôt" });
   assert.deepEqual(await call("POST", "done?s=test", { pid: early.body.pid }), { status: 409, body: { error: "not_open" } });
   await host("open");
-  const six = { q0: ["ai", 1], q1: ["human", 2], q2: ["b", 3], q3: [2, 1], q4: ["b", 2], q5: [null, 3] };
+  const six = { q0: "ai", q1: "human", q2: "b", q3: 2, q4: "b", q5: null };
   const pid = await play("Sauteur", undefined, six);
   const before = await call("GET", "host-state?s=test", undefined, "secret");
   assert.deepEqual(before.body.players.map(({ pseudo, answered, finished }) => ({ pseudo, answered, finished })), [
@@ -124,7 +124,7 @@ test("done marks a player who skipped questions as finished", async () => {
 test("a player who answered every question counts as finished without done", async () => {
   const { call, host, play } = setup();
   await host("open");
-  await play("Complet", undefined, { q0: ["ai", 1], q1: ["human", 2], q2: ["b", 3], q3: [2, 1], q4: ["b", 2], q5: [null, 3], q6: ["a", 2] });
+  await play("Complet", undefined, { q0: "ai", q1: "human", q2: "b", q3: 2, q4: "b", q5: null, q6: "a" });
   const { body } = await call("GET", "host-state?s=test", undefined, "secret");
   assert.equal(body.players[0].finished, true);
 });

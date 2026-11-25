@@ -6,9 +6,9 @@ import { fixtureConcepts, fixtureGame } from "../fixtures/quiz.mjs";
 
 const history = {
   sessions: [
-    { session: "03", date: "2026-07-01", concepts: { hallucination: { asked: 1, correctRate: 0.45, avgConfidence: 2 } } },
-    { session: "04", date: "2026-09-22", concepts: { hallucination: { asked: 1, correctRate: 0.6, avgConfidence: 2 } } },
-    { session: "test", date: "2026-10-20", concepts: { hallucination: { asked: 1, correctRate: 0.9, avgConfidence: 2 } } },
+    { session: "03", date: "2026-07-01", concepts: { hallucination: { asked: 1, correctRate: 0.45 } } },
+    { session: "04", date: "2026-09-22", concepts: { hallucination: { asked: 1, correctRate: 0.6 } } },
+    { session: "test", date: "2026-10-20", concepts: { hallucination: { asked: 1, correctRate: 0.9 } } },
   ],
 };
 const content = createContent({ sessions: { test: fixtureGame }, concepts: fixtureConcepts, history });
@@ -46,7 +46,7 @@ test("publicGame reveals everything plus concept labels afterwards, without muta
 
 test("compareWithHistory finds the latest previous session for each concept", () => {
   const cmp = content.compareWithHistory(
-    { hallucination: { asked: 2, answers: 2, correctRate: 1, avgConfidence: 2 }, tokenization: { asked: 2, answers: 1, correctRate: 0, avgConfidence: 3 } },
+    { hallucination: { asked: 2, answers: 2, correctRate: 1 }, tokenization: { asked: 2, answers: 1, correctRate: 0 } },
     "test",
   );
   assert.deepEqual(cmp.hallucination.previous, { session: "04", correctRate: 0.6 });

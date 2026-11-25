@@ -155,15 +155,14 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
     },
 
     "POST answer": async ({ s, game, req }) => {
-      const { pid, qid, choice, confidence } = await readBody(req);
+      const { pid, qid, choice } = await readBody(req); // a stale page may still send `confidence`: ignored
       const state = await readState(s);
       if (state.status !== "open") throw new HttpError(409, "not_open");
       await requirePlayer(s, pid);
       const question = game.questions.find((q) => q.id === qid);
       if (!question) throw new HttpError(400, "unknown_question");
-      if (![1, 2, 3].includes(confidence)) throw new HttpError(400, "invalid_confidence");
       if (!isValidChoice(question, choice)) throw new HttpError(400, "invalid_choice");
-      await store.setJSON(keys.answer(s, pid, qid), { choice, confidence });
+      await store.setJSON(keys.answer(s, pid, qid), { choice });
       return { ok: true };
     },
 
@@ -276,7 +275,7 @@ export function createApi({ store, content, hostKey, maxPlayers = MAX_PLAYERS, n
       const agg = aggregate(game.questions, players);
       const concepts = {};
       for (const [id, c] of Object.entries(agg.concepts)) {
-        concepts[id] = { asked: c.asked, correctRate: round(c.correctRate, 2), avgConfidence: round(c.avgConfidence, 1) };
+        concepts[id] = { asked: c.asked, correctRate: round(c.correctRate, 2) };
       }
       return { session: s, date: now().toISOString().slice(0, 10), players: players.length, globalScore: agg.globalScore, concepts };
     },

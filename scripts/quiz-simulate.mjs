@@ -48,7 +48,7 @@ const pids = [];
 for (const pseudo of ["Sim Alpha", "Sim Bêta", "Sim Gamma"]) {
   const { pid } = await call("POST", "join", { pseudo, uid: crypto.randomUUID() });
   for (const q of game.questions) {
-    await call("POST", "answer", { pid, qid: q.id, choice: randomChoice(q), confidence: 1 + Math.floor(Math.random() * 3) });
+    await call("POST", "answer", { pid, qid: q.id, choice: randomChoice(q) });
   }
   pids.push(pid);
 }
