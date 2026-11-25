@@ -1,0 +1,160 @@
+{
+  "session": "06",
+  "title": "On se met en jambes",
+  "questions": [
+    {
+      "id": "q0",
+      "game": "human_or_ai",
+      "warmup": true,
+      "question": "Ce petit poème sur le café : écrit par une personne ou par une IA ?",
+      "media": {
+        "kind": "text",
+        "text": "Dans la tasse fumante, un monde se dessine,\nL'arôme du matin, promesse divine.\nChaque gorgée murmure un doux refrain,\nLe café, compagnon de nos lendemains."
+      },
+      "answer": "ai",
+      "concept": "ai-detection",
+      "explanation": "Poème généré par Claude Opus 5.5 à partir de la demande « écris un court poème sur le café ». Les indices : des rimes faciles (« dessine / divine »), des images vagues (« promesse divine ») et aucun détail vécu. L'IA produit vite du joli, rarement du singulier."
+    },
+    {
+      "id": "q1",
+      "game": "definition",
+      "term": "Un prompt",
+      "choices": [
+        {
+          "id": "a",
+          "text": "La demande qu'on écrit à l'IA"
+        },
+        {
+          "id": "b",
+          "text": "Un réglage caché qui rend l'IA plus intelligente"
+        },
+        {
+          "id": "c",
+          "text": "Le programme informatique qui fait tourner l'IA"
+        }
+      ],
+      "answer": "a",
+      "concept": "prompt-context",
+      "explanation": "Le prompt, c'est tout ce qu'on écrit à l'IA : la question, mais aussi le contexte, les consignes et le format attendu. L'IA ne connaît que ce qu'on lui dit : plus le contexte est clair, meilleure est la réponse."
+    },
+    {
+      "id": "q2",
+      "game": "human_or_ai",
+      "question": "Lis ces quatre vers. Qui les a écrits : une personne ou une IA ?",
+      "media": {
+        "kind": "text",
+        "text": "Souvent, pour s'amuser, les hommes d'équipage\nPrennent des albatros, vastes oiseaux des mers,\nQui suivent, indolents compagnons de voyage,\nLe navire glissant sur les gouffres amers."
+      },
+      "answer": "human",
+      "concept": "ai-detection",
+      "explanation": "Charles Baudelaire, « L'Albatros » (Les Fleurs du mal, 1861). Des images précises et inattendues (« les gouffres amers ») et un rythme maîtrisé : une IA imite le style, mais tombe vite dans le cliché."
+    },
+    {
+      "id": "q3",
+      "game": "definition",
+      "term": "La date limite de connaissances",
+      "choices": [
+        {
+          "id": "a",
+          "text": "La date où l'IA a été mise en ligne"
+        },
+        {
+          "id": "b",
+          "text": "Après elle, l'IA ne sait rien sans recherche web"
+        },
+        {
+          "id": "c",
+          "text": "Le jour où votre abonnement à l'IA prend fin, faute de renouvellement"
+        }
+      ],
+      "answer": "b",
+      "concept": "training-cutoff",
+      "revisits": "05",
+      "explanation": "Une IA apprend sur des textes collectés jusqu'à une certaine date : c'est sa date limite de connaissances. Pour parler de l'actualité, celle qu'on partage ce soir, il lui faut un outil de recherche web."
+    },
+    {
+      "id": "q4",
+      "game": "definition",
+      "term": "Un méta-prompt",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Un prompt très long, avec beaucoup de détails"
+        },
+        {
+          "id": "b",
+          "text": "Un prompt qui demande à l'IA d'écrire un prompt"
+        },
+        {
+          "id": "c",
+          "text": "Un prompt envoyé à plusieurs IA différentes en même temps"
+        }
+      ],
+      "answer": "b",
+      "concept": "meta-prompting",
+      "explanation": "Un méta-prompt fait travailler l'IA sur la demande elle-même : à partir d'une idée brute, elle pose des questions puis rédige un prompt complet (rôle, contexte, tâche, format). C'est le principe de Prompter."
+    },
+    {
+      "id": "q5",
+      "game": "human_or_ai",
+      "question": "Ce petit texte de veille : écrit par une personne ou par une IA ?",
+      "media": {
+        "kind": "text",
+        "text": "L'intelligence artificielle continue de transformer notre quotidien à un rythme sans précédent. Cette semaine, plusieurs annonces majeures redessinent le paysage technologique : des modèles toujours plus performants, des outils plus accessibles et des questions éthiques plus pressantes que jamais. Une chose est sûre : l'avenir de l'IA s'écrit aujourd'hui, et il nous concerne tous."
+      },
+      "answer": "ai",
+      "concept": "ai-detection",
+      "explanation": "Texte généré par Claude Opus 5.5 à partir d'une demande vague (« écris un paragraphe de veille IA »). Les indices : aucun nom, aucun chiffre, aucune date, et des formules toutes faites (« à un rythme sans précédent », « une chose est sûre »). Une vraie veille cite des faits."
+    },
+    {
+      "id": "q6",
+      "game": "prompt_duel",
+      "question": "Tu cherches un slogan pour ton meetup. Quelle demande donne des propositions utilisables ?",
+      "task": "Trouver un slogan pour un meetup IA mensuel",
+      "prompts": [
+        {
+          "id": "a",
+          "text": "Trouve un slogan pour mon meetup IA."
+        },
+        {
+          "id": "b",
+          "text": "Trouve 3 slogans pour mon meetup IA mensuel, dans le style de cet exemple : « Pas de slides théoriques, des démos en direct. » Courts, concrets, sans jargon."
+        }
+      ],
+      "outputs": {
+        "a": "Voici une proposition : « L'IA, ensemble. » Simple et fédérateur, il met en avant l'esprit communautaire de votre meetup. Je peux aussi vous proposer d'autres variantes si vous le souhaitez.",
+        "b": "1. « Un café, une démo, une idée à essayer. »\n2. « On montre, on teste, on repart avec. »\n3. « L'IA en vrai, une fois par mois. »"
+      },
+      "answer": "b",
+      "concept": "prompt-examples",
+      "explanation": "Réponses de Claude Opus 5.5 à chacune des deux demandes. Un exemple du ton voulu vaut mieux qu'un long paragraphe de consignes : l'IA imite le style montré. Sans exemple, elle propose un slogan passe-partout, qui irait à n'importe quel événement."
+    },
+    {
+      "id": "q7",
+      "game": "investigation",
+      "timeLimit": 40,
+      "question": "Un assistant transforme une idée brute en prompt. Une de ses réponses pose problème : laquelle ?",
+      "transcript": [
+        {
+          "role": "user",
+          "text": "Transforme mon idée en prompt : un mail pour inviter l'équipe au pot de départ de Sophie, vendredi."
+        },
+        {
+          "role": "ai",
+          "text": "Avant, deux questions : à quelle heure, et où ?"
+        },
+        {
+          "role": "user",
+          "text": "17 h, à la cafétéria."
+        },
+        {
+          "role": "ai",
+          "text": "Voici ton prompt : « Rédige un mail chaleureux invitant l'équipe au pot de départ de Sophie, vendredi à 17 h à la cafétéria, pour fêter ses 12 ans dans l'entreprise. »"
+        }
+      ],
+      "answer": 3,
+      "concept": "hallucination",
+      "explanation": "Personne n'a parlé de « 12 ans dans l'entreprise » : l'assistant a inventé un détail plausible. C'est une hallucination. Un prompt généré se relit avant usage : l'IA accélère, l'humain valide."
+    }
+  ]
+}

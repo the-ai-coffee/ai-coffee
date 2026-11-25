@@ -2,5 +2,6 @@
 // function, so quiz-data/ never has to be published. One line per session file.
 import demo from "./demo.json" with { type: "json" };
 import s05 from "./05.json" with { type: "json" };
+import s06 from "./06.json" with { type: "json" };
 
-export default { demo, "05": s05 };
+export default { demo, "05": s05, "06": s06 };
