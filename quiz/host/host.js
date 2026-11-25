@@ -4,6 +4,7 @@ import { GAMES } from "../lib/games/index.js";
 import { countUp, reducedMotion } from "../lib/motion.js";
 import { PROFILES } from "../lib/profiles.js";
 import { formatClock, gameDurationSec, remainingSec } from "../lib/timing.js";
+import { pacedLoop } from "../lib/pacing.js";
 
 const session = new URLSearchParams(location.search).get("s");
 const KEY_STORAGE = "aic-quiz-hostkey";
@@ -148,20 +149,11 @@ async function refresh(fromAction = false) {
     }
     if (err.status === 503) return showError("QUIZ_HOST_KEY n'est pas configurée sur Netlify.");
     if (err.status === 404) return showError(`Partie « ${session} » introuvable.`);
-    throw err; // network: the loop logs and retries
+    throw err; // network: pacedLoop logs and retries
   }
   if ((!fromAction && seq !== refreshSeq) || (busy && !fromAction)) return; // stale poll, or an action owns the screen
   data = next;
   if (!busy) renderAll();
-}
-
-async function loop() {
-  try {
-    await refresh();
-  } catch (err) {
-    console.warn("[quiz] poll", err);
-  }
-  setTimeout(loop, 1000);
 }
 
 // ---------- rendering ----------
@@ -359,4 +351,17 @@ function renderSummary() {
 }
 
 if (!session) showError("Ajoutez ?s=<session> à l'URL.");
-else loop();
+else {
+  // Shown when polling pauses after a long idle stretch (quiz/lib/pacing.js).
+  const pauseBanner = h("p", { class: "paused", role: "status", hidden: true }, "Pause — cliquez pour reprendre");
+  document.body.append(pauseBanner);
+  pacedLoop({
+    role: "host",
+    tick: () => refresh(),
+    status: () => data?.state.status,
+    // New players and new answers count as activity, not just status changes.
+    signature: () => (data ? JSON.stringify([data.state, data.players.map((p) => p.answered)]) : ""),
+    onPause: () => (pauseBanner.hidden = false),
+    onResume: () => (pauseBanner.hidden = true),
+  });
+}

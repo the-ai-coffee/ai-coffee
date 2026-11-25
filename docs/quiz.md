@@ -15,7 +15,7 @@
 ## 🔐 Configuration (une seule fois)
 
 1. Générez une clé animateur : `openssl rand -hex 24`.
-2. Netlify → *Site configuration* → *Environment variables* : créez `QUIZ_HOST_KEY` avec cette valeur, scope *Functions*. Gardez-la dans le gestionnaire de mots de passe des co-organisateurs.
+2. Netlify → *Site configuration* → *Environment variables* : créez `QUIZ_HOST_KEY` avec cette valeur, scope *Functions*. Ce scope couvre aussi l'Edge Function qui sert l'API du quiz. Gardez-la dans le gestionnaire de mots de passe des co-organisateurs.
 3. Redéployez le site.
 4. Vérifiez que les réponses ne sont pas publiques : `curl -s -o /dev/null -w "%{http_code}\n" <site>/quiz-data/concepts.json` doit renvoyer `404`. La liste complète des vérifications est dans la tâche 13 du [plan](superpowers/plans/2026-10-13-quiz-brise-glace.md).
 
@@ -71,6 +71,8 @@
 - Quand le chrono global atteint 0, il clignote et le bouton **Révéler** pulse : c'est vous qui décidez du moment.
 - Un joueur qui recharge sa page reprend où il en était. Les réponses non envoyées (réseau instable) sont réessayées automatiquement, et un compteur les affiche.
 
+> 💡 **Quota Netlify** : l'API du quiz tourne en *Edge Function* (offre gratuite : 1 M d'appels par mois). Les téléphones et l'écran animateur interrogent l'API seulement quand c'est utile : rien quand l'onglet est masqué, plus rien côté joueurs une fois la partie terminée, et une pause automatique après 15 min sans changement (« Pause — touchez pour reprendre »). Fermez quand même l'écran animateur après la session.
+
 ------
 
 ## 📈 Après la session
@@ -119,3 +121,6 @@ pnpm dev                                    # http://localhost:8888 (Netlify Blo
 | Un joueur reste sur « La partie va commencer… » | La partie n'est pas ouverte, ou elle a été réinitialisée | **Ouvrir la partie**. Le joueur recharge sa page si besoin |
 | `quiz:export` → `409 not_done` | La partie n'est pas terminée | Cliquer sur **Terminer**, puis relancer l'export |
 | `quiz:validate --strict` échoue sur `verify: true` | Contenu pas encore vérifié | Vérifier la question, puis retirer le drapeau |
+| Bandeau « Pause — touchez/cliquez pour reprendre » | 15 min sans aucun changement : les appels sont suspendus pour économiser le quota | Toucher ou cliquer la page : la partie reprend aussitôt |
+| Netlify : « exceeded the Functions limit » ou erreurs 5xx sur `/api/quiz/*` | Quota mensuel Netlify épuisé (*Team → Usage*) | Attendre la remise à zéro mensuelle ou passer à une offre payante ; option long terme : spec `docs/superpowers/specs/2026-11-24-quiz-quota-design.md`, section Cloudflare |
+| Après **Réinitialiser** en fin de partie, les téléphones restent sur l'écran des résultats | Une fois la partie terminée, les téléphones n'interrogent plus l'API (économie de quota) | Les joueurs rechargent la page ou rescannent le QR code |
