@@ -320,6 +320,18 @@
   .part .topic { font-family: var(--serif); font-style: italic; font-size: 60px; line-height: 1.15; margin: 0; color: var(--ink-2); }
   .part .by { position: absolute; top: 760px; left: var(--pad-x); right: var(--pad-x); border-top: 2px solid var(--accent); padding-top: 30px; display: flex; align-items: baseline; gap: 40px; }
   .part .by .name { font-family: var(--serif); font-size: 52px; }
+  .part .by .role { font-family: var(--mono); font-size: 22px; letter-spacing: 0.08em; color: var(--ink-3); }
+  /* variante « démo décrite » : titre plus court, rangée des IA cibles, deux règles */
+  .part.rich .head { top: 250px; gap: 40px; }
+  .part.rich h2.title { font-size: 128px; }
+  .part.rich .topic { font-size: 48px; }
+  .part.rich .targets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .part.rich .target { border-top: 2px solid var(--rule-2); padding-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .part.rich .target b { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1; }
+  .part.rich .target span { font-family: var(--mono); font-size: 20px; color: var(--ink-2); }
+  .part.rich .rules { display: flex; gap: 48px; font-family: var(--sans); font-weight: 300; font-size: 28px; color: var(--ink-2); margin: 0; }
+  .part.rich .rules b { color: var(--accent); font-weight: 500; }
+  .part.rich .by { top: 860px; }
 </style>
 </head>
 <body>
@@ -339,6 +351,7 @@
         <div class="meta">
           <span>1h30</span><span class="pip"></span>
           <span>Espresso</span><span class="pip"></span>
+          <span>3 intervenants</span><span class="pip"></span>
           <span>Discussion ouverte</span>
         </div>
 
@@ -361,8 +374,8 @@
 
       <div class="topics">
         <span class="chip lead-chip">Prompter</span>
-        <span class="chip">Prompt</span>
-        <span class="chip">Méta-prompt</span>
+        <span class="chip">Use case data</span>
+        <span class="chip">Automatisation mail</span>
         <span class="chip">News IA</span>
         <span class="chip">Questions</span>
         <span class="chip">Espresso</span>
@@ -373,35 +386,40 @@
   <section data-label="02 Sommaire">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Au programme</div>
-      <div class="folio">02 / 10</div>
+      <div class="folio">02 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 06 · Open Coffee</span></div>
     </div>
 
     <div class="body toc">
       <div class="intro">
         <div class="label">Ce soir · 26 novembre</div>
-        <h2 class="title">Quatre temps,<br>une <span class="stroke">table</span> ouverte.</h2>
-        <p class="txt">Un quiz pour se lancer, deux interventions, puis on partage nos découvertes et vos questions.</p>
+        <h2 class="title">Cinq temps,<br>une <span class="stroke">table</span> ouverte.</h2>
+        <p class="txt">Un quiz pour se lancer, trois intervenants, puis on partage nos découvertes et vos questions.</p>
       </div>
 
       <div class="list">
         <div class="row">
           <span class="n">01</span>
-          <div><span class="name">Espresso</span><span class="sub">Quiz · Humain ou IA ? · Niveau du jour</span></div>
+          <div><span class="name">Espresso</span><span class="sub">Quiz · Actu IA · Niveau du jour</span></div>
           <span class="dur">La salle</span>
         </div>
         <div class="row">
           <span class="n">02</span>
-          <div><span class="name">Prompter</span><span class="sub">De l'idée brute au prompt de qualité</span></div>
+          <div><span class="name">Prompter</span><span class="sub">Démo · Un atelier de prompts</span></div>
           <span class="dur">Michael</span>
         </div>
         <div class="row">
           <span class="n">03</span>
-          <div><span class="name">Intervention</span><span class="sub">Sujet à venir</span></div>
+          <div><span class="name">Use case</span><span class="sub">Présentation d'un cas d'usage</span></div>
           <span class="dur">Chandris</span>
         </div>
         <div class="row">
           <span class="n">04</span>
+          <div><span class="name">Tri des mails</span><span class="sub">Démo · Demandes de location</span></div>
+          <span class="dur">Xavier</span>
+        </div>
+        <div class="row">
+          <span class="n">05</span>
           <div><span class="name">Session ouverte</span><span class="sub">Découvertes du mois · Vos questions</span></div>
           <span class="dur">Tout le monde</span>
         </div>
@@ -412,12 +430,12 @@
   <section data-label="03 Partie 1 · Espresso">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Partie 1 · Quiz</div>
-      <div class="folio">03 / 10</div>
+      <div class="folio">03 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 06 · Espresso</span></div>
     </div>
 
     <div class="part">
-      <div class="num">PARTIE 01 / 04</div>
+      <div class="num">PARTIE 01 / 05</div>
       <div class="head">
         <h2 class="title">On lance l'<em>Espresso</em></h2>
         <p class="topic">Scannez le QR code, jouez sur votre téléphone.</p>
@@ -426,108 +444,73 @@
     </div>
   </section>
 
-  <section data-label="04 Partie 2 · Prompter">
+  <section data-label="04 Partie 2 · Michael · Prompter">
     <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Partie 2 · Intervention</div>
-      <div class="folio">04 / 10</div>
+      <div class="kicker"><span class="dot"></span> Partie 2 · Démo rapide</div>
+      <div class="folio">04 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 06 · Prompter</span></div>
     </div>
 
-    <div class="part">
-      <div class="num">PARTIE 02 / 04</div>
+    <div class="part rich">
+      <div class="num">PARTIE 02 / 05</div>
       <div class="head">
         <h2 class="title"><em>Prompter</em></h2>
-        <p class="topic">Créer mes prompts de qualité à partir de mes idées brutes.</p>
+        <p class="topic">Un atelier de prompts : chaque demande devient un prompt optimisé, prêt à coller dans l'IA cible.</p>
+        <div class="targets">
+          <div class="target"><b>Texte &amp; code</b><span>Claude, ChatGPT, Gemini…</span></div>
+          <div class="target"><b>Image</b><span>Midjourney, Flux…</span></div>
+          <div class="target"><b>Vidéo</b><span>Sora, Veo…</span></div>
+          <div class="target"><b>Audio</b><span>Suno, ElevenLabs…</span></div>
+        </div>
+        <p class="rules"><span>Il ne fait <b>jamais</b> la tâche lui-même.</span><span>S'il manque une info, il <b>pose des questions</b>.</span></p>
       </div>
       <div class="by"><span class="label">Présenté par</span><span class="name">Michael Pambo Ognana</span></div>
     </div>
   </section>
 
-  <section data-label="05 Idée brute vs prompt">
+  <section data-label="05 Partie 3 · Chandris Nguema · Use case">
     <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Prompter · Avant, après</div>
-      <div class="folio">05 / 10</div>
-      <div class="baseline"><span class="mark">IA Coffee</span><span>Prompter · De l'idée brute au prompt</span></div>
-    </div>
-
-    <div class="body compare-wrap">
-      <div class="head" style="display:flex; flex-direction:column; gap:24px;">
-        <div class="label">Le principe</div>
-        <h2 class="title">Ce qui est clair dans ma tête, <span class="stroke">écrit</span>.</h2>
-      </div>
-
-      <div class="compare">
-        <div class="side before">
-          <span class="tag">Idée brute</span>
-          <div class="head">Quelques mots</div>
-          <ul>
-            <li>Une ligne, sans structure</li>
-            <li>Le contexte reste dans ma tête</li>
-            <li>Une réponse générique en retour</li>
-          </ul>
-        </div>
-        <div class="arrow">→</div>
-        <div class="side after">
-          <span class="tag">Prompt de qualité</span>
-          <div class="head">Prêt à l'emploi</div>
-          <ul>
-            <li><b>Contexte</b> et <b>objectif</b> explicités</li>
-            <li><b>Contraintes</b> posées noir sur blanc</li>
-            <li><b>Format</b> de sortie attendu précisé</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section data-label="06 Impact · 4 ingrédients" class="ink">
-    <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Prompter · L'essentiel</div>
-      <div class="folio">06 / 10</div>
-      <div class="baseline"><span class="mark">IA Coffee</span><span>Prompter · Les ingrédients d'un bon prompt</span></div>
-    </div>
-
-    <div class="body stat">
-      <div class="top">Ce que l'idée brute ne dit pas</div>
-      <div class="mid">
-        <div class="big">4<span class="unit"> ingrédients</span></div>
-        <div class="ctx">pour passer d'une idée brute à un prompt de qualité. <em>L'IA ne devine pas ce qu'on ne lui dit pas.</em></div>
-      </div>
-      <div class="foot">
-        <span><b>Contexte</b></span>
-        <span><b>Objectif</b></span>
-        <span><b>Contraintes</b></span>
-        <span><b>Format</b></span>
-      </div>
-    </div>
-  </section>
-
-  <section data-label="07 Partie 3 · Chandris Nguema">
-    <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Partie 3 · Intervention</div>
-      <div class="folio">07 / 10</div>
+      <div class="kicker"><span class="dot"></span> Partie 3 · Use case</div>
+      <div class="folio">05 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 06 · Chandris Nguema</span></div>
     </div>
 
     <div class="part">
-      <div class="num">PARTIE 03 / 04</div>
+      <div class="num">PARTIE 03 / 05</div>
       <div class="head">
-        <h2 class="title">Sujet <em>à venir</em></h2>
-        <p class="topic">Le titre arrive bientôt.</p>
+        <h2 class="title long">Présentation d'un <em>use case</em></h2>
+        <p class="topic">Un cas d'usage concret, vu du terrain.</p>
       </div>
-      <div class="by"><span class="label">Présenté par</span><span class="name">Chandris Nguema</span></div>
+      <div class="by"><span class="label">Présenté par</span><span class="name">Chandris Nguema</span><span class="role">Senior Data Professional</span></div>
     </div>
   </section>
 
-  <section data-label="08 Partie 4 · Session ouverte">
+  <section data-label="06 Partie 4 · Xavier · Tri des mails">
     <div class="chrome">
-      <div class="kicker"><span class="dot"></span> Partie 4 · Discussion</div>
-      <div class="folio">08 / 10</div>
+      <div class="kicker"><span class="dot"></span> Partie 4 · Démo</div>
+      <div class="folio">06 / 09</div>
+      <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 06 · Xavier Gueret</span></div>
+    </div>
+
+    <div class="part">
+      <div class="num">PARTIE 04 / 05</div>
+      <div class="head">
+        <h2 class="title">Démo : <em>trier ses mails</em></h2>
+        <p class="topic">Automatiser le tri des demandes de location des clients dans sa boîte mail.</p>
+      </div>
+      <div class="by"><span class="label">Présenté par</span><span class="name">Xavier Gueret</span></div>
+    </div>
+  </section>
+
+  <section data-label="07 Partie 5 · Session ouverte">
+    <div class="chrome">
+      <div class="kicker"><span class="dot"></span> Partie 5 · Discussion</div>
+      <div class="folio">07 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Épisode 06 · Session ouverte</span></div>
     </div>
 
     <div class="part">
-      <div class="num">PARTIE 04 / 04</div>
+      <div class="num">PARTIE 05 / 05</div>
       <div class="head">
         <h2 class="title long">Session <em>ouverte</em></h2>
         <p class="topic">Vos découvertes IA du mois, et toutes vos questions.</p>
@@ -536,10 +519,10 @@
     </div>
   </section>
 
-  <section data-label="09 Glossaire">
+  <section data-label="08 Glossaire">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Glossaire</div>
-      <div class="folio">09 / 10</div>
+      <div class="folio">08 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Les mots de ce soir</span></div>
     </div>
 
@@ -551,19 +534,19 @@
 
       <div class="gloss">
         <div class="term"><span class="name">Prompt</span><span class="def">La demande adressée à l'IA : question, contexte, consignes, format.</span></div>
-        <div class="term"><span class="name">Méta-prompt</span><span class="def">Un prompt qui demande à l'IA d'écrire ou d'améliorer un prompt.</span></div>
-        <div class="term"><span class="name">Contexte</span><span class="def">Ce que l'IA voit de la conversation : sa mémoire de travail.</span></div>
-        <div class="term"><span class="name">Exemple</span><span class="def">Un modèle du résultat attendu : l'IA imite le style montré.</span></div>
-        <div class="term"><span class="name">Date limite</span><span class="def">Sans recherche web, l'IA ignore ce qui s'est passé après.</span></div>
+        <div class="term"><span class="name">IA cible</span><span class="def">L'outil qui exécute le prompt : texte, image, vidéo ou audio.</span></div>
+        <div class="term"><span class="name">Agent</span><span class="def">Une IA qui agit à ta place : trier, envoyer, réserver.</span></div>
         <div class="term"><span class="name">Hallucination</span><span class="def">Une information inventée, présentée avec assurance.</span></div>
+        <div class="term"><span class="name">Injection</span><span class="def">Un ordre caché dans un texte lu par l'IA, qui la détourne.</span></div>
+        <div class="term"><span class="name">Deepfake</span><span class="def">Une fausse vidéo réaliste d'une vraie personne.</span></div>
       </div>
     </div>
   </section>
 
-  <section data-label="10 Clôture">
+  <section data-label="09 Clôture">
     <div class="chrome">
       <div class="kicker"><span class="dot"></span> Merci</div>
-      <div class="folio">10 / 10</div>
+      <div class="folio">09 / 09</div>
       <div class="baseline"><span class="mark">IA Coffee</span><span>Merci · au mois prochain</span></div>
     </div>
 
@@ -576,7 +559,7 @@
 
       <div class="label">Ce qu'on retient</div>
       <div class="recap">
-        Idée brute <span class="sep">·</span> Contexte <span class="sep">·</span> Format <span class="sep">·</span> <em>Prompt de qualité</em>
+        Prompter <span class="sep">·</span> Use case <span class="sep">·</span> Tri des mails <span class="sep">·</span> <em>Vos découvertes</em>
       </div>
 
       <div class="next">
