@@ -26,16 +26,29 @@ function renderVideo(m) {
     return h("video", { class: "media media-video", src: m.src.split("#")[0] + range, controls: true, playsinline: true, preload: "metadata" });
   }
   const start = m.start ?? 0;
-  const src =
-    m.provider === "youtube"
-      ? `https://www.youtube-nocookie.com/embed/${encodeURIComponent(m.id)}?start=${start}${m.end ? `&end=${m.end}` : ""}&rel=0&playsinline=1`
-      : `https://player.vimeo.com/video/${encodeURIComponent(m.id)}#t=${start}s`;
-  return h(
-    "div",
-    { class: "media-video-wrap" },
-    h("iframe", { class: "media media-video", src, title: "Vidéo", loading: "lazy", allow: "autoplay; encrypted-media; picture-in-picture", allowfullscreen: true }),
-    isHttpsUrl(m.fallback) ? h("a", { class: "media-fallback", href: m.fallback, target: "_blank", rel: "noopener" }, "La vidéo ne se charge pas ? Voir l'image") : null,
+  const frame = (src) =>
+    h("iframe", { class: "media media-video", src, title: "Vidéo", allow: "autoplay; encrypted-media; picture-in-picture", allowfullscreen: true });
+  const fallback = isHttpsUrl(m.fallback)
+    ? h("a", { class: "media-fallback", href: m.fallback, target: "_blank", rel: "noopener" }, "La vidéo ne se charge pas ? Voir l'image")
+    : null;
+
+  if (m.provider === "vimeo") {
+    // Vimeo hides its title, author and avatar overlay on request
+    const src = `https://player.vimeo.com/video/${encodeURIComponent(m.id)}?title=0&byline=0&portrait=0#t=${start}s`;
+    return h("div", { class: "media-video-wrap" }, frame(src), fallback);
+  }
+
+  // YouTube always overlays the video title before playback (no embed parameter turns it
+  // off), and a title like « AI Cats Dancing » gives the answer away. So a neutral cover
+  // stands in for the player; the tap loads it with autoplay, past the title screen.
+  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(m.id)}?start=${start}${m.end ? `&end=${m.end}` : ""}&rel=0&playsinline=1&autoplay=1`;
+  const cover = h(
+    "button",
+    { class: "media media-video video-cover", type: "button", onclick: () => cover.replaceWith(frame(src)) },
+    h("span", { class: "video-cover-play", "aria-hidden": "true" }, "▶"),
+    h("span", {}, "Lancer la vidéo"),
   );
+  return h("div", { class: "media-video-wrap" }, cover, fallback);
 }
 
 // Resolves when a question's timer may start: once a video extract has had time to play.

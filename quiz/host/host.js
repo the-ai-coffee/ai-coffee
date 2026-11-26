@@ -312,6 +312,9 @@ setInterval(() => {
   revealBtn?.classList.toggle("is-pulsing", left === 0);
 }, 250);
 
+// Concept bars: green when the room knows it, amber when half, red when to review.
+const rateClass = (x) => (x === null || x === undefined ? "" : x >= 0.7 ? "rate-good" : x >= 0.4 ? "rate-mid" : "rate-low");
+
 function renderSummary() {
   const { globalScore, concepts, players } = data;
   const rows = Object.values(concepts).sort((a, b) => (a.correctRate ?? 1) - (b.correctRate ?? 1));
@@ -328,7 +331,7 @@ function renderSummary() {
       rows.map((c) =>
         h(
           "li",
-          { class: "bar" },
+          { class: `bar ${rateClass(c.correctRate)}` },
           h("span", { class: "bar-label" }, c.label),
           h("span", { class: "bar-track" }, h("span", { class: "bar-fill", style: `width:${pct(c.correctRate)}%` })),
           h("span", { class: "bar-pct" }, rate(c.correctRate)),
@@ -336,12 +339,21 @@ function renderSummary() {
         ),
       ),
     ),
+    h("p", { class: "kicker" }, "Les profils de la salle"),
     h(
       "ul",
       { class: "profiles" },
       Object.values(PROFILES).map((p) => {
-        const faces = players.filter((x) => x.profile === p.id).map((x) => x.avatar ?? "🙂").join(" ");
-        return h("li", {}, h("strong", {}, `${p.emoji} ${p.title}`), h("span", { class: "profile-faces" }, faces || "—"));
+        const members = players.filter((x) => x.profile === p.id);
+        const count = members.length === 0 ? "Personne" : members.length === 1 ? "1 joueur" : `${members.length} joueurs`;
+        return h(
+          "li",
+          { class: members.length ? "" : "is-empty" },
+          h("strong", {}, `${p.emoji} ${p.title}`),
+          h("span", { class: "profile-range" }, p.range),
+          h("span", { class: "profile-count" }, count),
+          members.length ? h("span", { class: "profile-faces" }, members.map((x) => x.avatar ?? "🙂").join(" ")) : null,
+        );
       }),
     ),
   );

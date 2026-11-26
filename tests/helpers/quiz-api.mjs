@@ -5,15 +5,15 @@ import { fixtureConcepts, fixtureGame } from "../fixtures/quiz.mjs";
 import { memoryStore } from "./memory-store.mjs";
 
 export const UID = "11111111-2222-4333-8444-555555555555";
-export const A = { q0: ["human", 3], q1: ["human", 3], q2: ["b", 3], q3: [2, 1] };
-export const B = { q0: ["ai", 1], q1: ["ai", 2], q3: [2, 3] };
+export const A = { q0: "human", q1: "human", q2: "b", q3: 2 };
+export const B = { q0: "ai", q1: "ai", q3: 2 };
 
 export function setup({ hostKey = "secret", maxPlayers } = {}) {
   const store = memoryStore();
   const content = createContent({
     sessions: { test: fixtureGame },
     concepts: fixtureConcepts,
-    history: { sessions: [{ session: "03", date: "2026-07-01", concepts: { hallucination: { asked: 1, correctRate: 0.45, avgConfidence: 2 } } }] },
+    history: { sessions: [{ session: "03", date: "2026-07-01", concepts: { hallucination: { asked: 1, correctRate: 0.45 } } }] },
   });
   let n = 0;
   const api = createApi({ store, content, hostKey, maxPlayers, now: () => new Date("2026-10-20T19:00:00Z"), newId: () => `p${++n}` });
@@ -29,8 +29,8 @@ export function setup({ hostKey = "secret", maxPlayers } = {}) {
   const host = (action, extra = {}) => call("POST", "host?s=test", { action, ...extra }, "secret");
   const play = async (pseudo, uid, answers) => {
     const { body } = await call("POST", "join?s=test", { pseudo, uid, avatar: "🦊" });
-    for (const [qid, [choice, confidence]] of Object.entries(answers)) {
-      const r = await call("POST", "answer?s=test", { pid: body.pid, qid, choice, confidence });
+    for (const [qid, choice] of Object.entries(answers)) {
+      const r = await call("POST", "answer?s=test", { pid: body.pid, qid, choice });
       assert.equal(r.status, 200, JSON.stringify(r.body));
     }
     return body.pid;

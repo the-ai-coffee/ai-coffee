@@ -1,7 +1,6 @@
 import { api } from "./lib/api.js";
 import { nextAvatar, randomAvatar } from "./lib/avatars.js";
 import { h, mount } from "./lib/dom.js";
-import { CONFIDENCE } from "./lib/games/common.js";
 import { GAMES } from "./lib/games/index.js";
 import { waitForMedia } from "./lib/media.js";
 import { countUp, reducedMotion } from "./lib/motion.js";
@@ -240,35 +239,11 @@ function renderPlay() {
   const q = game.questions.find((x) => !me.answers[x.id]);
   if (!q) return renderWaiting();
   const index = game.questions.indexOf(q);
-  let picked = null; // the choice made, waiting for its confidence
   const fill = h("span", { class: "timer-fill" });
   const secs = h("span", { class: "timer-secs" }, String(timeLimitFor(q)));
   const timerEl = h("div", { class: "timer is-waiting", role: "timer", "aria-label": "Temps restant" }, h("span", { class: "timer-track" }, fill), secs);
   const stage = h("div", { class: "stage" });
-  const question = GAMES[q.game].renderQuestion(q, (choice) => {
-    picked = { choice };
-    mount(
-      stage,
-      h(
-        "div",
-        { class: "confidence" },
-        h("p", { class: "consigne" }, "Tu es sûr de toi ?"),
-        h("div", { class: "choices" }, CONFIDENCE.map((c) => h("button", { class: "choice", type: "button", onclick: () => record(q.id, choice, c.value) }, c.label))),
-        h(
-          "button",
-          {
-            class: "link",
-            type: "button",
-            onclick: () => {
-              picked = null;
-              mount(stage, question);
-            },
-          },
-          "↩ Changer de réponse",
-        ),
-      ),
-    );
-  });
+  const question = GAMES[q.game].renderQuestion(q, (choice) => record(q.id, choice));
   stage.append(question);
   unsentNote = h("p", { class: "unsent" }, unsentLabel(unsentCount()));
   mount(
@@ -284,13 +259,13 @@ function renderPlay() {
   waitForMedia(q.media, stage).then(() => {
     if (!stage.isConnected || me.answers[q.id]) return; // moved on meanwhile
     timerEl.classList.remove("is-waiting");
-    startTimer(q, timerEl, fill, secs, () => (picked ? record(q.id, picked.choice, 1) : skip(q.id)));
+    startTimer(q, timerEl, fill, secs, () => skip(q.id));
   });
 }
 
-function record(qid, choice, confidence) {
+function record(qid, choice) {
   stopTimer();
-  me.answers[qid] = { choice, confidence, sent: false };
+  me.answers[qid] = { choice, sent: false };
   save();
   send(qid); // queued first, so the next screen does not flag it as unsent
   flashThen("saved", render);
@@ -324,7 +299,7 @@ async function deliver(qid) {
   const answer = me.answers[qid];
   if (!pid || !answer || answer.sent || answer.late) return; // reset meanwhile, or nothing left to send
   try {
-    await api.answer(session, pid, qid, answer.choice, answer.confidence);
+    await api.answer(session, pid, qid, answer.choice);
     answer.sent = true;
     save();
   } catch (err) {

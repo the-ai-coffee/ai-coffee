@@ -127,3 +127,11 @@ test("a definition needs a term and an answer among its choices", () => {
   has(withQ({ ...ok, answer: "c" }), "answer ne correspond à aucun choix");
   has(withQ({ ...ok, choices: [{ id: "a", text: "A" }] }), "au moins 2 choices");
 });
+
+test("an « Actu IA » needs a short fact and an answer among its choices", () => {
+  const ok = { id: "n1", game: "actu", fact: "Un fait court.", choices: [{ id: "v", text: "Vrai" }, { id: "f", text: "Faux" }], answer: "v", concept: "tokenization", explanation: "E." };
+  const withQ = (q) => { const g = clone(); g.questions[6] = q; return validateGame(g, fixtureConcepts).errors; };
+  assert.deepEqual(withQ(ok), []);
+  has(withQ({ ...ok, fact: "x".repeat(161) }), "fact manquant ou trop long");
+  has(withQ({ ...ok, answer: "z" }), "answer ne correspond à aucun choix");
+});

@@ -75,7 +75,7 @@ test("a fallback link is only rendered for an https URL", () => {
 
 test("the investigation reveal marks the faulty bubble and the player's own one in text", () => {
   const q = fixtureGame.questions[3]; // answer: 2
-  const tree = GAMES.investigation.renderReveal({ ...q, conceptLabel: "X" }, { counts: {}, answered: 0 }, { choice: 1, confidence: 2 });
+  const tree = GAMES.investigation.renderReveal({ ...q, conceptLabel: "X" }, { counts: {}, answered: 0 }, { choice: 1 });
   const bubbles = findAll(tree, (n) => (n.attrs?.class ?? "").split(" ").includes("bubble"));
   assert.ok(bubbles[2].text.startsWith("✅ "), bubbles[2].text);
   assert.ok(findAll(bubbles[2], (n) => n.attrs?.class === "ok-mark").length === 1);
@@ -92,6 +92,15 @@ test("the bet machine reveal shows the question's media", () => {
 test("a definition shows the term and its choices, then the term again at the reveal", () => {
   const text = GAMES.definition.renderQuestion(definitionQ, () => {}).text;
   assert.ok(text.includes("LLM") && text.includes("Un modèle qui prédit le texte suivant"), text);
-  const reveal = GAMES.definition.renderReveal({ ...definitionQ, conceptLabel: "X" }, { counts: { b: 1 }, answered: 1 }, { choice: "b", confidence: 1 }).text;
+  const reveal = GAMES.definition.renderReveal({ ...definitionQ, conceptLabel: "X" }, { counts: { b: 1 }, answered: 1 }, { choice: "b" }).text;
   assert.ok(reveal.includes("LLM") && reveal.includes("Large Language Model."), reveal);
+});
+
+test("an « Actu IA » question shows its instruction, the fact and short answers", () => {
+  const q = { id: "n1", game: "actu", fact: "Tidal retire des millions de morceaux générés par IA.", choices: [{ id: "v", text: "Vrai" }, { id: "f", text: "Faux" }], answer: "v", concept: "ai-detection", explanation: "Vrai." };
+  assert.equal(GAMES.actu.CONSIGNE, "Actu IA : à ton avis ?");
+  const text = GAMES.actu.renderQuestion(q, () => {}).text;
+  assert.ok(text.includes("Actu IA : à ton avis ?") && text.includes("Tidal retire") && text.includes("Vrai") && text.includes("Faux"));
+  const reveal = GAMES.actu.renderReveal({ ...q, conceptLabel: "X" }, { counts: { v: 1 }, answered: 1 }, { choice: "v" }).text;
+  assert.ok(reveal.includes("Tidal retire") && reveal.includes("Vrai."));
 });

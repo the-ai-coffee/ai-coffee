@@ -1,12 +1,6 @@
-// Scoring rewards being right AND being calibrated: a confident mistake costs more
-// than a hesitant one. Pure functions, shared by the browser and the Netlify function.
-export const CONFIDENCE_POINTS = { 1: [70, 30], 2: [85, 15], 3: [100, 0] };
-
-export function scoreAnswer(correct, confidence) {
-  const points = CONFIDENCE_POINTS[confidence];
-  if (!points) throw new RangeError(`confidence must be 1, 2 or 3 (got ${confidence})`);
-  return correct ? points[0] : points[1];
-}
+// A right answer is worth 100 points, a wrong one 0: a player's score is their
+// percentage of right answers. Pure functions, shared by the browser and the Netlify function.
+export const scoreAnswer = (correct) => (correct ? 100 : 0);
 
 export const isCorrect = (question, choice) => choice === question.answer;
 
@@ -19,16 +13,14 @@ export function scorePlayer(questions, answers = {}) {
   let points = 0;
   let answered = 0;
   let correct = 0;
-  let confidence = 0;
   const concepts = {};
   for (const q of questions) {
     if (q.warmup) continue;
     const a = answers[q.id];
     if (!a) continue;
     const ok = isCorrect(q, a.choice);
-    points += scoreAnswer(ok, a.confidence);
+    points += scoreAnswer(ok);
     answered++;
-    confidence += a.confidence;
     if (ok) correct++;
     const c = (concepts[q.concept] ??= { answered: 0, correct: 0 });
     c.answered++;
@@ -39,7 +31,6 @@ export function scorePlayer(questions, answers = {}) {
     answered,
     correct,
     correctRate: ratio(correct, answered),
-    avgConfidence: ratio(confidence, answered),
     concepts,
   };
 }
@@ -48,7 +39,7 @@ export function aggregate(questions, players) {
   const perQuestion = Object.fromEntries(questions.map((q) => [q.id, { counts: {}, answered: 0, correct: 0 }]));
   const concepts = {};
   for (const q of questions) {
-    if (!q.warmup) (concepts[q.concept] ??= { asked: 0, answers: 0, correct: 0, confidence: 0 }).asked++;
+    if (!q.warmup) (concepts[q.concept] ??= { asked: 0, answers: 0, correct: 0 }).asked++;
   }
 
   const scores = [];
@@ -68,7 +59,6 @@ export function aggregate(questions, players) {
       if (q.warmup) continue;
       const c = concepts[q.concept];
       c.answers++;
-      c.confidence += a.confidence;
       if (ok) c.correct++;
     }
   }
@@ -82,7 +72,7 @@ export function aggregate(questions, players) {
     concepts: Object.fromEntries(
       Object.entries(concepts).map(([id, c]) => [
         id,
-        { asked: c.asked, answers: c.answers, correctRate: ratio(c.correct, c.answers), avgConfidence: ratio(c.confidence, c.answers) },
+        { asked: c.asked, answers: c.answers, correctRate: ratio(c.correct, c.answers) },
       ]),
     ),
   };

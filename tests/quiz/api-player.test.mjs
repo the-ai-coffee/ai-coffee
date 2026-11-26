@@ -45,7 +45,7 @@ test("join refuses players beyond maxPlayers", async () => {
 test("answers are refused until the game is open", async () => {
   const { call } = setup();
   const { body } = await call("POST", "join?s=test", { pseudo: "Un" });
-  const r = await call("POST", "answer?s=test", { pid: body.pid, qid: "q1", choice: "ai", confidence: 1 });
+  const r = await call("POST", "answer?s=test", { pid: body.pid, qid: "q1", choice: "ai" });
   assert.deepEqual(r, { status: 409, body: { error: "not_open" } });
 });
 
@@ -53,10 +53,10 @@ test("answer validation", async () => {
   const { call, host } = setup();
   await host("open");
   const { body } = await call("POST", "join?s=test", { pseudo: "Un" });
-  const answer = (patch) => call("POST", "answer?s=test", { pid: body.pid, qid: "q2", choice: "a", confidence: 2, ...patch });
+  const answer = (patch) => call("POST", "answer?s=test", { pid: body.pid, qid: "q2", choice: "a", ...patch });
   assert.deepEqual(await answer({ choice: "z" }), { status: 400, body: { error: "invalid_choice" } });
-  assert.deepEqual(await answer({ confidence: 4 }), { status: 400, body: { error: "invalid_confidence" } });
-  assert.deepEqual(await answer({ confidence: "2" }), { status: 400, body: { error: "invalid_confidence" } });
+  // a stale page may still send a confidence level: it is ignored, not refused
+  assert.deepEqual(await answer({ confidence: 4 }), { status: 200, body: { ok: true } });
   assert.deepEqual(await answer({ qid: "qx" }), { status: 400, body: { error: "unknown_question" } });
   assert.deepEqual(await answer({ pid: "ghost" }), { status: 404, body: { error: "unknown_player" } });
   assert.deepEqual(await answer({}), { status: 200, body: { ok: true } });
@@ -66,7 +66,7 @@ test("answer validation", async () => {
 test("game hides answers while open and reveals them with stats afterwards", async () => {
   const { call, host, play } = setup();
   await host("open");
-  await play("Un", undefined, { q3: [2, 1] });
+  await play("Un", undefined, { q3: 2 });
   const open = (await call("GET", "game?s=test")).body;
   assert.equal(open.state.status, "open");
   assert.ok(!("answer" in open.questions[3]) && !("explanation" in open.questions[3]));
@@ -84,7 +84,7 @@ test("answers are locked after the reveal", async () => {
   await host("open");
   const { body } = await call("POST", "join?s=test", { pseudo: "Un" });
   await host("reveal");
-  const r = await call("POST", "answer?s=test", { pid: body.pid, qid: "q1", choice: "ai", confidence: 1 });
+  const r = await call("POST", "answer?s=test", { pid: body.pid, qid: "q1", choice: "ai" });
   assert.deepEqual(r, { status: 409, body: { error: "not_open" } });
 });
 
@@ -97,14 +97,14 @@ test("me returns score, profile, badges and missed concepts after the reveal", a
   const { status, body } = await call("GET", `me?s=test&pid=${pid}`);
   assert.equal(status, 200);
   assert.equal(body.pseudo, "Alice");
-  assert.equal(body.score, 57);
+  assert.equal(body.score, 67);
   assert.equal(body.correct, 2);
   assert.equal(body.answered, 3);
-  assert.equal(body.profile.id, "oracle");
+  assert.equal(body.profile.id, "sceptique");
   assert.deepEqual(body.badges.map((b) => b.id), ["detector"]);
   assert.deepEqual(body.missedConcepts, ["Tokenisation"]);
-  assert.deepEqual(body.progression, [{ session: "test", score: 57 }]);
-  assert.deepEqual(body.answers.q3, { choice: 2, confidence: 1 });
+  assert.deepEqual(body.progression, [{ session: "test", score: 67 }]);
+  assert.deepEqual(body.answers.q3, { choice: 2 });
   assert.equal((await call("GET", "me?s=test&pid=ghost")).status, 404);
 });
 
@@ -128,9 +128,9 @@ test("concurrent answers from one player are all kept", async () => {
   const { call, host } = setup();
   await host("open");
   const { body } = await call("POST", "join?s=test", { pseudo: "Rapide" });
-  const answers = { q0: ["ai", 1], q1: ["human", 2], q2: ["b", 3], q3: [2, 1], q4: ["b", 2] };
+  const answers = { q0: "ai", q1: "human", q2: "b", q3: 2, q4: "b" };
   const results = await Promise.all(
-    Object.entries(answers).map(([qid, [choice, confidence]]) => call("POST", "answer?s=test", { pid: body.pid, qid, choice, confidence })),
+    Object.entries(answers).map(([qid, choice]) => call("POST", "answer?s=test", { pid: body.pid, qid, choice })),
   );
   assert.deepEqual(results.map((r) => r.status), [200, 200, 200, 200, 200]);
   const hostState = await call("GET", "host-state?s=test", undefined, "secret");
@@ -138,7 +138,7 @@ test("concurrent answers from one player are all kept", async () => {
   await host("reveal");
   const me = await call("GET", `me?s=test&pid=${body.pid}`);
   assert.deepEqual(Object.keys(me.body.answers).sort(), ["q0", "q1", "q2", "q3", "q4"]);
-  assert.deepEqual(me.body.answers.q2, { choice: "b", confidence: 3 });
+  assert.deepEqual(me.body.answers.q2, { choice: "b" });
 });
 
 test("a pid that is not a safe key is refused with invalid_player", async () => {
@@ -146,7 +146,7 @@ test("a pid that is not a safe key is refused with invalid_player", async () => 
   await host("open");
   await call("POST", "join?s=test", { pseudo: "Un" });
   for (const pid of ["p1/../p2", "../state", "a".repeat(65)]) {
-    assert.deepEqual(await call("POST", "answer?s=test", { pid, qid: "q1", choice: "ai", confidence: 1 }), {
+    assert.deepEqual(await call("POST", "answer?s=test", { pid, qid: "q1", choice: "ai" }), {
       status: 400,
       body: { error: "invalid_player" },
     });

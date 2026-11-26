@@ -1,3 +1,4 @@
+import * as actu from "./actu.js";
 import * as betMachine from "./bet-machine.js";
 import * as definition from "./definition.js";
 import * as humanOrAi from "./human-or-ai.js";
@@ -11,4 +12,5 @@ export const GAMES = {
   investigation,
   prompt_duel: promptDuel,
   definition,
+  actu,
 };

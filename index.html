@@ -93,7 +93,9 @@
     background: radial-gradient(circle at 60% 30%, var(--accent-soft) 0%, transparent 55%);
     opacity: 0.35; filter: blur(10px);
   }
-  .hero .visual img { position: relative; width: 58%; }
+  /* the logo ships on an opaque cream square: multiply drops that square into the
+     panel, so only the cup and the steam sit on the glow */
+  .hero .visual img { position: relative; width: 74%; mix-blend-mode: multiply; }
 
   /* ── stat strip ───────────────────────────────────────── */
   .stats { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
@@ -304,6 +306,16 @@
           <p class="desc">Un simulateur de mock-exams pour certifications IT construit avec l'IA, les profils spécialisés de Hermes Agent, et une discussion sur l'avenir du métier de développeur.</p>
           <div class="meta">
             <span class="presenters">Michael P.O. · Xavier G. · Jean-Noé K.</span>
+            <span class="go">Voir le deck →</span>
+          </div>
+        </a>
+
+        <a class="card" href="decks/06-open-coffee/deck.html">
+          <div class="eyebrow"><span class="n">Épisode Nº 06 · 26 novembre 2026</span><span class="tag">À venir</span></div>
+          <h3>Open Coffee</h3>
+          <p class="desc">Discussion ouverte et partage de news : la démo de Prompter, un atelier de prompts, un use case data, une IA en local pour récupérer des devis dans sa boîte mail, puis vos découvertes IA du mois et vos questions.</p>
+          <div class="meta">
+            <span class="presenters">Michael P.O. · Chandris N. · Xavier G.</span>
             <span class="go">Voir le deck →</span>
           </div>
         </a>

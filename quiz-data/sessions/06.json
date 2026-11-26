@@ -1,0 +1,167 @@
+{
+  "session": "06",
+  "title": "On se met en jambes",
+  "questions": [
+    {
+      "id": "q0",
+      "game": "human_or_ai",
+      "warmup": true,
+      "question": "Vraie vidéo, ou fabriquée par une IA ?",
+      "media": {
+        "url": "https://www.youtube.com/shorts/AAco7ZuBksk",
+        "start": 0,
+        "end": 20
+      },
+      "answer": "ai",
+      "concept": "video-generation",
+      "explanation": "Vidéo générée par IA. Mettre une vraie personne dans une scène inventée, c'est un deepfake : drôle ici, mais c'est aussi l'outil des arnaques au faux patron."
+    },
+    {
+      "id": "q1",
+      "game": "definition",
+      "term": "Un prompt",
+      "choices": [
+        {
+          "id": "a",
+          "text": "La demande qu'on écrit à l'IA"
+        },
+        {
+          "id": "b",
+          "text": "Un réglage caché qui rend l'IA plus intelligente"
+        },
+        {
+          "id": "c",
+          "text": "Le programme informatique qui fait tourner l'IA"
+        }
+      ],
+      "answer": "a",
+      "concept": "prompt-context",
+      "explanation": "Le prompt, c'est ce qu'on écrit à l'IA. Elle ne sait que ce qu'on lui dit : plus on donne de contexte, meilleure est la réponse."
+    },
+    {
+      "id": "q2",
+      "game": "actu",
+      "fact": "Tidal, appli de musique en streaming, supprime des millions de morceaux. Pourquoi ?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Ils sont piratés"
+        },
+        {
+          "id": "b",
+          "text": "Ils sont 100 % faits par IA"
+        },
+        {
+          "id": "c",
+          "text": "Personne ne les écoute"
+        }
+      ],
+      "answer": "b",
+      "concept": "ai-detection",
+      "explanation": "Annoncé cette semaine (The Guardian, 26 nov. 2026) : Tidal bannit la musique entièrement générée par IA, qui détourne les droits d'auteur des artistes."
+    },
+    {
+      "id": "q3",
+      "game": "actu",
+      "fact": "L'agence du médicament (ANSM) met en garde contre les conseils santé des IA. Le risque ?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Elles inventent avec aplomb"
+        },
+        {
+          "id": "b",
+          "text": "Elles refusent de répondre"
+        },
+        {
+          "id": "c",
+          "text": "Elles coûtent trop cher"
+        }
+      ],
+      "answer": "a",
+      "concept": "hallucination",
+      "explanation": "Une IA peut donner une réponse fausse sur un ton très sûr : c'est une hallucination. Pour un médicament, on demande à un médecin ou un pharmacien (ANSM, 25 nov. 2026)."
+    },
+    {
+      "id": "q4",
+      "game": "actu",
+      "fact": "Un client a convaincu le chatbot d'un concessionnaire de lui « vendre » un SUV à 1 dollar.",
+      "choices": [
+        {
+          "id": "v",
+          "text": "Vrai"
+        },
+        {
+          "id": "f",
+          "text": "Faux"
+        }
+      ],
+      "answer": "v",
+      "concept": "prompt-injection",
+      "explanation": "Vrai (Chevrolet, 2023). Il a simplement écrit au bot d'accepter tout ce qu'il dirait : une injection de prompt. Le SUV n'a jamais été livré."
+    },
+    {
+      "id": "q5",
+      "game": "definition",
+      "term": "Un agent IA",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Une IA qui agit à ta place"
+        },
+        {
+          "id": "b",
+          "text": "Un espion qui utilise l'IA"
+        },
+        {
+          "id": "c",
+          "text": "Une personne qui vend des abonnements à l'IA"
+        }
+      ],
+      "answer": "a",
+      "concept": "agent",
+      "revisits": "05",
+      "explanation": "Un agent ne fait pas que répondre : il agit (envoyer un mail, réserver, modifier un fichier). Pratique, mais on lui donne le moins d'accès possible."
+    },
+    {
+      "id": "q6",
+      "game": "actu",
+      "fact": "Une compagnie aérienne n'est pas responsable de ce que promet son chatbot.",
+      "choices": [
+        {
+          "id": "v",
+          "text": "Vrai"
+        },
+        {
+          "id": "f",
+          "text": "Faux"
+        }
+      ],
+      "answer": "f",
+      "concept": "hallucination",
+      "explanation": "Faux. Le chatbot d'Air Canada avait inventé un remboursement : en 2024, un tribunal a obligé la compagnie à payer. L'entreprise répond de son IA."
+    },
+    {
+      "id": "q7",
+      "game": "prompt_duel",
+      "task": "Trouver un slogan pour un meetup IA",
+      "prompts": [
+        {
+          "id": "a",
+          "text": "Trouve un slogan pour mon meetup IA."
+        },
+        {
+          "id": "b",
+          "text": "3 slogans courts pour mon meetup IA, dans ce style : « Des démos, pas des slides. »"
+        }
+      ],
+      "outputs": {
+        "a": "Voici une proposition : « L'IA, ensemble. » Simple et fédérateur, il met en avant l'esprit communautaire de votre meetup.",
+        "b": "1. « Un café, une démo, une idée. »\n2. « On teste, on comprend, on repart avec. »\n3. « L'IA en vrai, pas en slides. »"
+      },
+      "answer": "b",
+      "concept": "prompt-examples",
+      "explanation": "Réponses de Claude Opus 5.5. Un exemple du ton voulu vaut mieux qu'une longue consigne : l'IA imite le style montré."
+    }
+  ]
+}
