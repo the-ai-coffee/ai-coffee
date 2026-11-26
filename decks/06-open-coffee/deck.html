@@ -332,6 +332,12 @@
   .part.rich .rules { display: flex; gap: 48px; font-family: var(--sans); font-weight: 300; font-size: 28px; color: var(--ink-2); margin: 0; }
   .part.rich .rules b { color: var(--accent); font-weight: 500; }
   .part.rich .by { top: 860px; }
+  /* glossaire : bloc centré verticalement, termes plus grands pour occuper la slide */
+  .gloss-wrap.roomy { grid-template-rows: auto auto; align-content: center; gap: 72px; }
+  .gloss-wrap.roomy .gloss { align-content: start; gap: 0 96px; }
+  .gloss-wrap.roomy .term { padding: 36px 0; gap: 36px; }
+  .gloss-wrap.roomy .term .name { font-size: 56px; }
+  .gloss-wrap.roomy .term .def { font-size: 28px; }
 </style>
 </head>
 <body>
@@ -526,16 +532,15 @@
       <div class="baseline"><span class="mark">IA Coffee</span><span>Les mots de ce soir</span></div>
     </div>
 
-    <div class="body gloss-wrap">
+    <div class="body gloss-wrap roomy">
       <div class="head" style="display:flex; flex-direction:column; gap:24px;">
         <div class="label">À retenir</div>
-        <h2 class="title">Sept mots, <span class="stroke">un</span> vocabulaire.</h2>
+        <h2 class="title">Un peu de <span class="stroke">vocabulaire</span>.</h2>
       </div>
 
       <div class="gloss">
         <div class="term"><span class="name">Prompt</span><span class="def">La demande adressée à l'IA : question, contexte, consignes, format.</span></div>
         <div class="term"><span class="name">Méta-prompt</span><span class="def">Un prompt qui demande à l'IA d'écrire ou d'améliorer un prompt.</span></div>
-        <div class="term"><span class="name">IA cible</span><span class="def">L'outil qui exécute le prompt : texte, image, vidéo ou audio.</span></div>
         <div class="term"><span class="name">Agent</span><span class="def">Une IA qui agit à ta place : trier, envoyer, réserver.</span></div>
         <div class="term"><span class="name">Hallucination</span><span class="def">Une information inventée, présentée avec assurance.</span></div>
         <div class="term"><span class="name">Injection</span><span class="def">Un ordre caché dans un texte lu par l'IA, qui la détourne.</span></div>
