@@ -332,6 +332,8 @@
   .part.rich .rules { display: flex; gap: 48px; font-family: var(--sans); font-weight: 300; font-size: 28px; color: var(--ink-2); margin: 0; }
   .part.rich .rules b { color: var(--accent); font-weight: 500; }
   .part.rich .by { top: 860px; }
+  /* clôture : le bandeau « prochain épisode » court sur toute la largeur de la slide */
+  .close .next.banner { justify-self: stretch; margin: 0 calc(-1 * var(--pad-x)); border-radius: 0; align-items: center; padding: 44px var(--pad-x); }
   /* glossaire : bloc centré verticalement, termes plus grands pour occuper la slide */
   .gloss-wrap.roomy { grid-template-rows: auto auto; align-content: center; gap: 72px; }
   .gloss-wrap.roomy .gloss { align-content: start; gap: 0 96px; }
@@ -563,7 +565,7 @@
         <span class="url">buymeacoffee.com/ai.coffee</span>
       </div>
 
-      <div class="next">
+      <div class="next banner">
         <span class="ep">Prochain épisode · Nº 07</span>
         <span class="t">À suivre.</span>
         <span class="cta">Date et programme annoncés très bientôt</span>
