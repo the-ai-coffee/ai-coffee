@@ -8,6 +8,7 @@
     { "id": "hallucination", "label": "Hallucination", "family": "limites", "definition": "Le modèle produit une information fausse avec assurance." },
     { "id": "sycophancy", "label": "Complaisance", "family": "limites", "definition": "Le modèle tend à donner raison à l'utilisateur, même quand celui-ci a tort." },
     { "id": "bias", "label": "Biais", "family": "limites", "definition": "Le modèle reproduit les biais présents dans ses données d'entraînement." },
+    { "id": "prompt-injection", "label": "Injection de prompt", "family": "limites", "definition": "Des instructions cachées dans un contenu lu par l'IA (e-mail, page web, document) détournent ce qu'elle fait." },
     { "id": "ai-detection", "label": "Repérer l'IA", "family": "limites", "definition": "Les indices qui trahissent un contenu généré, et les limites de cette détection." },
     { "id": "prompt-context", "label": "Donner du contexte", "family": "prompting", "definition": "Plus la tâche est située (but, public, contraintes), meilleure est la réponse." },
     { "id": "prompt-examples", "label": "Montrer des exemples", "family": "prompting", "definition": "Quelques exemples de la sortie attendue (few-shot) guident mieux qu'une longue consigne." },
@@ -19,6 +20,7 @@
     { "id": "tool-use", "label": "Appel d'outils", "family": "usages", "definition": "Le modèle appelle des outils externes (recherche web, API) pour agir ou s'informer." },
     { "id": "mcp", "label": "MCP", "family": "usages", "definition": "Un protocole standard pour brancher un modèle sur des outils et des services tiers." },
     { "id": "skills", "label": "Skills", "family": "usages", "definition": "Des paquets d'instructions et de ressources qui apprennent un savoir-faire à l'assistant." },
+    { "id": "least-privilege", "label": "Moindre privilège", "family": "usages", "definition": "Un agent ne reçoit que les accès strictement utiles à sa tâche : une consigne écrite ne remplace pas une permission retirée." },
     { "id": "rag", "label": "RAG", "family": "usages", "definition": "Le modèle répond en s'appuyant sur des documents retrouvés au moment de la question." }
   ]
 }
