@@ -6,14 +6,15 @@
       "id": "q0",
       "game": "human_or_ai",
       "warmup": true,
-      "question": "Ce petit poème sur le café : écrit par une personne ou par une IA ?",
+      "question": "Jensen Huang, le patron de NVIDIA, sur un terrain de basket : vraie vidéo, ou fabriquée par une IA ?",
       "media": {
-        "kind": "text",
-        "text": "Dans la tasse fumante, un monde se dessine,\nL'arôme du matin, promesse divine.\nChaque gorgée murmure un doux refrain,\nLe café, compagnon de nos lendemains."
+        "url": "https://www.youtube.com/shorts/AAco7ZuBksk",
+        "start": 0,
+        "end": 20
       },
       "answer": "ai",
-      "concept": "ai-detection",
-      "explanation": "Poème généré par Claude Opus 5.5 à partir de la demande « écris un court poème sur le café ». Les indices : des rimes faciles (« dessine / divine »), des images vagues (« promesse divine ») et aucun détail vécu. L'IA produit vite du joli, rarement du singulier."
+      "concept": "video-generation",
+      "explanation": "Vidéo générée par IA (chaîne Videntra). Mettre une vraie personnalité en scène dans une situation inventée, c'est un deepfake : drôle ici, mais la même technique sert aux arnaques au faux dirigeant. Regardez les mouvements, les mains et la continuité d'une image à l'autre."
     },
     {
       "id": "q1",
