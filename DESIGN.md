@@ -239,4 +239,8 @@ The nine slide archetypes (cover, table of contents, definition, impact, flow, c
 
 ## Exception: quiz player phone
 
-The player's phone during the icebreaker quiz (`quiz/index.html`, `quiz/game.css`) uses a playful "Game-show set" theme: purple-to-orange gradient, raised rounded buttons, Geist 800 typography, confetti. This is the **only** exception to this charter: the host screen shared in Meet, the site and the decks stay sober. The theme uses its own `--game-*` variables and redeclares no token; it respects `prefers-reduced-motion` and never carries a result by colour alone.
+The player's phone during the icebreaker quiz (`quiz/index.html`, `quiz/game.css`) uses a playful "Game-show set" theme: purple-to-orange gradient, raised rounded buttons, Geist 800 typography, confetti. Apart from the host screen's result bars (below), this is the only exception to this charter: the host screen shared in Meet, the site and the decks stay sober. The theme uses its own `--game-*` variables and redeclares no token; it respects `prefers-reduced-motion` and never carries a result by colour alone.
+
+## Exception: quiz host screen result bars
+
+On the quiz host screen (`quiz/host/`, styles in `quiz/quiz.css`), the result bars carry colour so the room reads the outcome at a glance: the right answer and concepts the room knows (≥ 70 %) in green (`--result-good`), half-known concepts (40–69 %) in amber (`--result-mid`), concepts to review (< 40 %) in red (`--result-low`), other answers and progress bars in the accent. These `--result-*` variables live in `quiz/quiz.css`, not in the tokens, and apply to bars only: the rest of the host screen stays sober. Every bar also shows its percentage in text.

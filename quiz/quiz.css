@@ -61,8 +61,18 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 .bar { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; }
 .bar-label { grid-column: 1 / -1; }
 .bar-track { height: 10px; border-radius: 999px; background: var(--paper-2); overflow: hidden; }
-.bar-fill { display: block; height: 100%; background: var(--ink-3); }
-.bar.is-correct .bar-fill { background: var(--accent); }
+/* Result colours (host screen exception, see DESIGN.md): every bar also shows its
+   percentage in text, so colour never carries a result alone. */
+:root {
+  --result-good: oklch(0.640 0.140 152);  /* right answer, concept well known */
+  --result-mid:  oklch(0.760 0.140 80);   /* concept half known               */
+  --result-low:  oklch(0.600 0.180 28);   /* concept to review                */
+}
+.bar-fill { display: block; height: 100%; background: var(--accent-soft); }
+.bar.is-correct .bar-fill { background: var(--result-good); }
+.bar.rate-good .bar-fill { background: var(--result-good); }
+.bar.rate-mid .bar-fill { background: var(--result-mid); }
+.bar.rate-low .bar-fill { background: var(--result-low); }
 .bar.is-mine .bar-label { font-weight: 600; }
 .bar-pct { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
 .verdict { font-family: var(--serif); font-size: 24px; margin: 0; }
@@ -116,7 +126,8 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 .player-avatar { font-size: 26px; line-height: 1; }
 .player-count { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
 .player.is-done .player-count { color: var(--accent); font-weight: 600; }
-.player.is-done .bar-fill { background: var(--accent); }
+.player .bar-fill { background: linear-gradient(90deg, var(--accent-soft), var(--accent)); }
+.player.is-done .bar-fill { background: var(--result-good); }
 .player.is-new { animation: host-in 0.4s ease-out; }
 .player .bar-fill, .host-reveal .bar-fill, .host-summary .bar-fill { transition: width 0.9s ease-out; }
 .found { font-family: var(--serif); font-size: 36px; color: var(--accent); margin: 8px 0 0; }
@@ -125,7 +136,7 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 .host-reveal:not(.revealed) .ok-mark,
 .host-reveal:not(.revealed) .found,
 .host-reveal:not(.revealed) .explain { visibility: hidden; }
-.host-reveal:not(.revealed) .bar.is-correct .bar-fill { background: var(--ink-3); }
+.host-reveal:not(.revealed) .bar.is-correct .bar-fill { background: var(--accent-soft); }
 .host-reveal:not(.revealed) .bubble.is-faulty { border: 1px solid var(--rule); }
 .host-reveal:not(.revealed) .prompt-card.is-correct { border: 1px solid var(--rule-2); }
 .host-reveal:not(.revealed) .none-line.is-correct { color: var(--ink-2); }
