@@ -2,7 +2,7 @@
 // and the tests. Messages are French: they are read by the organisers.
 import { isHttpsUrl, resolveMedia } from "../../../quiz/lib/media-url.js";
 import { MAX_TIME_LIMIT, MIN_TIME_LIMIT } from "../../../quiz/lib/timing.js";
-export const GAMES = ["human_or_ai", "bet_machine", "investigation", "prompt_duel", "definition"];
+export const GAMES = ["human_or_ai", "bet_machine", "investigation", "prompt_duel", "definition", "actu"];
 export const FAMILIES = ["fondamentaux", "limites", "prompting", "usages"];
 export const SESSION_RE = /^[a-z0-9-]{1,20}$/;
 const MEDIA_KINDS = ["text", "image", "code", "video"];
@@ -96,6 +96,11 @@ function validateQuestion(q, conceptIds, errors) {
     }
     case "definition":
       if (!isText(q.term)) errors.push(`${id}: term manquant`);
+      if (!uniqueItems(q.choices) || q.choices.length < 2) errors.push(`${id}: au moins 2 choices {id, text} aux id uniques`);
+      else if (!q.choices.some((c) => c.id === q.answer)) errors.push(`${id}: answer ne correspond à aucun choix`);
+      break;
+    case "actu":
+      if (!(isText(q.fact) && q.fact.length <= 160)) errors.push(`${id}: fact manquant ou trop long (160 caractères max)`);
       if (!uniqueItems(q.choices) || q.choices.length < 2) errors.push(`${id}: au moins 2 choices {id, text} aux id uniques`);
       else if (!q.choices.some((c) => c.id === q.answer)) errors.push(`${id}: answer ne correspond à aucun choix`);
       break;

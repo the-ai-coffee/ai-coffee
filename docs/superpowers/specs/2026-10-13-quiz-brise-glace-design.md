@@ -51,6 +51,7 @@ Le joueur choisit sa réponse, qui est enregistrée aussitôt (l'étape « nivea
 - **Pariez sur la machine** — une question posée à un LLM ; le joueur prédit sa réponse (ou s'il se trompe).
 - **L'Enquête** — une conversation avec une IA en bulles ; le joueur **tape la phrase fautive** (ou « Rien ne cloche »). Illustre hallucination, complaisance, perte de contexte, tokenisation…
 - **Définition** — un terme de base (LLM, agent, contexte…) ; le joueur choisit sa définition parmi 3–4 propositions.
+- **Actu IA** — un fait d'actualité court et sourcé (≤ 160 caractères) et 2–3 réponses courtes, souvent Vrai / Faux. Le jeu le plus léger à lire, pour les fins de soirée.
 - **Duel de prompts** — 2–3 prompts pour une même tâche ; le joueur parie sur le meilleur. Au debrief : les **vraies sorties obtenues** côte à côte et le principe de prompting en jeu.
 
 ### Résilience
@@ -89,6 +90,7 @@ Champs communs obligatoires par question : `id`, `game`, `answer`, `concept` (ex
 | `bet_machine` | `prompt`, `choices[{id,text}]` | id d'un choix |
 | `definition` | `term`, `choices[{id,text}]` | id d'un choix |
 | `investigation` | `transcript[{role,text}]` | index de la ligne fautive, ou `null` (« rien ne cloche ») |
+| `actu` | `fact` (≤ 160 car.), `choices[{id,text}]` | id d'un choix |
 | `prompt_duel` | `task`, `prompts[{id,text}]`, `outputs{id: texte}` | id du meilleur prompt |
 
 `media` : `{kind: "text"|"image"|"code"|"video", ...}`. Vidéo : `provider: "youtube"|"vimeo"` + `id`, `start`, `end` (secondes) — préféré au ré-hébergement pour les vidéos trouvées en ligne ; ou `src` pour un fichier local (`media/quiz/…`).

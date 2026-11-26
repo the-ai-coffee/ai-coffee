@@ -29,7 +29,9 @@ Produit `quiz-data/sessions/NN.json` à partir de `sessions/NN.md`, de
    absurde) + 6–7 questions comptées : ~2 `human_or_ai`, ~2 `bet_machine`, au moins 2 `definition`
    (notion de base : LLM, agent, contexte… ; `term` + `choices`, bonne réponse jamais
    la plus longue ni la plus détaillée), 2–3
-   `investigation` / `prompt_duel`. Chaque question a un `concept` et une
+   `investigation` / `prompt_duel`, et des `actu` (fait d'actualité IA récent et sourcé,
+   `fact` ≤ 160 caractères + 2–3 réponses courtes, souvent Vrai / Faux). Viser peu de texte
+   à lire : public non expert, en soirée. Chaque question a un `concept` et une
    `explanation` pédagogique de 1–2 phrases qui **nomme** le phénomène.
    Chaque jeu affiche déjà sa consigne fixe (« Ce contenu a-t-il été créé par un humain
    ou par une IA ? », etc.) : n'ajoute un champ `question` (≤ 300 caractères) que pour

@@ -95,3 +95,12 @@ test("a definition shows the term and its choices, then the term again at the re
   const reveal = GAMES.definition.renderReveal({ ...definitionQ, conceptLabel: "X" }, { counts: { b: 1 }, answered: 1 }, { choice: "b" }).text;
   assert.ok(reveal.includes("LLM") && reveal.includes("Large Language Model."), reveal);
 });
+
+test("an « Actu IA » question shows its instruction, the fact and short answers", () => {
+  const q = { id: "n1", game: "actu", fact: "Tidal retire des millions de morceaux générés par IA.", choices: [{ id: "v", text: "Vrai" }, { id: "f", text: "Faux" }], answer: "v", concept: "ai-detection", explanation: "Vrai." };
+  assert.equal(GAMES.actu.CONSIGNE, "Actu IA : à ton avis ?");
+  const text = GAMES.actu.renderQuestion(q, () => {}).text;
+  assert.ok(text.includes("Actu IA : à ton avis ?") && text.includes("Tidal retire") && text.includes("Vrai") && text.includes("Faux"));
+  const reveal = GAMES.actu.renderReveal({ ...q, conceptLabel: "X" }, { counts: { v: 1 }, answered: 1 }, { choice: "v" }).text;
+  assert.ok(reveal.includes("Tidal retire") && reveal.includes("Vrai."));
+});
