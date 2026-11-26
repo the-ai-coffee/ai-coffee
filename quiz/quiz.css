@@ -129,7 +129,10 @@ button.bubble:focus-visible, button.bubble:active { border-color: var(--accent);
 .host-reveal:not(.revealed) .bubble.is-faulty { border: 1px solid var(--rule); }
 .host-reveal:not(.revealed) .prompt-card.is-correct { border: 1px solid var(--rule-2); }
 .host-reveal:not(.revealed) .none-line.is-correct { color: var(--ink-2); }
-.profiles li { display: flex; flex-direction: column; gap: 4px; }
+.profiles li { display: flex; flex-direction: column; gap: 4px; flex: 1 1 200px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 12px; }
+.profiles li.is-empty { opacity: 0.5; }
+.profile-range { font-size: 14px; color: var(--ink-2); }
+.profile-count { font-family: var(--mono); font-size: 15px; color: var(--accent); }
 .profile-faces { font-size: 24px; letter-spacing: 2px; }
 @keyframes host-pulse { to { transform: scale(1.08); box-shadow: 0 0 0 6px var(--accent-soft); } }
 @keyframes host-blink { 50% { opacity: 0.4; } }

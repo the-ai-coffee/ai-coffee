@@ -336,12 +336,21 @@ function renderSummary() {
         ),
       ),
     ),
+    h("p", { class: "kicker" }, "Les profils de la salle"),
     h(
       "ul",
       { class: "profiles" },
       Object.values(PROFILES).map((p) => {
-        const faces = players.filter((x) => x.profile === p.id).map((x) => x.avatar ?? "🙂").join(" ");
-        return h("li", {}, h("strong", {}, `${p.emoji} ${p.title}`), h("span", { class: "profile-faces" }, faces || "—"));
+        const members = players.filter((x) => x.profile === p.id);
+        const count = members.length === 0 ? "Personne" : members.length === 1 ? "1 joueur" : `${members.length} joueurs`;
+        return h(
+          "li",
+          { class: members.length ? "" : "is-empty" },
+          h("strong", {}, `${p.emoji} ${p.title}`),
+          h("span", { class: "profile-range" }, p.range),
+          h("span", { class: "profile-count" }, count),
+          members.length ? h("span", { class: "profile-faces" }, members.map((x) => x.avatar ?? "🙂").join(" ")) : null,
+        );
       }),
     ),
   );

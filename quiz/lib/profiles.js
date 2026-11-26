@@ -4,9 +4,9 @@
 export const THRESHOLDS = { oracle: 0.8, sceptique: 0.5 };
 
 export const PROFILES = {
-  oracle: { id: "oracle", emoji: "🎯", title: "Œil de lynx", tagline: "La machine ne t'a presque jamais eu." },
-  sceptique: { id: "sceptique", emoji: "🧐", title: "Bon flair", tagline: "Tu vises juste, plus souvent qu'à ton tour." },
-  explorateur: { id: "explorateur", emoji: "🔭", title: "Explorateur", tagline: "La machine t'a eu, et c'est comme ça qu'on apprend." },
+  oracle: { id: "oracle", emoji: "🎯", title: "Œil de lynx", tagline: "La machine ne t'a presque jamais eu.", range: "80 % de bonnes réponses ou plus" },
+  sceptique: { id: "sceptique", emoji: "🧐", title: "Bon flair", tagline: "Tu vises juste, plus souvent qu'à ton tour.", range: "De 50 à 79 % de bonnes réponses" },
+  explorateur: { id: "explorateur", emoji: "🔭", title: "Explorateur", tagline: "La machine t'a eu, et c'est comme ça qu'on apprend.", range: "Moins de 50 % de bonnes réponses" },
 };
 
 export function profileFor({ correctRate }) {
