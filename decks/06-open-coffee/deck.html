@@ -332,6 +332,10 @@
   .part.rich .rules { display: flex; gap: 48px; font-family: var(--sans); font-weight: 300; font-size: 28px; color: var(--ink-2); margin: 0; }
   .part.rich .rules b { color: var(--accent); font-weight: 500; }
   .part.rich .by { top: 860px; }
+  /* clôture : un grand merci en tête, QR un peu plus petit pour garder l'air */
+  .close.thanks { gap: 48px; }
+  .close .big-thanks { font-family: var(--serif); font-weight: 400; font-size: 150px; line-height: 0.95; letter-spacing: -0.03em; margin: 0; }
+  .close.thanks .support img { width: 180px; height: 180px; }
   /* clôture : le bandeau « prochain épisode » court sur toute la largeur de la slide */
   .close .next.banner { justify-self: stretch; margin: 0 calc(-1 * var(--pad-x)); border-radius: 0; align-items: center; padding: 44px var(--pad-x); }
   /* glossaire : bloc centré verticalement, termes plus grands pour occuper la slide */
@@ -558,7 +562,9 @@
       <div class="baseline"><span class="mark">IA Coffee</span><span>Merci · au mois prochain</span></div>
     </div>
 
-    <div class="body close">
+    <div class="body close thanks">
+      <h2 class="big-thanks">Un grand <span class="stroke">merci</span> !</h2>
+
       <div class="support">
         <img src="../../media/bmc_qr.png" alt="QR Buy Me a Coffee, soutenir IA Coffee">
         <span class="cap">Offrez-nous un café · scannez pour nous soutenir</span>
